@@ -1,25 +1,45 @@
-package com.example.bitcoin.controller;
+package com.example.bitcoin;
 
-import java.io.IOException;
-import java.util.UUID;
-
-import org.apache.catalina.connector.Request;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import java.io.IOException;
+import java.util.UUID;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
 
+@Controller
 public class GetAccounts {
 
-	public static void main(String[] args) {
+
+	@GetMapping("/test")
+	public String test(){
+		return "/test.html";
+	}
+
+	@GetMapping("/mainPage")
+	public String mainPage(){
+		return "/mainPage.html";
+	}
+
+	@GetMapping("/login")
+	public String loginPage(){
+		return "/login.html";
+	}
+
+
+
+	public static void main2(String[] args) {
 
 		String accessKey =	"EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";
 				/*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
@@ -55,7 +75,7 @@ public class GetAccounts {
 					.addHeader("accept", "application/json").build();
 
 			try {
-				okhttp3.Response responses = clients.newCall(requests).execute();
+				Response responses = clients.newCall(requests).execute();
 				// 응답처리
 				if (responses.body() != null) {
 					String responseBody = responses.body().string();
@@ -78,7 +98,7 @@ public class GetAccounts {
 
 			// Response response2 = client.newCall(request).execute();
 			try {
-				okhttp3.Response response2 = client2.newCall(request2).execute();
+				Response response2 = client2.newCall(request2).execute();
 				// 응답 처리
 				if (response2.body() != null) {
 					String responseBody2 = response2.body().string();
