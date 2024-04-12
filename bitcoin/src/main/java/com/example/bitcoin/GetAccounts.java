@@ -1,25 +1,38 @@
 package com.example.bitcoin;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import okhttp3.OkHttpClient;
-import okhttp3.Response;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.UUID;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 
-import java.io.IOException;
-import java.util.UUID;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.example.bitcoin.service.coinservice;
 
+import jakarta.servlet.http.HttpSession;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @Controller
 public class GetAccounts {
+
+
+	@Autowired
+	coinservice coinservice2;
 
 
 	@GetMapping("/test")
@@ -36,6 +49,19 @@ public class GetAccounts {
 	public String loginPage(){
 		return "/login.html";
 	}
+
+	@GetMapping("/home")
+	public String logout() {
+		return "/home.html";
+	}
+
+	@GetMapping("/login2")
+	public String login2() {
+		return "/login2.html";
+	}
+
+
+
 
 
 

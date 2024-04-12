@@ -3,13 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+   	<style>
+
+  /* * {
+
+   	padding: 0;
+   	margin: 0;
+   	max-width: 100%;
+   	overflow-x: hidden;
+   	position:relative;
+   	display: block;
+
+
+   }*/
+
+   	</style>
+
 </head>
 <body>
-<label for="access">access :</label>
+
+
+
+
+
+
+
+  <table width="100%" style="border:none">
+    <tr>
+      <td colspan="2" style="background-color:lightgrey">
+      <h2>HEADER 영역</h2>
+      <img src="bitcoin.jpg" alt="예제 이미지" width="75" height="75">
+		<form id="logoutForm" action="/logout" method="post">
+		  <button type="submit">로그아웃</button>
+		</form>
+
+
+
+
+      </td>
+    </tr>
+    <tr>
+      <td style="background-color:#339999; color:white; width:20%">
+        <h2>NAV 영역</h2>
+      </td>
+      <td style="height:200px; text-align:left">
+        <p>SECTION 영역</p>
+        <label for="access">access :</label>
 <input id="access" type="text"/><br/>
 <label for="secret">secret :</label>
 <input id="secret" type="text" style="margin-left:4px;"/>
-
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2" style="background-color:#FFCC00">
+        <h2>FOOTER 영역</h2>
+      </td>
+    </tr>
+  </table>
 
 </body>
 </html>
