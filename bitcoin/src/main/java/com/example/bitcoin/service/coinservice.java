@@ -13,5 +13,5 @@ public interface coinservice {
 	  public  MemberVO findOne(String userId);
 
 
-
+    public MemberVO codeSave(MemberVO vo);
 }

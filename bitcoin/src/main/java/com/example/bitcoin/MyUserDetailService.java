@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 
 @Component
@@ -27,6 +28,8 @@ public class MyUserDetailService implements UserDetailsService{
 
 	@Override
 	public UserDetails loadUserByUsername(String insertedUserId) throws UsernameNotFoundException{
+
+
 		MemberVO member = Optional.ofNullable(coinservice3.findById(insertedUserId))
 				.orElseThrow(() -> new UsernameNotFoundException("없는 회원입니다. ㅠ"));
 

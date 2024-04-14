@@ -9,4 +9,6 @@ public interface coinmapper {
 
     //시큐리티 로그인
   public  MemberVO findById(String userId);
+
+  public MemberVO codeSave(MemberVO vo);
 }

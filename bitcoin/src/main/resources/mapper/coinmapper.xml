@@ -18,6 +18,13 @@
 
  </select>
 
+	<select id="codeSave" parameterType="String" resultType="com.example.bitcoin.dto.MemberVO">
+
+		SELECT accesscode, secretcode
+		  FROM member
+		where id = #{id}
+
+	</select>
 
 
 </mapper>

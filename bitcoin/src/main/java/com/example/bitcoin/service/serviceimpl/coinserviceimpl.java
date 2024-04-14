@@ -22,14 +22,10 @@ public class coinserviceimpl implements coinservice{
 		return coinmappers.findById(userId);
 	}
 
-
-
-
-
-
-
-
-
+	@Override
+	public MemberVO codeSave(MemberVO vo) {
+		return coinmappers.codeSave(vo);
+	}
 
 
 }

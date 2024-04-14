@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.UUID;
 
+
+import com.example.bitcoin.dto.MemberVO;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,9 +15,13 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.AuthenticatedPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.auth0.jwt.JWT;
@@ -26,6 +32,11 @@ import jakarta.servlet.http.HttpSession;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import static net.sf.jsqlparser.util.validation.metadata.NamedObject.user;
 
 @Controller
 public class GetAccounts {
@@ -36,17 +47,17 @@ public class GetAccounts {
 
 
 	@GetMapping("/test")
-	public String test(){
+	public String test() {
 		return "/test.html";
 	}
 
-	@GetMapping("/mainPage")
-	public String mainPage(){
+	/*@GetMapping("/mainPage")
+	public String mainPage() {
 		return "/mainPage.html";
-	}
+	}*/
 
 	@GetMapping("/login")
-	public String loginPage(){
+	public String loginPage() {
 		return "/login.html";
 	}
 
@@ -61,23 +72,88 @@ public class GetAccounts {
 	}
 
 
+	@ResponseBody
+	@PostMapping("/account")
+	public String account(@RequestBody MemberVO vo) {
 
-
-
-
-	public static void main2(String[] args) {
-
-		String accessKey =	"EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";
-				/*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
-		String secretKey = 	"1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";
-				/*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
-		String serverUrl =  "https://api.upbit.com";
+		String accessKey = vo.getAccessCode();
+		/*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
+		String secretKey = vo.getSecretCode();
+		/*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
+		String serverUrl = "https://api.upbit.com";
 
 		Algorithm algorithm = Algorithm.HMAC256(secretKey);
 		String jwtToken = JWT.create().withClaim("access_key", accessKey)
 				.withClaim("nonce", UUID.randomUUID().toString()).sign(algorithm);
 
 		String authenticationToken = "Bearer " + jwtToken;
+
+		HttpClient client = HttpClientBuilder.create().build();
+		HttpGet request = new HttpGet(serverUrl + "/v1/accounts");
+		request.setHeader("Content-Type", "application/json");
+		request.addHeader("Authorization", authenticationToken);
+
+		HttpResponse response = null;
+		try {
+			response = client.execute(request);
+
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		HttpEntity entity = response.getEntity();
+		String result = null;
+		try {
+
+			result = EntityUtils.toString(entity, "UTF-8");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+
+
+	@GetMapping("/mainPage")
+	public String getUserInfo(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+		model.addAttribute("user",userDetails.getUsername());
+		return "/mainPage.html";
+	}
+
+
+	@PostMapping("/code")
+	@ResponseBody
+	public MemberVO codeSave(@RequestBody MemberVO vo){
+
+		MemberVO vo2 = new MemberVO();
+		vo2 = coinservice2.codeSave(vo);
+		return vo2;
+
+
+
+
+
+	}
+
+	/*public static void main2(String[] args) {
+
+		String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";
+		System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  // access 코드
+		String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";
+		System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  // secret 코드
+		String serverUrl = "https://api.upbit.com";
+
+		Algorithm algorithm = Algorithm.HMAC256(secretKey);
+		String jwtToken = JWT.create().withClaim("access_key", accessKey)
+				.withClaim("nonce", UUID.randomUUID().toString()).sign(algorithm);
+
+		String authenticationToken = "Bearer " + jwtToken;
+
+
+
+
+
 
 		// 내 자산 정보
 
@@ -184,9 +260,6 @@ public class GetAccounts {
 
 
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
+	}*/
 }
