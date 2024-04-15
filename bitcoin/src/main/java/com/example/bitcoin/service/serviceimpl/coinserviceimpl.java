@@ -4,6 +4,7 @@ package com.example.bitcoin.service.serviceimpl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.example.bitcoin.dto.MemberVO;
@@ -11,7 +12,8 @@ import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 
 
-
+@Service
+@Primary
 public class coinserviceimpl implements coinservice{
 
 	@Autowired

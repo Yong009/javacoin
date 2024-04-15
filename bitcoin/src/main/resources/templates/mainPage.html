@@ -4,9 +4,54 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/owl.carousel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.2.1/assets/owl.theme.default.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
    	<style>
 
+
+        input {
+            width: 350px;
+            height: 25px;
+            font-size: 15px;
+            border: 0;
+            border-radius: 15px;
+            outline: none;
+            padding-left: 10px;
+            background-color: rgb(233, 233, 233);
+        }
+
+        .one h1 {
+            text-align: center;
+            text-transform: uppercase;
+            padding-bottom: 5px;
+
+        }
+        .one h1:before {
+            width: 28px;
+            height: 5px;
+            display: block;
+            content: "";
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            margin-left: -14px;
+            background-color: #b80000;
+        }
+        .one h1:after {
+            width: 100px;
+            height: 1px;
+            display: block;
+            content: "";
+            position: relative;
+            margin-top: 25px;
+            left: 50%;
+            margin-left: -50px;
+            background-color: #b80000;
+        }
 
 
         table.type01 {
@@ -28,36 +73,359 @@
             vertical-align: top;
             border: 1px solid #ccc;
         }
-  /* * {
+        /* 폰트 적용 */
+        /* 노토산스 폰트 */
+        @import url('https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap');
 
-   	padding: 0;
-   	margin: 0;
-   	max-width: 100%;
-   	overflow-x: hidden;
-   	position:relative;
-   	display: block;
+        html {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        /* 노말라이즈 */
+        body, ul, li {
+            margin:0;
+            padding:0;
+            list-style:none;
+        }
+        body {
+            word-break:keep-all;
+        }
+        a {
+            text-decoration:none;
+            color:inherit;
+        }
+        html {
+            overflow-x:hidden;
+            line-height:1.15;
+        }
+        /* 노말라이즈 */
+
+        /* 라이브러리 */
+        .con {
+            max-width:1300px;
+            margin:0 auto;
+        }
+        .row::after {
+            content:"";
+            display:block;
+            clear:both;
+        }
+        .cell {
+            float:left;
+            box-sizing:border-box;
+        }
+        .cell-right {
+            float:right;
+        }
+        .line-height-0 {
+            line-height:0;
+        }
+        .line-height-0 > * {
+            line-height:normal;
+        }
+        .visible-on {
+            display:block;
+        }
+        .visible-off {
+            display:none;
+        }
+        .img-box {
+            overflow:hidden;
+        }
+        .img-box > img {
+            width:100%;
+            display:block;
+        }
+        .relative {
+            position:relative;
+        }
+        .block {
+            display:block;
+        }
+        /* 라이브러리 끝 */
+
+        body {
+            background-color:#dfdfdf;
+            height:3000px;
+        }
+        /* 커스텀 */
+        .header {
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:86px;
+            background-color:#fff;
+            z-index:100;
+        }
+
+        .header > .header-inner {
+            max-width:1220px;
+            margin:0 auto;
+            position:relative;
+        }
+
+        /* 상단 로고 */
+        .header > .header-inner > .logo {
+            position:absolute;
+            top:5%;
+            left:50%;
+            transform:translatex(-50%);
+            width:128px;
+        }
+
+        /* 검색 박스 */
+        .header > .header-inner > .search-box {
+            position:absolute;
+            top:50%;
+            right:30px;
+            transform:translatey(-50%);
+        }
+
+        .header > .header-inner > .search-box > a > span {
+            font-size:15px;
+            font-weight:bold;
+            position:relative;
+            top:-2px;
+        }
+        .header > .header-inner > .search-box > a > img {
+            width:15px;
+            padding-left:5px;
+            position:relative;
+            top:-1px;
+        }
+
+        /* 상단 메뉴바 */
+
+        .header > .header-inner > .top-menu-bar > ul {
+            display:inline-block;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul:nth-child(2) {
+            margin-right:105px;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > a {
+            display:block;
+            margin:0 30px;
+            font-size:15px;
+            font-weight:bold;
+            position:relative;
+            line-height:86px;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > a > * {
+            line-height:normal;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > a::after {
+            content:"";
+            display:block;
+            background-color:#000;
+            position:absolute;
+            bottom:0;
+            left:50%;
+            width:0%;
+            height:3px;
+            transform:translatex(-50%);
+            transition:width .3s ease-in-out;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > a.active::after {
+            width:100%;
+        }
+
+        /* 2차 메뉴 배경 */
+        .header > .header-inner > .top-menu-bar > .sub-menu-bg {
+            position:fixed;
+            top:86px;
+            left:0;
+            width:100%;
+            height:0;
+            background-color:#fff;
+            border-top:1px solid #ccc;
+            z-index:-5;
+            transition:height .3s;
+        }
+
+        /* 2차 메뉴 */
+        .header > .header-inner > .top-menu-bar ul > li {
+            position:relative;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > ul {
+            position:absolute;
+            top:100%;
+            left:0;
+            min-width:1000px;
+            visibility:hidden;
+            transform:translatex(-10px);
+            opacity:0;
+            padding-top:20px;
+        }
+        .header > .header-inner > .top-menu-bar > ul > li.active ul {
+            visibility:visible;
+            opacity:1;
+            transform:translatex(0);
+            transition:all .5s;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > ul > li {
+            margin-left:30px;
+        }
+        .header > .header-inner > .top-menu-bar > ul > li > ul > li > a {
+            font-weight:bold;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul ul > li > a {
+            display:inline-block;
+            font-size:15px;
+            padding:7px 0;
+            position:relative;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul ul > li > a::after {
+            content:"";
+            display:block;
+            background-color:#000;
+            position:absolute;
+            bottom:0;
+            left:50%;
+            width:0%;
+            height:1px;
+            transform:translatex(-50%);
+            transition:width .3s ease-in-out;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul ul > li > a:hover::after {
+            width:100%;
+        }
+
+        /* 서브메뉴 실질적 width, height */
+        .header > .header-inner > .top-menu-bar > ul > li > .sub-menu-width {
+            width:100%;
+            height:300px;
+            position:fixed;
+            top:86px;
+            left:0;
+            z-index:-3;
+            display:none;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li.active > .sub-menu-width {
+            display:block;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > .sub-menu-width-1 {
+            height:164px;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > .sub-menu-width-2 {
+            height:238px;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > .sub-menu-width-3 {
+            height:164px;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > .sub-menu-width-4 {
+            height:90px;
+        }
+
+        .header > .header-inner > .top-menu-bar > ul > li > .sub-menu-width-5 {
+            height:127px;
+        }
+
+        /* 3차 메뉴 */
+        .header > .header-inner > .top-menu-bar > ul ul ul {
+
+        }
+
+        .header > .header-inner > .top-menu-bar > ul ul ul > li {
+            margin-right:80px;
+        }
 
 
-   }*/
-
-   	</style>
+    </style>
 
 </head>
 <body>
 
+<div class="header">
+    <div class="header-inner">
+        <div class="logo img-box">
+    <img src="bitcoin.jpg" alt="예제 이미지" width="75" height="75">
+        </div>
+        <nav class="top-menu-bar row line-height-0">
+            <ul class="row">
+                <li class="cell menu-1">
+                    <a href="#">마이 페이지</a>
+                    <ul>
+                        <li><a href="/mainPage">잔고 조회</a></li>
+                        <li><a href="#">구독 결제</a></li>
+                    </ul>
+                    <div class="sub-menu-width sub-menu-width-1"></div>
+                </li>
+                <li class="cell menu-2">
+                    <a href="#">차트</a>
+                    <ul class="row">
+                        <li><a href="#">전체보기</a></li>
+                    </ul>
+                    <div class="sub-menu-width sub-menu-width-1"></div>
+                </li>
 
-<h2></h2>
 
+
+
+                <li class="cell menu-3">
+                    <a href="#">자동 매매</a>
+                    <ul>
+                        <li><a href="#">rsi</a></li>
+                        <li><a href="#">변동성 돌파</a></li>
+                        <li><a href="#">상승장 타기</a></li>
+                    </ul>
+                    <div class="sub-menu-width sub-menu-width-3"></div>
+                </li>
+            </ul>
+            <ul class="row cell-right">
+                <li class="cell menu-4">
+                    <a href="#">커뮤니티</a>
+                    <ul>
+                        <li><a href="#">코인토론방</a></li>
+                    </ul>
+                    <div class="sub-menu-width sub-menu-width-4"></div>
+                </li>
+                <li class="cell menu-5">
+                    <a href="#">고객 지원</a>
+                    <ul>
+                        <li><a href="#">건의하기</a></li>
+                        <li><a href="#">이용 약관</a></li>
+                    </ul>
+                    <div class="sub-menu-width sub-menu-width-5"></div>
+                </li>
+            </ul>
+            <div class="sub-menu-bg"></div>
+        </nav>
+
+        <div class="search-box">
+            <a href="#">
+                <span>검색</span><img src="https://www.dacorkorea.com/images/icon-search.png" alt="search">
+            </a>
+        </div>
+        <!-- 서치박스 온
+        <div class="search-box-on">
+            <input type="search" placeholder="">
+        </div>
+        -->
+    </div>
+</div>
 
 
 
   <table width="100%" style="border:none">
     <tr>
-      <td colspan="2" style="background-color:lightgrey">
+      <td colspan="2" style="background-color:lightgrey; ">
 
-      <img src="bitcoin.jpg" alt="예제 이미지" width="100" height="100">
-          <h2>메뉴</h2>
-          <p id="userid"><span th:text="${user}"></span>님 환영합니다.</p>
+          <p id="userid" style="margin-top:100px;"><span th:text="${user}"></span>님 환영합니다.</p>
 
 		<form id="logoutForm" action="/logout" method="post">
 		  <button type="submit">로그아웃</button>
@@ -75,7 +443,7 @@
           <input id="access" type="text"/><br/>
           <label for="secret">secret :</label>
           <input id="secret" type="text" style="margin-left:4px;"/>
-          <button type="button" id = "accountBtn" >잔고 조회</button>
+          <button type="button" id = "accountBtn" class="btn btn-primary">잔고 조회</button>
       </td>
       <td style="height:200px; text-align:left">
         <p>my 잔고</p>
@@ -104,6 +472,54 @@
   </table>
 
     <script>
+
+        // 상단 메뉴 관련
+        $('.header > .header-inner > .top-menu-bar > ul > li').mouseenter(function(){
+            $(this).addClass('active');
+            $(this).find('> a').addClass('active');
+        });
+
+        $('.header > .header-inner > .top-menu-bar > ul > li').mouseleave(function(){
+            $(this).removeClass('active');
+            $(this).find('> a').removeClass('active');
+        });
+
+        // 상단 2차 메뉴 배경
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-1').mouseenter(function(){
+            $('.sub-menu-bg').css('height','164px');
+        });
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-1').mouseleave(function(){
+            $('.sub-menu-bg').css('height','');
+        });
+
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-2').mouseenter(function(){
+            $('.sub-menu-bg').css('height','238px');
+        });
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-2').mouseleave(function(){
+            $('.sub-menu-bg').css('height','');
+        });
+
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-3').mouseenter(function(){
+            $('.sub-menu-bg').css('height','164px');
+        });
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-3').mouseleave(function(){
+            $('.sub-menu-bg').css('height','');
+        });
+
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-4').mouseenter(function(){
+            $('.sub-menu-bg').css('height','90px');
+        });
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-4').mouseleave(function(){
+            $('.sub-menu-bg').css('height','');
+        });
+
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-5').mouseenter(function(){
+            $('.sub-menu-bg').css('height','127px');
+        });
+        $('.header > .header-inner > .top-menu-bar > ul > .menu-5').mouseleave(function(){
+            $('.sub-menu-bg').css('height','');
+        });
+
         var username = '[[${user}]]';
         console.log(username);
 
@@ -119,10 +535,17 @@
             dataType:"json",
             contentType:"application/json",
             success:function(result){
-                console.log(result[0]);
+                $('#access').val(result[0].accessCode);
+                var a = $('#access').val();
+                 $('#secret').val(result[0].secretCode)
+                var b = $('#secret').val();
+
+
             }
 
         })
+
+
 
 
         var tbody = $('#Tb');
@@ -136,71 +559,55 @@
         })
 
 
-       $('#accountBtn').on('click',function() {
+           $('#accountBtn').on('click',function() {
 
-           var accessCode = $('#access').val();
-           var secretCode = $('#secret').val();
-
-           var account = {
-               accessCode: accessCode,
-               secretCode: secretCode
-           }
-
-
-
-           $.ajax({
-               url: "/account",
-               type: "POST",
-               data: JSON.stringify(account),
-               contentType: "application/json",
-               dataType: "json",
-               success: function (result) {
-                   console.log(result);
-
-                   $.each(result,function(i,item){
-
-                       var row = $('<tr>');
-
-                       var td1 = $('<td class="center">').text(item.currency);
-                       row.append(td1);
-
-                       var td2 = $('<td class="center">').text(item.balance);
-
-                       row.append(td2);
-
-
-                       tbody.append(row);
-
-                       }
-
-                   )
-
+               var accessCode = $('#access').val();
+               var secretCode = $('#secret').val();
+               var account = {
+                   accessCode: accessCode,
+                   secretCode: secretCode
                }
+               $.ajax({
+                   url: "/account",
+                   type: "POST",
+                   data: JSON.stringify(account),
+                   contentType: "application/json",
+                   dataType: "json",
+                   success: function (result) {
+                       console.log(result);
+                       $.each(result,function(i,item){
+                           var row = $('<tr>');
+                           var td1 = $('<td class="center">').text(item.currency);
+                           row.append(td1);
+                           var td2 = $('<td class="center">').text(item.balance);
+                           row.append(td2);
+                           tbody.append(row);
+
+                           }
+
+                       )
+
+                   }
 
 
+                   })
                })
-           })
 
+        var a = $('#access').val();
+        var b = $('#secret').val();
+        if(a !='' && b != ''){
+            accountGet();
+        }
 
         function refreshTable(account2) {
-
             tbody.empty();
-
-
             $.each(account2, function (i, item) {
-
                 var row = $('<tr>');
-
                 var td1 = $('<td class="center">').text(item.currency);
                 row.append(td1);
-
                 var td2 = $('<td class="center">').text(item.balance);
-
                 row.append(td2);
-
-
                 tbody.append(row);
-
             })
 
        }
