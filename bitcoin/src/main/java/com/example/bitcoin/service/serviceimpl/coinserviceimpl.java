@@ -1,8 +1,9 @@
 package com.example.bitcoin.service.serviceimpl;
 
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import com.example.bitcoin.dto.MemberVO;
@@ -23,8 +24,8 @@ public class coinserviceimpl implements coinservice{
 	}
 
 	@Override
-	public MemberVO codeSave(MemberVO vo) {
-		return coinmappers.codeSave(vo);
+	public List<MemberVO> getCode(String id) {
+		return coinmappers.getCode(id);
 	}
 
 

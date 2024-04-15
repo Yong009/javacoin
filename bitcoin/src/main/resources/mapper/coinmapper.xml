@@ -18,9 +18,9 @@
 
  </select>
 
-	<select id="codeSave" parameterType="String" resultType="com.example.bitcoin.dto.MemberVO">
+	<select id="getCode" parameterType="String" resultType="com.example.bitcoin.dto.MemberVO">
 
-		SELECT accesscode, secretcode
+		SELECT *
 		  FROM member
 		where id = #{id}
 

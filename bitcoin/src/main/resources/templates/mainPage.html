@@ -113,17 +113,16 @@
 
 
         $.ajax({
-            url:"/code",
+            url:"/getCode",
             type: "POST",
             data:JSON.stringify(userid),
             dataType:"json",
             contentType:"application/json",
             success:function(result){
-                console.log(result);
+                console.log(result[0]);
             }
 
         })
-
 
 
         var tbody = $('#Tb');
@@ -175,12 +174,7 @@
                        }
 
                    )
-                   /*let account2 = {
-                       currency : result[0].currency,
-                       balance : result[0].balance
-                   }*/
 
-                   //refreshTable(account2);
                }
 
 

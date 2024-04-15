@@ -1,6 +1,8 @@
 package com.example.bitcoin.service;
 
-import org.springframework.context.annotation.Primary;
+import java.util.List;
+
+import org.springframework.context.annotation.ComponentScan;
 
 import com.example.bitcoin.dto.MemberVO;
 
@@ -13,5 +15,5 @@ public interface coinservice {
 	  public  MemberVO findOne(String userId);
 
 
-    public MemberVO codeSave(MemberVO vo);
+    public List<MemberVO> getCode(String id);
 }
