@@ -123,6 +123,18 @@ public class GetAccounts {
 
 	}
 
+	@ResponseBody
+	@PostMapping("/saveCode")
+	public boolean saveCode(@RequestBody MemberVO vo){
+
+		List<MemberVO> vo2 = new ArrayList<>();
+
+		boolean a = coinservice2.saveCode(vo);
+
+		return a;
+	}
+
+
 	/*public static void main2(String[] args) {
 
 		String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";

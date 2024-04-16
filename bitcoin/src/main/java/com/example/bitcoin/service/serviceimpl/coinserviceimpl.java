@@ -30,5 +30,11 @@ public class coinserviceimpl implements coinservice{
 		return coinmappers.getCode(id);
 	}
 
+	@Override
+	public boolean saveCode(MemberVO vo) {
+
+		return coinmappers.saveCode(vo);
+	}
+
 
 }

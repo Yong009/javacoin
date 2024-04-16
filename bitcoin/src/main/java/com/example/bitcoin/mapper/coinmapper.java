@@ -13,4 +13,6 @@ public interface coinmapper {
   public  MemberVO findById(String userId);
 
   public List<MemberVO> getCode(String id);
+
+  public boolean saveCode(MemberVO vo);
 }

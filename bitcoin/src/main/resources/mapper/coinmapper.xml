@@ -26,5 +26,14 @@
 
 	</select>
 
+  <update id="saveCode" parameterType="String">
+
+  		update member
+  		  set accesscode= #{accessCode},
+  		  	  secretcode= #{secretCode}
+  		  where id = #{id}
+
+  </update>
+
 
 </mapper>

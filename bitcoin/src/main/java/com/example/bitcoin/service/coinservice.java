@@ -15,5 +15,7 @@ public interface coinservice {
 	  public  MemberVO findOne(String userId);
 
 
-    public List<MemberVO> getCode(String id);
+	  public List<MemberVO> getCode(String id);
+
+	  public boolean saveCode(MemberVO vo);
 }

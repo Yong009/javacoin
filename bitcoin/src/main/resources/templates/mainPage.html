@@ -355,8 +355,13 @@
         <div class="logo img-box">
     <img src="bitcoin.jpg" alt="예제 이미지" width="75" height="75">
         </div>
+
         <nav class="top-menu-bar row line-height-0">
+
             <ul class="row">
+            	<li class="cell menu-1" style="margin-right:70px; margin-top:5px;">
+            		<h2 style="text-align: center; text-transform: uppercase; padding-bottom: 10px;">AKS</h2>
+            	</li>
                 <li class="cell menu-1">
                     <a href="#">마이 페이지</a>
                     <ul>
@@ -439,11 +444,13 @@
     <tr>
       <td style="background-color:#339999; color:white; width:20%">
         <h2>api 코드</h2>
+        <button type="button" id = "accountBtn" class="btn btn-primary" style="float:right;">잔고 조회</button>
+        <button type="button" id = "accountSaveBtn" class="btn btn-primary" style="float:right;">코드 저장</button><br/>
           <label for="access">access :</label>
           <input id="access" type="text"/><br/>
           <label for="secret">secret :</label>
           <input id="secret" type="text" style="margin-left:4px;"/>
-          <button type="button" id = "accountBtn" class="btn btn-primary">잔고 조회</button>
+
       </td>
       <td style="height:200px; text-align:left">
         <p>my 잔고</p>
@@ -611,6 +618,38 @@
             })
 
        }
+
+
+
+
+
+        var member = {
+
+        	accesscode : $('#access').val(),
+        	secretcode : $('#secret').val()
+
+        }
+
+
+       $('#accountSaveBtn').on('click',function(){
+			$.ajax({
+				url:"/saveCode",
+				type:"post",
+				data:JSON.stringify(member),
+				dataType:"json",
+				contentType:"application/json",
+				success: function(result){
+
+					if(result){
+						alert('저장 실패!!')
+					}else{
+						alert('저장 실패!!')
+					}
+				}
+
+
+			})
+       })
 
 
 
