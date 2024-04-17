@@ -373,7 +373,7 @@
                 <li class="cell menu-2">
                     <a href="#">차트</a>
                     <ul class="row">
-                        <li><a href="#">전체보기</a></li>
+                        <li><a href="#">차트 및 검색</a></li>
                     </ul>
                     <div class="sub-menu-width sub-menu-width-1"></div>
                 </li>
@@ -396,6 +396,7 @@
                     <a href="#">커뮤니티</a>
                     <ul>
                         <li><a href="#">코인토론방</a></li>
+                        <li><a href="#">기술적 조언</a></li>
                     </ul>
                     <div class="sub-menu-width sub-menu-width-4"></div>
                 </li>
@@ -443,12 +444,12 @@
     </tr>
     <tr>
       <td style="background-color:#339999; color:white; width:20%">
-        <h2>api 코드</h2>
+        <h2>업비트 api 코드</h2>
         <button type="button" id = "accountBtn" class="btn btn-primary" style="float:right;">잔고 조회</button>
         <button type="button" id = "accountSaveBtn" class="btn btn-primary" style="float:right;">코드 저장</button><br/>
-          <label for="access">access :</label>
-          <input id="access" type="text"/><br/>
-          <label for="secret">secret :</label>
+          <label for="access">access</label><br/><br/>
+          <input id="access" type="text"/><br/><br/>
+          <label for="secret">secret</label><br/><br/>
           <input id="secret" type="text" style="margin-left:4px;"/>
 
       </td>
@@ -500,7 +501,7 @@
         });
 
         $('.header > .header-inner > .top-menu-bar > ul > .menu-2').mouseenter(function(){
-            $('.sub-menu-bg').css('height','238px');
+            $('.sub-menu-bg').css('height','164px');
         });
         $('.header > .header-inner > .top-menu-bar > ul > .menu-2').mouseleave(function(){
             $('.sub-menu-bg').css('height','');
@@ -514,14 +515,14 @@
         });
 
         $('.header > .header-inner > .top-menu-bar > ul > .menu-4').mouseenter(function(){
-            $('.sub-menu-bg').css('height','90px');
+            $('.sub-menu-bg').css('height','164px');
         });
         $('.header > .header-inner > .top-menu-bar > ul > .menu-4').mouseleave(function(){
             $('.sub-menu-bg').css('height','');
         });
 
         $('.header > .header-inner > .top-menu-bar > ul > .menu-5').mouseenter(function(){
-            $('.sub-menu-bg').css('height','127px');
+            $('.sub-menu-bg').css('height','164px');
         });
         $('.header > .header-inner > .top-menu-bar > ul > .menu-5').mouseleave(function(){
             $('.sub-menu-bg').css('height','');
@@ -581,7 +582,14 @@
                    contentType: "application/json",
                    dataType: "json",
                    success: function (result) {
-                       console.log(result);
+
+                	   if(result.error && result.error.name === 'invalid_access_key'){
+
+                	   	 alert('실패했습니다. 유효하지 않은 접근 키')
+						 return false;
+                	   }
+
+
                        $.each(result,function(i,item){
                            var row = $('<tr>');
                            var td1 = $('<td class="center">').text(item.currency);
@@ -622,16 +630,22 @@
 
 
 
-
-        var member = {
-
-        	accesscode : $('#access').val(),
-        	secretcode : $('#secret').val()
-
-        }
-
-
        $('#accountSaveBtn').on('click',function(){
+
+		   var id = '[[${user}]]'
+    	   var accessCode = $('#access').val();
+    	   var secretCode = $('#secret').val();
+
+            var member = {
+				id : id,
+            	accessCode : accessCode,
+            	secretCode : secretCode
+
+            }
+
+
+
+
 			$.ajax({
 				url:"/saveCode",
 				type:"post",
@@ -641,7 +655,7 @@
 				success: function(result){
 
 					if(result){
-						alert('저장 실패!!')
+						alert('저장 성공!!')
 					}else{
 						alert('저장 실패!!')
 					}

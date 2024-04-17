@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.service.coinservice;
 
@@ -133,6 +134,23 @@ public class GetAccounts {
 
 		return a;
 	}
+
+
+	@GetMapping("/board")
+	public String board() {
+
+		return "/board.html";
+	}
+
+
+	@ResponseBody
+    @GetMapping("/boardListAjax")
+    public List<BoardVO> boardListAjax() {
+
+        List<BoardVO> list = coinservice2.getList();
+
+        return list;
+    }
 
 
 	/*public static void main2(String[] args) {

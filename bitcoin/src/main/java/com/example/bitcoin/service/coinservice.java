@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.ComponentScan;
 
+import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.MemberVO;
 
 
@@ -18,4 +19,7 @@ public interface coinservice {
 	  public List<MemberVO> getCode(String id);
 
 	  public boolean saveCode(MemberVO vo);
+
+
+	public List<BoardVO> getList();
 }

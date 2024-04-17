@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
@@ -34,6 +35,12 @@ public class coinserviceimpl implements coinservice{
 	public boolean saveCode(MemberVO vo) {
 
 		return coinmappers.saveCode(vo);
+	}
+
+	@Override
+	public List<BoardVO> getList() {
+
+		return coinmappers.getList();
 	}
 
 

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.MemberVO;
 
 @Mapper
@@ -15,4 +16,6 @@ public interface coinmapper {
   public List<MemberVO> getCode(String id);
 
   public boolean saveCode(MemberVO vo);
+
+  public List<BoardVO> getList();
 }

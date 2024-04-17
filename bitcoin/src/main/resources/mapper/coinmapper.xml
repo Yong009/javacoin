@@ -29,11 +29,20 @@
   <update id="saveCode" parameterType="String">
 
   		update member
-  		  set accesscode= #{accessCode},
-  		  	  secretcode= #{secretCode}
+  		  set accessCode= #{accessCode},
+  		  	  secretCode= #{secretCode}
   		  where id = #{id}
 
   </update>
+
+  <select id="getList" resultType="com.example.bitcoin.dto.BoardVO">
+
+		SELECT *
+		 from board
+		order by seq
+			offset 0 rows
+    		fetch next 10 rows only
+	</select>
 
 
 </mapper>

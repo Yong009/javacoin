@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+    <style>
+
+    </style>
+</head>
+<body>
+
+<h2 style="text-align: center;"> 게시판 </h2>
+
+<form>
+		<span class="left" style="margin-bottom: 0px;">
+		<a href="#" id="lastest">최신순</a> | <a href="#" id="number">번호순</a> | <a href="#" id="view">조회수순</a>
+		</span>
+
+    <span class="right">
+		            <span class="grey" id="strong">SELECT</span>
+		    <select>
+		    <option name="제목" value="제목">제목</option>
+		    <option name="글쓴이" value="글쓴이">글쓴이</option>
+		    </select>
+		<input type="text"> <input class="gradient" name="검색" type="button" value="검색">
+		</span>
+</form>
+<br>
+
+
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>번호</th>
+            <th>제목</th>
+            <th>글쓴이</th>
+            <th>일시</th>
+            <th>조회수</th>
+        </tr>
+        </thead>
+        <tbody id="Tb">
+
+        </tbody>
+    </table>
+
+    <div class="center" id="pageCount" style="margin-top:10px;">
+
+        <a href="#!" id="page"></a>
+
+    </div>
+
+
+    <div class="right">
+        <span><input class="button-black" id="write" type="button" value="글쓰기"></span>
+    </div>
+
+</div>
+</body>
+
+<script>
+
+	function Board(seq, title, writer, writeDate, viewCount) {
+	    this.seq = seq;
+	    this.title = title;
+	    this.writer = writer;
+	    this.writeDate = writeDate;
+	    this.viewCount = viewCount;
+
+	}
+
+
+
+
+
+     $.ajax({
+         url: "/boardListAjax",
+         type: "GET",
+         contentType: "application/json",
+         dataType: "json",
+         success: function (result) {
+             Board = result;
+
+             //var gridTest = JSON.stringify(Board)
+             console.log(Board);
+
+         }
+     });
+
+
+
+
+
+    $(document).ready(function () {
+        getBoardList()
+
+    });
+
+
+    document.getElementById('write').addEventListener('click', function () {
+
+        window.location.href = "/joinMember";
+    })
+
+
+
+
+    var size;
+    var postNext;
+    let post;
+    let next;
+    let jsonString;
+
+    $.ajax({
+        url: "/pageCount",
+        type: "POST",
+        contentType: "application/json",
+        dataType: "json",
+        success: function (result) {
+            size = result[0].pageSize;
+
+            for (i = 1; i <= Math.floor(((size / 10) + 1)); i++) {
+
+                if (i == 1) {
+                    $('#pageCount').append($('<span name="pagingNumPost">').append($('<button name="pagingNum" style="height:30px;" id="post">').text('<이전')));
+                }
+
+                $('#pageCount').append($('<span name="pagingNum">').append($('<button name="pagingNum" style="height:30px;">').text(i)));
+
+                if (i == Math.floor(((size / 10) + 1))) {
+
+                    $('#pageCount').append($('<span name="pagingNumNext">').append($('<button name="pagingNum" style="height:30px;" id="next">').text('다음>')));
+
+                }
+
+            }
+
+        }
+    })
+
+
+    $('#lastest').click(function () {
+
+        $.ajax({
+            url: "/boardLastest",
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (result) {
+                Board = result;
+
+                refreshTable();
+
+            }
+
+
+        })
+
+    })
+
+    $('#number').click(function () {
+
+        $.ajax({
+            url: "/boardListAjax",
+            type: "GET",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (result) {
+                Board = result;
+
+                refreshTable();
+
+
+            }
+
+        });
+
+    })
+
+    $('#view').click(function () {
+
+        $.ajax({
+            url: "/boardView",
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (result) {
+                Board = result;
+                refreshTable();
+            }
+        });
+    })
+
+    let board = [];
+
+    function getBoardList() {
+        $.ajax({
+            url: "/boardListAjax",
+            type: "GET",
+            contentType: "application/json",
+            dataType: "json",
+            success: function (result) {
+                Board = result;
+
+                jsonString = JSON.stringify(Board)
+                refreshTable();
+            }
+        });
+    }
+
+    var customFn = getBoardList
+
+
+    var tbody = $('#Tb');
+
+
+    function refreshTable() {
+
+        tbody.empty();
+
+
+        $.each(Board, function (i, item) {
+
+            var row = $('<tr>');
+
+            var td1 = $('<td class="center">').text(item.seq);
+            row.append(td1);
+
+            var td2 = $('<td class="center">');
+            var link = $('<a>').attr('href', '#').text(item.title);
+            td2.append(link);
+            row.append(td2);
+
+            var td3 = $('<td class="center">').text(item.writer);
+            row.append(td3);
+
+            var td4 = $('<td class="center">').text(item.writeDate);
+            row.append(td4);
+
+            var td5 = $('<td class="center">').text(item.viewCount);
+            row.append(td5);
+
+
+            tbody.append(row);
+
+            link.on('click', function (event) {
+                event.preventDefault();
+                // 여기에서 seq 값을 이용하여 상세 페이지로 이동하도록 구현
+
+                var responseData = {seq: item.seq};
+
+                localStorage.setItem('seq', JSON.stringify(responseData));
+
+
+                window.location.href = "/textComment";
+            });
+
+        });
+    }
+
+    let post2;
+    let next2;
+
+    $('#pageCount').on('click', ev => {
+
+
+        var targetName = ev.target.name
+        if (targetName === 'pagingNum') {
+
+            if (ev.target.id !== "post" && ev.target.id !== "next") {
+
+                var targetNum = ev.target.innerHTML
+                let saveNum = targetNum
+
+                $(document).ready(function () {
+                    nextPaging(targetNum);
+
+                })
+                post2 = saveNum - 1
+                next2 = parseInt(saveNum) + 1
+
+            }
+
+
+            if (ev.target.id == "post") {
+                $(document).ready(function () {
+                    nextPaging(post2);
+
+                })
+            }
+
+            if (ev.target.id == "next") {
+                $(document).ready(function () {
+                    nextPaging(next2);
+
+                })
+            }
+        }
+
+
+    })
+
+
+    function nextPaging(cnt) {
+        var str = (cnt - 1) * 10;
+
+
+        var page = {
+            strPage: str
+        }
+
+        $.ajax({
+            url: "/paging",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(page),
+            dataType: "json",
+            success: function (result) {
+                Board = result;
+                refreshTable();
+            }
+        })
+    }
