@@ -39,9 +39,7 @@
 
 		SELECT *
 		 from board
-		order by seq
-			offset 0 rows
-    		fetch next 10 rows only
+		order by writedate
 	</select>
 
 
