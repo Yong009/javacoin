@@ -39,7 +39,7 @@
 
 		SELECT *
 		 from board
-		order by writedate
+
 	</select>
 
 

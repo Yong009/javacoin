@@ -1,9 +1,11 @@
 package com.example.bitcoin;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -24,8 +26,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bitcoin.dto.BoardVO;
+import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.service.coinservice;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import okhttp3.OkHttpClient;
 
 @Controller
 public class GetAccounts {
@@ -33,6 +40,11 @@ public class GetAccounts {
 
 	@Autowired
 	coinservice coinservice2;
+
+	@GetMapping("/")
+	public String loginPage2() {
+		return "/login.html";
+	}
 
 
 	@GetMapping("/test")
@@ -151,6 +163,96 @@ public class GetAccounts {
 
         return list;
     }
+
+
+	@GetMapping("/header.html")
+	public String header() {
+		return "header.html";
+	}
+
+
+	@GetMapping("/market")
+	public String market() {
+
+
+		OkHttpClient client4 = new OkHttpClient();
+
+
+		okhttp3.Request request4 = new okhttp3.Request.Builder()
+		  .url("https://api.upbit.com/v1/market/all")
+		  .get()
+		  .addHeader("accept", "application/json")
+		  .build();
+
+		String responseBody = null;
+		try {
+
+			okhttp3.Response response4 = client4.newCall(request4).execute();
+			responseBody = response4.body().string();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(responseBody);
+		return responseBody;
+	}
+
+	@GetMapping("/currentPrice")
+	public String currentPrice() {
+
+
+		OkHttpClient client4 = new OkHttpClient();
+
+
+		okhttp3.Request request4 = new okhttp3.Request.Builder()
+		  .url("https://api.upbit.com/v1/market/all")
+		  .get()
+		  .addHeader("accept", "application/json")
+		  .build();
+
+		String responseBody = null;
+		try {
+
+			okhttp3.Response response4 = client4.newCall(request4).execute();
+			responseBody = response4.body().string();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+
+
+
+		Gson gson = new Gson();
+		Type marketListType = new TypeToken<ArrayList<MarketVO>>(){}.getType();
+		ArrayList<MarketVO> allMarkets = gson.fromJson(responseBody, marketListType);
+
+		List<String> krwMarkets = allMarkets.stream()
+				 .filter(market -> market.getMarket().startsWith("KRW-")) // getMarket()으로 수정
+				    .map(market -> market.getMarket()) // getMarket()으로 수정
+				    .collect(Collectors.toList());
+
+		String marketParam = String.join(",", krwMarkets.subList(0, Math.min(krwMarkets.size(), 10)));
+
+		okhttp3.Request tickerRequest = new okhttp3.Request.Builder()
+		  .url("https://api.upbit.com/v1/ticker?markets=" + marketParam)
+		  .get()
+		  .addHeader("Accept", "application/json")
+		  .build();
+
+
+		OkHttpClient client5 = new OkHttpClient();
+		String tickerResponseBody = null;
+		try {
+		okhttp3.Response tickerResponse = client5.newCall(tickerRequest).execute();
+		tickerResponseBody = tickerResponse.body().string();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(tickerResponseBody);
+
+
+		return tickerResponseBody;
+	}
 
 
 	/*public static void main2(String[] args) {
