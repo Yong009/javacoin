@@ -43,6 +43,12 @@ public class coinserviceimpl implements coinservice{
 
 		return coinmappers.getList();
 	}
+	//회원가입
+	@Override
+	public boolean join(MemberVO vo) {
+
+		return coinmappers.join(vo);
+	}
 
 
 }

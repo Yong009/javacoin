@@ -3,44 +3,49 @@
 
 <mapper namespace="com.example.bitcoin.mapper.coinmapper">
 
- <select id="getUser" resultType="com.example.bitcoin.dto.MemberVO">
- 	select * from member
- 	where id = #{id}
+	 <select id="getUser" resultType="com.example.bitcoin.dto.MemberVO">
+	 	select * from member
+	 	where id = #{id}
 
- </select>
+	 </select>
 
- <select id ="findById" parameterType="String" resultType="com.example.bitcoin.dto.MemberVO">
+	 <!-- 로그인 -->
+	 <select id ="findById" parameterType="String" resultType="com.example.bitcoin.dto.MemberVO">
+	 	 SELECT id, password, role
+	 	   from member
+	 	  where id = #{userId}
+ 	</select>
 
- 	 SELECT id, password, role
- 	   from member
- 	  where id = #{userId}
+	<!-- 회원가입 -->
+	<insert id="join" parameterType="String">
+		insert into member ( id, password )
+		   			values ( #{id}, #{password} )
+
+	</insert>
 
 
- </select>
-
+	<!-- 코드가져오기 -->
 	<select id="getCode" parameterType="String" resultType="com.example.bitcoin.dto.MemberVO">
-
 		SELECT *
 		  FROM member
 		where id = #{id}
-
 	</select>
 
-  <update id="saveCode" parameterType="String">
-
+ 	<!-- 코드 저장 -->
+  	<update id="saveCode" parameterType="String">
   		update member
   		  set accessCode= #{accessCode},
   		  	  secretCode= #{secretCode}
   		  where id = #{id}
+   </update>
 
-  </update>
-
-  <select id="getList" resultType="com.example.bitcoin.dto.BoardVO">
-
+	<!-- 게시판 전체 -->
+  	<select id="getList" resultType="com.example.bitcoin.dto.BoardVO">
 		SELECT *
 		 from board
-
 	</select>
+
+
 
 
 </mapper>

@@ -53,6 +53,16 @@ public class GetAccounts {
 		return "/login.html";
 	}
 
+	//회원가입
+	@ResponseBody
+	@PostMapping
+	public boolean join(@RequestBody MemberVO vo){
+
+		boolean a = coinservice2.join(vo);
+		System.out.println(vo);
+		return a;
+	}
+
 	@GetMapping("/home")
 	public String logout() {
 		return "/home.html";

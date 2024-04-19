@@ -18,4 +18,6 @@ public interface coinmapper {
   public boolean saveCode(MemberVO vo);
   // 게시판 리스트
   public List<BoardVO> getList();
+  //회원가입
+  public boolean join(MemberVO vo);
 }

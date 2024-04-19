@@ -363,21 +363,15 @@ body {
           <div class="form sign-up">
             <div class="input-group">
               <i class='bx bxs-user'></i>
-              <input type="text" placeholder="아이디">
+              <input type="text" id="newId" placeholder="아이디">
             </div>
-            <div class="input-group">
-              <i class='bx bx-mail-send'></i>
-              <input type="email" placeholder="이메일">
-            </div>
+
             <div class="input-group">
               <i class='bx bxs-lock-alt'></i>
-              <input type="password" placeholder="비밀번호">
+              <input type="password" id="newPw"  placeholder="비밀번호">
             </div>
-            <div class="input-group">
-              <i class='bx bxs-lock-alt'></i>
-              <input type="password" placeholder="비밀번호 재확인">
-            </div>
-            <button>
+
+            <button type="submit" id="newMemberBtn">
               회원가입
             </button>
             <p>
@@ -479,6 +473,54 @@ body {
 	setTimeout(() => {
 	  container.classList.add('sign-in')
 	}, 200)
+
+	$('#newMemberBtn').on('click',function(){
+
+		var id 	= $('#newId').val();
+		var pw 	= $('#newPw').val();
+
+		if(id ==''){
+			alert('아이디를 입력해주세요');
+			return
+		}
+
+		if(pw =''){
+			alert('비밀번호를 입력해주세요');
+			return
+		}
+
+
+		var member = {
+			id : id,
+			password : pw
+		}
+
+
+
+		$.ajax({
+			url:"/join",
+			type:"post",
+			data:JSON.stringify(member),
+			contentType:"application/json",
+			dataType:"json",
+			success:function(result){
+
+				if(result){
+
+				 	alert('회원가입 성공! 운영진의 승인이 있어야 로그인이 됩니다.')
+
+				}else{
+
+					alert('회원가입 실패!')
+				}
+			}
+
+
+		})
+
+	})
+
+
 
 	</script>
 
