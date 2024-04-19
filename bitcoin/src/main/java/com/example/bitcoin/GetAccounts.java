@@ -53,6 +53,12 @@ public class GetAccounts {
 		return "/login.html";
 	}
 
+	//회원가입 페이지
+	@GetMapping("/memberJoin")
+	public String joinPage() {
+		return "/memberJoin.html";
+	}
+
 	//회원가입
 	@ResponseBody
 	@PostMapping

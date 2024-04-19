@@ -28,7 +28,7 @@ public class SpringSecurityConfig{
         http.csrf().disable().cors().disable()
                 .authorizeHttpRequests(request -> request
                 	.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                	.requestMatchers("/images/**","/css/**","/js/**","/status","/images/","/join","/board").permitAll()
+                	.requestMatchers("/images/**","/css/**","/js/**","/status","/images/","/join","/board","/memberJoin","/login").permitAll()
                 	.requestMatchers("/mainPage","/login").authenticated()
                 	.anyRequest().permitAll()
                        // .anyRequest().authenticated()	// 어떠한 요청이라도 인증필요
