@@ -16,11 +16,11 @@ import lombok.Data;
 @Data
 public class MemberVO {
 
-	String id;
-    String password;
-    String accessCode;
-    String secretCode;
-    String role;
+	String id;				//아이디
+    String password;		//비밀번호
+    String accessCode;		//엑세스코드
+    String secretCode;		//시크릿코드
+    String role;			//권한
 
 
 

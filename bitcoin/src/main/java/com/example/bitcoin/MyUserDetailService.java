@@ -33,6 +33,12 @@ public class MyUserDetailService implements UserDetailsService{
 		MemberVO member = Optional.ofNullable(coinservice3.findById(insertedUserId))
 				.orElseThrow(() -> new UsernameNotFoundException("없는 회원입니다. ㅠ"));
 
+
+	    // role이 'Y'가 아닌 경우 로그인 거부
+	    if(!"Y".equals(member.getRole())) {
+	        throw new UsernameNotFoundException("로그인할 수 없는 회원입니다.");
+	    }
+
 		return User.builder()
 				.username(member.getId())
 				.password(member.getPassword())

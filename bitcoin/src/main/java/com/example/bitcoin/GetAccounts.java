@@ -41,22 +41,13 @@ public class GetAccounts {
 	@Autowired
 	coinservice coinservice2;
 
+	// 시작 시 첫 페이지
 	@GetMapping("/")
 	public String loginPage2() {
 		return "/login.html";
 	}
 
-
-	@GetMapping("/test")
-	public String test() {
-		return "/test.html";
-	}
-
-	/*@GetMapping("/mainPage")
-	public String mainPage() {
-		return "/mainPage.html";
-	}*/
-
+	// 로그인 페이지
 	@GetMapping("/login")
 	public String loginPage() {
 		return "/login.html";
@@ -67,12 +58,7 @@ public class GetAccounts {
 		return "/home.html";
 	}
 
-	@GetMapping("/login2")
-	public String login2() {
-		return "/login2.html";
-	}
-
-
+	// 잔고 조회
 	@ResponseBody
 	@PostMapping("/account")
 	public String account(@RequestBody MemberVO vo) {
@@ -115,7 +101,7 @@ public class GetAccounts {
 		return result;
 	}
 
-
+	// 로그인 후 첫 페이지 ( 로그인 정보 가져옴 )
 	@GetMapping("/mainPage")
 	public String getUserInfo(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		model.addAttribute("user",userDetails.getUsername());
@@ -123,6 +109,7 @@ public class GetAccounts {
 	}
 
 
+	// 로그인 후 코드 가져오기
 	@ResponseBody
 	@PostMapping("/getCode")
 	public List<MemberVO> getCode(@RequestBody MemberVO vo){
@@ -136,6 +123,7 @@ public class GetAccounts {
 
 	}
 
+	//코드 저장
 	@ResponseBody
 	@PostMapping("/saveCode")
 	public boolean saveCode(@RequestBody MemberVO vo){
@@ -147,14 +135,14 @@ public class GetAccounts {
 		return a;
 	}
 
-
+	//게시판 페이지 이동
 	@GetMapping("/board")
 	public String board() {
 
 		return "/board.html";
 	}
 
-
+	//게시판 전체 리스트
 	@ResponseBody
     @GetMapping("/boardListAjax")
     public List<BoardVO> boardListAjax() {
@@ -164,14 +152,14 @@ public class GetAccounts {
         return list;
     }
 
-
+	//헤더 호출
 	@GetMapping("/header.html")
 	public String header() {
 		return "header.html";
 	}
 
-
-	@GetMapping("/market")
+	//마켓 정보
+	@PostMapping("/market")
 	public String market() {
 
 
@@ -197,7 +185,8 @@ public class GetAccounts {
 		return responseBody;
 	}
 
-	@GetMapping("/currentPrice")
+	//현재가 정보
+	@PostMapping("/currentPrice")
 	public String currentPrice() {
 
 

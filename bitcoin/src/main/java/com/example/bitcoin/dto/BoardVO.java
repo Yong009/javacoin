@@ -11,6 +11,18 @@ import lombok.Setter;
 @Setter
 @Data
 public class BoardVO {
+
+
+
+	public Long seq;			//번호
+	public String title;		//제목
+	public String writer;		//글쓴이
+	public Date writeDate;		//작성일자
+	public Long viewCount;		//조회수
+	public String textWrite;	//글
+
+
+
 	public Long getSeq() {
 		return seq;
 	}
@@ -48,10 +60,4 @@ public class BoardVO {
 	public void setTextWrite(String textWrite) {
 		this.textWrite = textWrite;
 	}
-	public Long seq;
-	public String title;
-	public String writer;
-	public Date writeDate;
-	public Long viewCount;
-	public String textWrite;
 }

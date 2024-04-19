@@ -9,9 +9,9 @@ import lombok.Setter;
 @Data
 public class MarketVO {
 
-	String market;
-	String koreanName;
-	String englishName;
+	String market;			//마켓정보
+	String koreanName;		//한글명
+	String englishName;		//영어명
 
 	public String getMarket() {
 		return market;

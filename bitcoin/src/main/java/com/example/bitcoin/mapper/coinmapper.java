@@ -10,12 +10,12 @@ import com.example.bitcoin.dto.MemberVO;
 @Mapper
 public interface coinmapper {
 
-    //시큐리티 로그인
+  //로그인
   public  MemberVO findById(String userId);
-
+  //코드 가져오기
   public List<MemberVO> getCode(String id);
-
+  //코드 저장
   public boolean saveCode(MemberVO vo);
-
+  // 게시판 리스트
   public List<BoardVO> getList();
 }
