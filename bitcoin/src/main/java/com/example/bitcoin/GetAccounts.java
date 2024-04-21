@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.example.bitcoin.mapper.coinmapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -14,6 +15,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -41,6 +43,12 @@ public class GetAccounts {
 	@Autowired
 	coinservice coinservice2;
 
+	@Autowired
+	coinmapper coinmapper4;
+
+
+
+
 	// 시작 시 첫 페이지
 	@GetMapping("/")
 	public String loginPage2() {
@@ -60,13 +68,22 @@ public class GetAccounts {
 	}
 
 	//회원가입
-	@ResponseBody
-	@PostMapping
-	public boolean join(@RequestBody MemberVO vo){
+	@PostMapping("/join")
+	public ResponseEntity<String> registerMember(@RequestBody MemberVO member){
+		try{
+			coinservice2.join(member);
+			return ResponseEntity.ok().body("회원가입 성공");
+		} catch (Exception e){
+			e.printStackTrace();
+			return ResponseEntity.badRequest().body("회원가입 실패");
+		}
 
-		boolean a = coinservice2.join(vo);
-		System.out.println(vo);
-		return a;
+
+	}
+
+	@GetMapping("/bit")
+	public String image(){
+		return "bitcoin.jpg";
 	}
 
 	@GetMapping("/home")

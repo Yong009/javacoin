@@ -17,9 +17,9 @@
  	</select>
 
 	<!-- 회원가입 -->
-	<insert id="join" parameterType="String">
-		insert into member ( id, password )
-		   			values ( #{id}, #{password} )
+	<insert id="join" parameterType="com.example.bitcoin.dto.MemberVO">
+		insert into member ( id, password, role )
+		   			values ( '${id}','${password}', '${role}' )
 
 	</insert>
 

@@ -355,58 +355,110 @@ body {
 
 <body>
 <div id="container" class="container">
-    <!-- FORM SECTION -->
-    <div class="row">
-      <!-- SIGN UP -->
-      <div class="col align-items-center flex-col sign-up">
-        <div class="form-wrapper align-items-center">
-          <div class="form sign-up">
-            <div class="input-group">
-              <i class='bx bxs-user'></i>
-              <input type="text" id="newId" placeholder="아이디">
-            </div>
+  <!-- FORM SECTION -->
+  <div class="row">
+    <!-- SIGN UP -->
+    <div class="col align-items-center flex-col sign-up">
+      <div class="form-wrapper align-items-center">
+        <div class="form sign-up">
+          <div class="input-group">
+            <i class='bx bxs-user'></i>
 
-            <div class="input-group">
-              <i class='bx bxs-lock-alt'></i>
-              <input type="password" id="newPw"  placeholder="비밀번호">
-            </div>
+            <input type="text" id="newId" placeholder="아이디">
+          </div>
 
-            <button type="submit" id="newMemberBtn">
-              회원가입
-            </button>
-            <p>
+          <div class="input-group">
+            <i class='bx bxs-lock-alt'></i>
+            <input type="password" id="newPw"  placeholder="비밀번호">
+          </div>
+
+          <button type="submit" id="newMemberBtn">
+            회원가입
+          </button>
+          <p>
               <span>
                 이미 회원이 있으시다구요?
               </span>
-              <b onclick="toggle()" class="pointer">
-                로그인
-              </b>
-            </p>
-          </div>
-        </div>
-
-      </div>
-	</div>
-</div>
-
-
-      <!-- END SIGN IN CONTENT -->
-      <!-- SIGN UP CONTENT -->
-      <div class="col align-items-center flex-col">
-        <div class="img sign-up">
-
-        </div>
-        <div class="text sign-up">
-          <h2>
-            가입을 환영합니다.
-          </h2>
-
+            <b onclick="toggle()" class="pointer">
+              로그인
+            </b>
+          </p>
         </div>
       </div>
-      <!-- END SIGN UP CONTENT -->
+
     </div>
-    <!-- END CONTENT SECTION -->
+    <!-- END SIGN UP -->
+    <!-- SIGN IN -->
+    <div class="col align-items-center flex-col sign-in">
+      <div class="form-wrapper align-items-center">
+        <div class="form sign-in">
+          <div class="input-group">
+            <i class='bx bxs-user'></i>
+
+              <input type="text" placeholder="아이디" id="username" name="userid">
+          </div>
+          <div class="input-group">
+            <i class='bx bxs-lock-alt'></i>
+            <input type="password" placeholder="비밀번호" id="password" name="pw">
+          </div>
+
+          <button type="button" id="login_btn">
+            회원가입
+          </button>
+
+          <p>
+            <b>
+              비밀번호 잊어버리셨나요?
+            </b>
+          </p>
+          <p>
+              <span>
+                계정이 없으신가요?
+              </span>
+            <b onclick="toggle()" class="pointer">
+              회원가입
+            </b>
+          </p>
+        </div>
+      </div>
+      <div class="form-wrapper">
+
+      </div>
+    </div>
+    <!-- END SIGN IN -->
   </div>
+  <!-- END FORM SECTION -->
+  <!-- CONTENT SECTION -->
+  <div class="row content-row">
+    <!-- SIGN IN CONTENT -->
+    <div class="col align-items-center flex-col">
+      <div class="text sign-in">
+        <h2>
+          환영합니다.
+        </h2>
+
+      </div>
+      <div class="img sign-in">
+
+      </div>
+    </div>
+    <!-- END SIGN IN CONTENT -->
+    <!-- SIGN UP CONTENT -->
+    <div class="col align-items-center flex-col">
+      <div class="img sign-up">
+
+      </div>
+      <div class="text sign-up">
+        <h2>
+          가입을 환영합니다.
+        </h2>
+
+      </div>
+    </div>
+    <!-- END SIGN UP CONTENT -->
+  </div>
+  <!-- END CONTENT SECTION -->
+</div>
 </body>
 
 	<script>

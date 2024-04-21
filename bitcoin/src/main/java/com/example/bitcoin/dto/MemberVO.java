@@ -3,17 +3,14 @@ package com.example.bitcoin.dto;
 
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import lombok.Data;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
+
 public class MemberVO {
 
 	String id;				//아이디
@@ -22,6 +19,14 @@ public class MemberVO {
     String secretCode;		//시크릿코드
     String role;			//권한
 
+	public static MemberVO createUser(String id, String pw, PasswordEncoder passwordEncoder){
+
+		MemberVO member = new MemberVO();
+		member.id = id;
+		member.password = passwordEncoder.encode(pw);
+		member.role = "N";
+		return member;
+	}
 
 
 
