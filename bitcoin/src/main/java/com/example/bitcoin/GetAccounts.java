@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.example.bitcoin.mapper.coinmapper;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -20,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +30,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -72,10 +73,10 @@ public class GetAccounts {
 	public ResponseEntity<String> registerMember(@RequestBody MemberVO member){
 		try{
 			coinservice2.join(member);
-			return ResponseEntity.ok().body("회원가입 성공");
+			return ResponseEntity.ok().body("성공");
 		} catch (Exception e){
 			e.printStackTrace();
-			return ResponseEntity.badRequest().body("회원가입 실패");
+			return ResponseEntity.badRequest().body("실패");
 		}
 
 
@@ -90,6 +91,8 @@ public class GetAccounts {
 	public String logout() {
 		return "/home.html";
 	}
+
+
 
 	// 잔고 조회
 	@ResponseBody

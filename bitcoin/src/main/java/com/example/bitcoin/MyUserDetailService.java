@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +24,8 @@ public class MyUserDetailService implements UserDetailsService{
 	@Autowired
 	coinmapper coinservice3;
 
+	@Autowired
+	PasswordEncoder passwordEncoder;
 
 
 	public MyUserDetailService(coinmapper coinservice3) {
@@ -33,9 +36,7 @@ public class MyUserDetailService implements UserDetailsService{
 	public UserDetails loadUserByUsername(String insertedUserId) throws UsernameNotFoundException{
 		MemberVO member = Optional.ofNullable(coinservice3.findById(insertedUserId))
 				.orElseThrow(() -> new UsernameNotFoundException("없는 회원입니다. ㅠ"));
-
-
-
+		//MemberVO member = coinservice3.findById(insertedUserId);
 
 
 	    // role이 'Y'가 아닌 경우 로그인 거부
@@ -43,6 +44,14 @@ public class MyUserDetailService implements UserDetailsService{
 	        throw new UsernameNotFoundException("로그인할 수 없는 회원입니다.");
 	    }*/
 
+//		UserDetails userDetails = User.builder()
+//				.username(member.getId())
+//				.password(member.getPassword())
+//				.roles(member.getRole())
+//				.build();
+			System.out.println(member.getPassword());
+//		return userDetails;
+	//	return new org.springframework.security.core.userdetails.User(member.getId(), member.getPassword(), null);
 		return User.builder()
 				.username(member.getId())
 				.password(member.getPassword())

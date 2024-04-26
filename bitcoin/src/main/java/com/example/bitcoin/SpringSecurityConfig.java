@@ -1,12 +1,14 @@
 package com.example.bitcoin;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -16,7 +18,8 @@ import jakarta.servlet.DispatcherType;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-public class SpringSecurityConfig{
+public class SpringSecurityConfig {
+
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -25,6 +28,18 @@ public class SpringSecurityConfig{
 	}
 
 
+	 @Autowired
+	    CustomAuthenticationProvider customAuthenticationProvider;
+
+	 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+	        auth.authenticationProvider(customAuthenticationProvider);
+	    }
+
+
+
+	 	 public SpringSecurityConfig(@Lazy CustomAuthenticationProvider customAuthenticationProvider) {
+	         this.customAuthenticationProvider = customAuthenticationProvider;
+	     }
 
 
 

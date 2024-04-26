@@ -7,6 +7,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 import lombok.Data;
+
+import java.util.Collection;
+
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
@@ -18,6 +22,9 @@ public class MemberVO {
     String accessCode;		//엑세스코드
     String secretCode;		//시크릿코드
     String role;			//권한
+
+
+
 
 	public static MemberVO createUser(String id, String pw, PasswordEncoder passwordEncoder){
 
@@ -54,11 +61,15 @@ public class MemberVO {
 	public void setSecretCode(String secretCode) {
 		this.secretCode = secretCode;
 	}
-	public String getRole() {
-		return role;
-	}
+
 	public void setRole(String role) {
 		this.role = role;
+	}
+
+
+
+	public String getRole() {
+		return role;
 	}
 
 
