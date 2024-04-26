@@ -1,5 +1,6 @@
 package com.example.bitcoin;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,8 +19,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private UserDetailsService userDetailsService;
 
+
+
     @Autowired
     PasswordEncoder passwordEncoder;
+
 
 
     public CustomAuthenticationProvider(@Lazy UserDetailsService userDetailsService) {
@@ -35,13 +39,11 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         // 사용자가 입력한 비밀번호 출력
         System.out.println("입력한 비밀번호: " + password);
 
-
-        password = passwordEncoder.encode(password);
-        System.out.println("해시된 비밀번호: "+ passwordEncoder.encode(password));
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
         System.out.println(userDetails.getPassword());
-        System.out.println(passwordEncoder.matches(password, userDetails.getPassword()));
-        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+        System.out.println(passwordEncoder.matches(password,userDetails.getPassword()));
+        if (!passwordEncoder.matches(password,userDetails.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 

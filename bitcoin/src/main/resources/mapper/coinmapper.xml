@@ -19,7 +19,7 @@
 	<!-- 회원가입 -->
 	<insert id="join" parameterType="com.example.bitcoin.dto.MemberVO">
 		insert into member ( id, password, role )
-		   			values ( '${id}','${password}', '${role}' )
+		   			values ( #{id},#{password}, #{role} )
 
 	</insert>
 

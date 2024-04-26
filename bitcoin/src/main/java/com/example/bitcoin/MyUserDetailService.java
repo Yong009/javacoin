@@ -1,10 +1,9 @@
 package com.example.bitcoin;
 
-import java.util.Optional;
-import java.util.regex.Pattern;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.mapper.coinmapper;
-import com.example.bitcoin.service.coinservice;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
 
 @Component
@@ -28,15 +25,30 @@ public class MyUserDetailService implements UserDetailsService{
 	PasswordEncoder passwordEncoder;
 
 
+
+
+
+
+
 	public MyUserDetailService(coinmapper coinservice3) {
 		this.coinservice3 = coinservice3;
 	}
 
 	@Override
 	public UserDetails loadUserByUsername(String insertedUserId) throws UsernameNotFoundException{
-		MemberVO member = Optional.ofNullable(coinservice3.findById(insertedUserId))
-				.orElseThrow(() -> new UsernameNotFoundException("없는 회원입니다. ㅠ"));
-		//MemberVO member = coinservice3.findById(insertedUserId);
+		//MemberVO member = Optional.ofNullable(coinservice3.findById(insertedUserId))
+		//		.orElseThrow(() -> new UsernameNotFoundException("없는 회원입니다. ㅠ"));
+		MemberVO member = coinservice3.findById(insertedUserId);
+
+		if(member == null) {
+			throw new UsernameNotFoundException("username" + insertedUserId + "not found");
+
+		}
+		System.out.println("***************Found user***************");
+		System.out.println("id : "+ member.getId());
+
+
+
 
 
 	    // role이 'Y'가 아닌 경우 로그인 거부
@@ -49,7 +61,7 @@ public class MyUserDetailService implements UserDetailsService{
 //				.password(member.getPassword())
 //				.roles(member.getRole())
 //				.build();
-			System.out.println(member.getPassword());
+
 //		return userDetails;
 	//	return new org.springframework.security.core.userdetails.User(member.getId(), member.getPassword(), null);
 		return User.builder()
