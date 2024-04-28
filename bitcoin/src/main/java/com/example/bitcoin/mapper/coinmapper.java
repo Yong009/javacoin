@@ -6,12 +6,15 @@ import org.apache.ibatis.annotations.Mapper;
 
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.MemberVO;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Mapper
 public interface coinmapper {
 
+
+
   //로그인
-  public  MemberVO findById(String userId);
+  public  UserDetails getUserDetails(String username);
   //코드 가져오기
   public List<MemberVO> getCode(String id);
   //코드 저장
@@ -20,4 +23,6 @@ public interface coinmapper {
   public List<BoardVO> getList();
   //회원가입
   public boolean join(MemberVO vo);
+
+
 }

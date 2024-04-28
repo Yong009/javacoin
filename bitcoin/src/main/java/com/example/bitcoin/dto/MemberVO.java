@@ -4,6 +4,7 @@ package com.example.bitcoin.dto;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import lombok.Data;
@@ -13,8 +14,8 @@ import lombok.Data;
 public class MemberVO {
 
 
-	@Autowired
-	PasswordEncoder passwordEncoder;
+
+	;
 
 	String id;				//아이디
     String password;		//비밀번호
@@ -28,7 +29,7 @@ public class MemberVO {
 		MemberVO member = new MemberVO();
 		member.id = id;
 		member.password = passwordEncoder.encode(pw);
-		member.role = "User";
+		member.role = "ROLE_USER";
 		return member;
 	}
 

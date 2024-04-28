@@ -28,6 +28,8 @@ public class SpringSecurityConfig {
 	}
 
 
+
+
 	 @Autowired
 	    CustomAuthenticationProvider customAuthenticationProvider;
 
@@ -45,10 +47,11 @@ public class SpringSecurityConfig {
 
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors().disable()
-                .authorizeHttpRequests(request -> request
+        http.csrf().disable();
+		http.cors().disable();
+		http  .authorizeHttpRequests(request -> request
                 	.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                	.requestMatchers("/static/**","/static","/images/**","/css/**","/js/**","/status","/images/","/join","/board","/memberJoin","/login").permitAll()
+                	.requestMatchers("/static/**","/static","/images/**","/css/**","/js/**","/status","/images/","/join","/board","/memberJoin","/login","/login-pass").permitAll()
                 	.requestMatchers("/mainPage","/login").authenticated()
                 	.anyRequest().permitAll()
                        // .anyRequest().authenticated()	// 어떠한 요청이라도 인증필요

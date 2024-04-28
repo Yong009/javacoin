@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +25,11 @@ public class coinserviceimpl implements coinservice{
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	@Autowired
+	/*@Autowired
 	public coinserviceimpl(coinmapper coinmappers, PasswordEncoder passwordEncoder){
 		this.coinmappers = coinmappers;
 		this.passwordEncoder = passwordEncoder;
-	}
+	}*/
 
 	//회원가입
 	@Override
@@ -41,16 +42,21 @@ public class coinserviceimpl implements coinservice{
 	}
 
 	//로그인
-	@Override
+	/*@Override
 	public boolean findOne(String userId, String pw) {
-		MemberVO member = coinmappers.findById(userId);
+		MemberVO member = coinmappers.getUserDetails(userId);
 
-		if(passwordEncoder.matches(pw, member.getPassword())){
+		if(bCryptPasswordEncoder.matches(pw, member.getPassword())){
 			return true; // 입력한 비밀번호와 저장소의 비밀번호가 일치
 		} else {
 			return false;
 		}
 
+	}*/
+
+	@Override
+	public boolean findOne(String userId, String pw) {
+		return false;
 	}
 
 	//코드 가져오기

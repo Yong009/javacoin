@@ -7,11 +7,16 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
@@ -19,35 +24,35 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     private UserDetailsService userDetailsService;
 
-
-
     @Autowired
-    PasswordEncoder passwordEncoder;
-
-
-
-    public CustomAuthenticationProvider(@Lazy UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         // 사용자가 입력한 비밀번호 출력
+        System.out.println("아이디: "+username);
         System.out.println("입력한 비밀번호: " + password);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        CustomUserDetails customUserDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(username);
 
-        System.out.println(userDetails.getPassword());
-        System.out.println(passwordEncoder.matches(password,userDetails.getPassword()));
-        if (!passwordEncoder.matches(password,userDetails.getPassword())) {
+        //UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+        System.out.println(customUserDetails.getPassword());
+
+        //System.out.println(userDetails.getPassword());
+        System.out.println(passwordEncoder.matches(password,customUserDetails.getPassword()));
+        if (!passwordEncoder.matches(password,customUserDetails.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
-        return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        return new UsernamePasswordAuthenticationToken(username, password, authorities);
     }
 
     @Override
