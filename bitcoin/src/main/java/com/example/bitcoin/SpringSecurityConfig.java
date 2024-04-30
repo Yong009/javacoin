@@ -1,6 +1,7 @@
 package com.example.bitcoin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.DispatcherType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -8,12 +9,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-import jakarta.servlet.DispatcherType;
+
 
 @Configuration
 @EnableWebSecurity
@@ -47,9 +47,8 @@ public class SpringSecurityConfig {
 
 	@Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-		http.cors().disable();
-		http  .authorizeHttpRequests(request -> request
+		 http.csrf().disable().cors().disable()
+         .authorizeHttpRequests(request -> request
                 	.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
                 	.requestMatchers("/static/**","/static","/images/**","/css/**","/js/**","/status","/images/","/join","/board","/memberJoin","/login","/login-pass").permitAll()
                 	.requestMatchers("/mainPage","/login").authenticated()
