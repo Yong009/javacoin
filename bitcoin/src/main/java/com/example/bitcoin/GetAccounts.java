@@ -60,7 +60,7 @@ public class GetAccounts {
 	// 시작 시 첫 페이지
 	@GetMapping("/")
 	public String loginPage2() {
-		return "/login.html";
+		return "/mainPage.html";
 	}
 
 	// 로그인 페이지

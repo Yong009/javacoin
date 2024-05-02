@@ -22,14 +22,8 @@ public class coinserviceimpl implements coinservice{
 	@Autowired
 	coinmapper coinmappers;
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
 
-	/*@Autowired
-	public coinserviceimpl(coinmapper coinmappers, PasswordEncoder passwordEncoder){
-		this.coinmappers = coinmappers;
-		this.passwordEncoder = passwordEncoder;
-	}*/
+	PasswordEncoder passwordEncoder;
 
 	//회원가입
 	@Override
