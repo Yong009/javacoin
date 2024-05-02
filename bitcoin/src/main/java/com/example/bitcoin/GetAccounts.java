@@ -203,7 +203,7 @@ public class GetAccounts {
 		return "header.html";
 	}
 
-	//마켓 정보
+	//마켓 정보p
 	@PostMapping("/market")
 	public String market() {
 
