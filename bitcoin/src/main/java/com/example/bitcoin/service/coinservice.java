@@ -2,7 +2,7 @@ package com.example.bitcoin.service;
 
 import java.util.List;
 
-import org.springframework.context.annotation.ComponentScan;
+
 
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.MemberVO;

@@ -15,7 +15,7 @@ public class MemberVO {
 
 
 
-	;
+
 
 	String id;				//아이디
     String password;		//비밀번호

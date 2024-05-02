@@ -19,7 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +32,7 @@ import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
+import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -47,6 +48,12 @@ public class GetAccounts {
 	@Autowired
 	coinmapper coinmapper4;
 
+	@Autowired
+	coinserviceimpl coinserviceimpl2;
+
+    public GetAccounts(coinserviceimpl coinserviceimpl2) {
+        this.coinserviceimpl2 = coinserviceimpl2;
+    }
 
 
 
@@ -67,6 +74,8 @@ public class GetAccounts {
 	public String joinPage() {
 		return "/memberJoin.html";
 	}
+
+
 
 	//회원가입
 	@PostMapping("/join")

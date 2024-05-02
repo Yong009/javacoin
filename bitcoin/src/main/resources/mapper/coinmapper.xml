@@ -10,11 +10,11 @@
 	 </select>
 
 	 <!-- 로그인 -->
-	 <select id ="getUserDetails" resultType="com.example.bitcoin.CustomUserDetails">
-	 	 SELECT id as username, password, role as authorities
+	 <select id ="getUserById" resultType="com.example.bitcoin.dto.MemberVO">
+	 	 SELECT *
 	 	   from member
-	 	  where id = #{username}
-	 	 	and use_yn = 'Y'
+	 	  where id = #{id}
+
  	</select>
 
 	<!-- 회원가입 -->
