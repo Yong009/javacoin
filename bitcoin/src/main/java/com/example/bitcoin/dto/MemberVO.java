@@ -10,10 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.Data;
 
 @Data
-
 public class MemberVO {
-
-
 
 
 

@@ -19,7 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,6 +29,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.dto.TickerVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
@@ -39,7 +39,7 @@ import com.google.gson.reflect.TypeToken;
 import okhttp3.OkHttpClient;
 
 @Controller
-public class GetAccounts {
+public class GetAccounts<ChartData> {
 
 
 	@Autowired
@@ -76,6 +76,11 @@ public class GetAccounts {
 	}
 
 
+	@GetMapping("/chart")
+	public String chart() {
+		return "/chart.html";
+
+	}
 
 	//회원가입
 	@PostMapping("/join")
@@ -100,7 +105,6 @@ public class GetAccounts {
 	public String logout() {
 		return "/home.html";
 	}
-
 
 
 	// 잔고 조회
@@ -203,8 +207,8 @@ public class GetAccounts {
 		return "header.html";
 	}
 
-	//마켓 정보p
-	@PostMapping("/market")
+	//마켓 정보
+	@GetMapping("/market")
 	public String market() {
 
 
@@ -231,7 +235,8 @@ public class GetAccounts {
 	}
 
 	//현재가 정보
-	@PostMapping("/currentPrice")
+	@ResponseBody
+	@GetMapping("/currentPrice")
 	public String currentPrice() {
 
 
@@ -267,7 +272,7 @@ public class GetAccounts {
 		String marketParam = String.join(",", krwMarkets.subList(0, Math.min(krwMarkets.size(), 10)));
 
 		okhttp3.Request tickerRequest = new okhttp3.Request.Builder()
-		  .url("https://api.upbit.com/v1/ticker?markets=" + marketParam)
+		  .url("https://api.upbit.com/v1/ticker?markets=" + marketParam)  //marketParam
 		  .get()
 		  .addHeader("Accept", "application/json")
 		  .build();
@@ -275,9 +280,11 @@ public class GetAccounts {
 
 		OkHttpClient client5 = new OkHttpClient();
 		String tickerResponseBody = null;
+		TickerVO tickerResponseBody2 = null;
 		try {
 		okhttp3.Response tickerResponse = client5.newCall(tickerRequest).execute();
 		tickerResponseBody = tickerResponse.body().string();
+
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
@@ -285,8 +292,11 @@ public class GetAccounts {
 		System.out.println(tickerResponseBody);
 
 
+
 		return tickerResponseBody;
 	}
+
+
 
 
 	/*public static void main2(String[] args) {

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<head>
+	  <meta charset="UTF-8">
+	<title>title</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+
+<body  style="background-color:white;">
+
+	<div id="header"></div>
+
+
+
+	<script>
+
+  	$('#header').load('header.html')
+
+
+  	$.ajax({
+		url:"/currentPrice",
+		type:"GET",
+		dataType:"json",
+		contentType:"application/json",
+		success:function(result){
+			// 이걸 표로 만들기
+			console.log("코인 : "+result[0].market)
+			console.log("현재가: "+result[0].trade_price)
+			console.log("오늘 시작 가격: "+result[0].opening_price)
+			console.log("전 날 가격: "+result[0].prev_closing_price)
+		}
+
+  	})
+
+
+	</script>
+</body>
+
+
+
+</html>
