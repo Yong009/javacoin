@@ -21,7 +21,7 @@ public interface coinservice {
 	//게시판 전체 리스트
 	public List<BoardVO> getList();
 
-	public void join(MemberVO vo);
+	/*public void join(MemberVO vo);*/
 
 
 }

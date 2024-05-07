@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.stereotype.Service;
 
 import com.example.bitcoin.dto.BoardVO;
@@ -23,17 +23,17 @@ public class coinserviceimpl implements coinservice{
 	coinmapper coinmappers;
 
 
-	PasswordEncoder passwordEncoder;
+	//PasswordEncoder passwordEncoder;
 
 	//회원가입
-	@Override
+	/*@Override
 	public void join(MemberVO vo) {
 
 		MemberVO member = MemberVO.createUser(vo.getId(), vo.getPassword(), passwordEncoder);
 		coinmappers.join(member);
 
 
-	}
+	}*/
 
 	//로그인
 	/*@Override

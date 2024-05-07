@@ -1,41 +1,311 @@
 <!DOCTYPE html>
 
 <head>
-	  <meta charset="UTF-8">
-	<title>title</title>
+    <meta charset="UTF-8">
+	<title>차트</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<style>
+
+
+	  	body {
+		  padding:1.5em;
+		  background: #f5f5f5
+			}
+
+		table {
+		  border: 1px #a39485 solid;
+		  font-size: .9em;
+		  box-shadow: 0 2px 5px rgba(0,0,0,.25);
+		  width: 100%;
+		  border-collapse: collapse;
+		  border-radius: 5px;
+		  overflow: hidden;
+		   position: relative;
+		    padding-bottom: 0;
+		    border: none;
+		    box-shadow: 0 0 10px rgba(0,0,0,.2);
+
+
+			}
+
+		th {
+		  text-align: left;
+			}
+
+		thead {
+		  font-weight: bold;
+		  color: #fff;
+		  background: #73685d;
+			}
+
+		 td, th {
+		  padding: 1em .5em;
+		  vertical-align: middle;
+			}
+
+		 td {
+		  border-bottom: 1px solid rgba(0,0,0,.1);
+		  background: #fff;
+			}
+
+		a {
+		  color: #73685d;
+		}
+
+		 @media all and (max-width: 768px) {
+
+		  table, thead, tbody, th, td, tr {
+		    display: block;
+		  	}
+
+		  th {
+		    text-align: right;
+		    border-bottom: 1px solid #a39485;
+		  	}
+
+
+		  thead {
+		    float: left;
+		    white-space: nowrap;
+		  }
+
+		  tbody {
+		    overflow-x: auto;
+		    overflow-y: hidden;
+		    position: relative;
+		    white-space: nowrap;
+		  }
+
+		  tr {
+		    display: inline-block;
+		    vertical-align: top;
+		  }
+
+
+
+		  td {
+		    border-bottom: 1px solid #e5e5e5;
+		  }
+
+
+	</style>
 </head>
 
 <body  style="background-color:white;">
 
-	<div id="header"></div>
+		<div id="header"></div>
+		<div style="margin-top:150px; margin-left:100px; margin-right:100px;">
+		<h1 style=" text-align: center; margin-bottom:100px;">차트</h3>
+	    <h2 style=" margin-bottom:100px; margin-left:700px;">업비트</h3>
+		 <table style="width:1500px;">
+			  <thead>
+			    <tr id="Tr">
+					<th style="">코인</th>
+					<th style="">현재가</th>
+					<th style="">변화</th>
+			    </tr>
+			  </thead>
+			  <tbody id ="Tb">
 
-
+			   </tbody>
+		</table>
+	</div>
 
 	<script>
 
-  	$('#header').load('header.html')
+	  	$('#header').load('header.html')
 
 
-  	$.ajax({
-		url:"/currentPrice",
-		type:"GET",
-		dataType:"json",
-		contentType:"application/json",
-		success:function(result){
-			// 이걸 표로 만들기
-			console.log("코인 : "+result[0].market)
-			console.log("현재가: "+result[0].trade_price)
-			console.log("오늘 시작 가격: "+result[0].opening_price)
-			console.log("전 날 가격: "+result[0].prev_closing_price)
-		}
+	  		  	$.ajax({
+				url:"/market",
+				type:"GET",
+				dataType:"json",
+				contentType:"application/json",
+				success:function(result){
+					// 이걸 표로 만들기
+				/* 	console.log("-----------마켓-----------------")
+				/*	console.log(result)*/
+				/*	console.log("----------------------------") */
 
-  	})
+				  	$.ajax({
+						url:"/currentPrice",
+						type:"GET",
+						dataType:"json",
+						contentType:"application/json",
+						success:function(result2){
+							// 이걸 표로 만들기
+							/* console.log("------------현재가----------------")
+							console.log("코인 : "+result2[0].market)
+							console.log("현재가: "+result2[0].trade_price)
+							console.log("오늘 시작 가격: "+result2[0].opening_price)
+							console.log("전 날 가격: "+result2[0].prev_closing_price)
+							console.log("----------------------------") */
 
 
-	</script>
-</body>
+
+
+							var tbody = $('#Tb');
+							$.each(result,function(index,item){
+
+									var market = result[index].market
+
+								 $.each(result2, function(index2, item2){
 
 
 
+									 if(market == result2[index2].market){
+
+										    var row = $('<tr>');
+
+				                            var td1 = $('<td style="">').text(result[index].korean_name+"["+result[index].market+"]");
+				                            row.append(td1);
+				                            var td2 = $('<td style="">').text(result2[index2].trade_price+"원");
+				                            row.append(td2);
+
+
+											/* console.log("코인 : "+result[index].korean_name+"["+result[index].market+"]")
+											console.log("현재가: "+result2[index2].trade_price) */
+									 		/*  console.log("오늘 시작 가격: "+result2[index2].opening_price)*/
+
+									 		if(result2[index2].opening_price > result2[index2].trade_price){
+
+									 			var td3 = $('<td style="color:red; font-weight:bold; ">').text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
+					                            row.append(td3);
+					                            tbody.append(row);
+									 			/* console.log("변화율 :  -"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) ) */
+
+									 		}else if(result2[index2].trade_price > result2[index2].opening_price){
+
+
+									 			var td3 = $('<td style="color:black; font-weight:bold; ">').text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
+					                            row.append(td3);
+					                            tbody.append(row);
+					                            /* console.log("변화율 :  +"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)) */
+
+
+									 		}else if(result2[index2].opening_price = result2[index2].trade_price){
+
+									 			/*console.log("변화율 : 0.0 ")*/
+									 			var td3 = $('<td class="table-primary" style="color:black; font-weight:bold; ">').text("0.0%");
+					                            row.append(td3);
+					                            tbody.append(row);
+
+									 		}
+
+									 }
+
+								 })
+
+							})
+						}
+
+			  		})
+
+				}
+
+		  	})
+
+
+
+	  	$(document).ready(function(){
+
+	  	  setInterval(function(){
+
+	  		var tbody = $('#Tb');
+
+	  		 tbody.empty();
+
+
+		  	$.ajax({
+				url:"/market",
+				type:"GET",
+				dataType:"json",
+				contentType:"application/json",
+				success:function(result){
+					// 이걸 표로 만들기
+				/* 	console.log("-----------마켓-----------------")
+				/*	console.log(result)*/
+				/*	console.log("----------------------------") */
+
+					console.log(result)
+
+				  	$.ajax({
+						url:"/currentPrice",
+						type:"GET",
+						dataType:"json",
+						contentType:"application/json",
+						success:function(result2){
+							// 이걸 표로 만들기
+							/* console.log("------------현재가----------------")
+							console.log("코인 : "+result2[0].market)
+							console.log("현재가: "+result2[0].trade_price)
+							console.log("오늘 시작 가격: "+result2[0].opening_price)
+							console.log("전 날 가격: "+result2[0].prev_closing_price)
+							console.log("----------------------------") */
+
+							console.log(result2)
+
+							var tbody = $('#Tb');
+
+							$.each(result,function(index,item){
+
+									var market = result[index].market
+
+								 $.each(result2, function(index2, item2){
+
+									 if(market == result2[index2].market){
+
+										    var row = $('<tr>');
+
+				                            var td1 = $('<td style="">').text(result[index].korean_name+"["+result[index].market+"]");
+				                            row.append(td1);
+				                            var td2 = $('<td style="">').text(result2[index2].trade_price+"원");
+				                            row.append(td2);
+
+
+											/* console.log("코인 : "+result[index].korean_name+"["+result[index].market+"]")
+											console.log("현재가: "+result2[index2].trade_price) */
+									 		/*  console.log("오늘 시작 가격: "+result2[index2].opening_price)*/
+
+									 		if(result2[index2].opening_price > result2[index2].trade_price){
+
+									 			var td3 = $('<td style="color:red; font-weight:bold;">').text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
+					                            row.append(td3);
+					                            tbody.append(row);
+									 			/* console.log("변화율 :  -"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) ) */
+
+									 		}else if(result2[index2].trade_price > result2[index2].opening_price){
+
+
+									 			var td3 = $('<td style="color:black; font-weight:bold; ">').text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
+					                            row.append(td3);
+					                            tbody.append(row);
+					                            /* console.log("변화율 :  +"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)) */
+
+
+									 		}else if(result2[index2].opening_price = result2[index2].trade_price){
+
+									 			/*console.log("변화율 : 0.0 ")*/
+									 			var td3 = $('<td class="table-primary" style="color:black; font-weight:bold; ">').text("0.0%");
+					                            row.append(td3);
+					                            tbody.append(row);
+
+									 		}
+
+									 }
+
+								 })
+
+							})
+						}
+
+			  		})
+
+				}
+
+		  	})
+	  		}, 5000);
+	  	})
+		</script>
+	</body>
 </html>

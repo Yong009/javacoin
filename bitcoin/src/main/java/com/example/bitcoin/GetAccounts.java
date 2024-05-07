@@ -1,7 +1,12 @@
 package com.example.bitcoin;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +19,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -34,6 +38,8 @@ import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import okhttp3.OkHttpClient;
@@ -83,7 +89,7 @@ public class GetAccounts<ChartData> {
 	}
 
 	//회원가입
-	@PostMapping("/join")
+	/*@PostMapping("/join")
 	public ResponseEntity<String> registerMember(@RequestBody MemberVO member){
 		try{
 			coinservice2.join(member);
@@ -94,7 +100,7 @@ public class GetAccounts<ChartData> {
 		}
 
 
-	}
+	}*/
 
 	@GetMapping("/bit")
 	public String image(){
@@ -113,8 +119,10 @@ public class GetAccounts<ChartData> {
 	public String account(@RequestBody MemberVO vo) {
 
 		String accessKey = vo.getAccessCode();
+		/* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
 		/*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
 		String secretKey = vo.getSecretCode();
+			/* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
 		/*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
 		String serverUrl = "https://api.upbit.com";
 
@@ -156,6 +164,8 @@ public class GetAccounts<ChartData> {
 		model.addAttribute("user",userDetails.getUsername());
 		return "/mainPage.html";
 	}
+
+
 
 
 	// 로그인 후 코드 가져오기
@@ -208,6 +218,7 @@ public class GetAccounts<ChartData> {
 	}
 
 	//마켓 정보
+	@ResponseBody
 	@GetMapping("/market")
 	public String market() {
 
@@ -230,7 +241,7 @@ public class GetAccounts<ChartData> {
 			e.printStackTrace();
 		}
 
-		System.out.println(responseBody);
+		/* System.out.println(responseBody); */
 		return responseBody;
 	}
 
@@ -264,12 +275,14 @@ public class GetAccounts<ChartData> {
 		Type marketListType = new TypeToken<ArrayList<MarketVO>>(){}.getType();
 		ArrayList<MarketVO> allMarkets = gson.fromJson(responseBody, marketListType);
 
+
 		List<String> krwMarkets = allMarkets.stream()
 				 .filter(market -> market.getMarket().startsWith("KRW-")) // getMarket()으로 수정
 				    .map(market -> market.getMarket()) // getMarket()으로 수정
 				    .collect(Collectors.toList());
 
-		String marketParam = String.join(",", krwMarkets.subList(0, Math.min(krwMarkets.size(), 10)));
+		/*String marketParam = String.join(",", krwMarkets.subList(0, Math.min(krwMarkets.size(), 10)));*/
+		String marketParam = String.join(",", krwMarkets);
 
 		okhttp3.Request tickerRequest = new okhttp3.Request.Builder()
 		  .url("https://api.upbit.com/v1/ticker?markets=" + marketParam)  //marketParam
@@ -289,7 +302,7 @@ public class GetAccounts<ChartData> {
 			e.printStackTrace();
 		}
 
-		System.out.println(tickerResponseBody);
+		/* System.out.println(tickerResponseBody); */
 
 
 
@@ -297,8 +310,119 @@ public class GetAccounts<ChartData> {
 	}
 
 
+//	//코인 검색(이름)
+//	//현재가 정보
+//	@ResponseBody
+//	@GetMapping("/searchCoin")
+//	public String search() {
+//
+//
+//		OkHttpClient client4 = new OkHttpClient();
+//
+//
+//		okhttp3.Request request4 = new okhttp3.Request.Builder()
+//		  .url("https://api.upbit.com/v1/market/all")
+//		  .get()
+//		  .addHeader("accept", "application/json")
+//		  .build();
+//
+//		String responseBody = null;
+//		try {
+//
+//			okhttp3.Response response4 = client4.newCall(request4).execute();
+//			responseBody = response4.body().string();
+//		}catch(IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//
+//
+//		Gson gson = new Gson();
+//		Type marketListType = new TypeToken<ArrayList<MarketVO>>(){}.getType();
+//		ArrayList<MarketVO> allMarkets = gson.fromJson(responseBody, marketListType);
+//
+//
+//		List<String> krwMarkets = allMarkets.stream()
+//				 .filter(market -> market.getMarket().startsWith("KRW-")) // getMarket()으로 수정
+//				    .map(market -> market.getMarket()) // getMarket()으로 수정
+//				    .collect(Collectors.toList());
+//
+//		/*String marketParam = String.join(",", krwMarkets.subList(0, Math.min(krwMarkets.size(), 10)));*/
+//		String marketParam = String.join(",", krwMarkets);
+//
+//		okhttp3.Request tickerRequest = new okhttp3.Request.Builder()
+//		  .url("https://api.upbit.com/v1/ticker?markets=" + marketParam)  //marketParam
+//		  .get()
+//		  .addHeader("Accept", "application/json")
+//		  .build();
+//
+//
+//		OkHttpClient client5 = new OkHttpClient();
+//		String tickerResponseBody = null;
+//		TickerVO tickerResponseBody2 = null;
+//		try {
+//		okhttp3.Response tickerResponse = client5.newCall(tickerRequest).execute();
+//		tickerResponseBody = tickerResponse.body().string();
+//
+//		}catch(IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//		/* System.out.println(tickerResponseBody); */
+//
+//
+//
+//		return tickerResponseBody;
+//	}
 
-
+//	//바이낸스
+//	@ResponseBody
+//	@GetMapping("/binance")
+//	public static String getStringFormUrl(String url) throws Throwable{
+//
+//		HttpURLConnection huc = (HttpURLConnection) new URL(url).openConnection();
+//		 huc.setRequestMethod("GET");
+//	        huc.addRequestProperty("User-Agent",
+//	                "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
+//	        huc.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
+//	        huc.connect();
+//	        InputStream in = null;
+//	        if( huc.getResponseCode() != 200 ){
+//	            in = huc.getErrorStream();
+//	        }else{
+//	            in = huc.getInputStream();
+//	        }
+//	        BufferedReader br = new BufferedReader(new InputStreamReader(in , "UTF-8"));
+//	        String line = null;
+//	        StringBuilder sb = new StringBuilder();
+//	        while ((line = br.readLine()) != null) {
+//	            sb.append(line);
+//	        }
+//	        br.close();
+//	        System.out.println(sb.toString());
+//
+//
+//
+//	        return sb.toString();
+//
+//	}
+//
+//	//바이낸스
+//	@ResponseBody
+//	@GetMapping("/binance2")
+//	public static void printTicker() throws Throwable{
+//
+//
+//		 String json_str = URLUtil.getStringFromUrl("https://api.binance.com/api/v1/ticker/24hr");
+//	     Gson gson = new Gson();
+//	     JsonArray ja = gson.fromJson(json_str, JsonElement.class).getAsJsonArray();
+//	     for(int i = 0; i < ja.size();i++){
+//	         JsonObject market = ja.get(i).getAsJsonObject();
+//	         System.out.println(market.get("symbol") + " : " + market);
+//	     }
+//
+//
+//	}
 	/*public static void main2(String[] args) {
 
 		String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";

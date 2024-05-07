@@ -9,7 +9,149 @@
 
 	<style>
 
+		body {
+  background-color: #3e94ec;
+  font-family: "Roboto", helvetica, arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  text-rendering: optimizeLegibility;
+}
 
+div.table-title {
+   display: block;
+  margin: auto;
+  max-width: 600px;
+  padding:5px;
+  width: 100%;
+}
+
+.table-title h3 {
+   color: #fafafa;
+   font-size: 30px;
+   font-weight: 400;
+   font-style:normal;
+   font-family: "Roboto", helvetica, arial, sans-serif;
+   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+   text-transform:uppercase;
+}
+
+
+/*** Table Styles **/
+
+.table-fill {
+  background: white;
+  border-radius:3px;
+  border-collapse: collapse;
+  height: 320px;
+  margin: auto;
+  max-width: 600px;
+  padding:5px;
+  width: 100%;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  animation: float 5s infinite;
+}
+
+th {
+  color:#D5DDE5;;
+  background:#1b1e24;
+  border-bottom:4px solid #9ea7af;
+  border-right: 1px solid #343a45;
+  font-size:23px;
+  font-weight: 100;
+  padding:24px;
+  text-align:left;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  vertical-align:middle;
+}
+
+th:first-child {
+  border-top-left-radius:3px;
+}
+
+th:last-child {
+  border-top-right-radius:3px;
+  border-right:none;
+}
+
+tr {
+  border-top: 1px solid #C1C3D1;
+  border-bottom-: 1px solid #C1C3D1;
+  color:#666B85;
+  font-size:16px;
+  font-weight:normal;
+  text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+}
+
+
+
+tr:first-child {
+  border-top:none;
+}
+
+tr:last-child {
+  border-bottom:none;
+}
+
+tr:nth-child(odd) td {
+  background:#EBEBEB;
+}
+
+
+
+tr:last-child td:first-child {
+  border-bottom-left-radius:3px;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius:3px;
+}
+
+td {
+  background:#FFFFFF;
+  padding:20px;
+  text-align:left;
+  vertical-align:middle;
+  font-weight:300;
+  font-size:18px;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid #C1C3D1;
+}
+
+td:last-child {
+  border-right: 0px;
+}
+
+th.text-left {
+  text-align: left;
+}
+
+th.text-center {
+  text-align: center;
+}
+
+th.text-right {
+  text-align: right;
+}
+
+td.text-left {
+  text-align: left;
+}
+
+td.text-center {
+  text-align: center;
+}
+
+td.text-right {
+  text-align: right;
+}
+
+input {
+  background-color: #fff;
+
+  padding: 0.9rem 0.9rem;
+  margin: 0.5rem 0;
+  width: 80%;
+}
 	</style>
 
 </head>
@@ -27,7 +169,7 @@
     <tr>
       <td colspan="2" style="background-color:white; ">
 
-          <p id="userid" style="margin-top:100px;"><span th:text="${user}" style="font-weight:bold;"></span>님 환영합니다.</p>
+          <h4 id="userid" style="margin-top:100px;"><span th:text="${user}" style="font-weight:bold; color:black;"></span>님 환영합니다.</p>
 
 		<form id="logoutForm" action="/logout" method="post">
 		  <button type="submit">로그아웃</button>
@@ -39,22 +181,22 @@
       </td>
     </tr>
     <tr>
-      <td style="background-color:#339999; color:white; width:20%">
-        <h2>업비트 api 코드</h2>
-        <button type="button" id = "accountBtn" class="btn btn-primary" style="float:right;">잔고 조회</button>
-        <button type="button" id = "accountSaveBtn" class="btn btn-primary" style="float:right;">코드 저장</button><br/>
-          <label for="access">access</label><br/><br/>
-          <input id="access" type="text"/><br/><br/>
-          <label for="secret">secret</label><br/><br/>
-          <input id="secret" type="text" style="margin-left:4px;"/>
+      <td style="background-color:white; color:black; width:20%">
+        <h2 style="margin-left:30px; margin-bottom:30px; font-weight:bold;">업비트 api코드</h2>
+        <button type="button" id = "accountBtn" class="btn btn-primary" style="float:right; margin-left:15px;">잔고 조회</button>
+        <button type="button" id = "accountSaveBtn" class="btn btn-primary" style="float:right; margin-bottom:30px;">코드 저장</button><br/>
+          <label for="access" style="margin-top:15px;">access코드</label><br/><br/>
+          <input id="access" type="text" class="form-control"/><br/><br/>
+          <label for="secret">secret코드</label><br/><br/>
+          <input id="secret" type="text" style="margin-left:4px;" class="form-control"/>
 
       </td>
       <td style="height:200px; text-align:left">
-        <p>my 잔고</p>
+        <h2 style="font-weight:bold; color:black; text-align:center; margin-bottom:40px;">my 잔고</h2>
 
 
 
-          <table class="type01">
+          <table class="table-fill">
               <thead>
               <tr>
                   <th scope="row">코인</th>
@@ -69,7 +211,7 @@
       </td>
     </tr>
     <tr>
-      <td colspan="2" style="background-color:#FFCC00">
+      <td colspan="2" style="">
         <h2>FOOTER 영역</h2>
       </td>
     </tr>
@@ -97,15 +239,108 @@
             dataType:"json",
             contentType:"application/json",
             success:function(result){
-                $('#access').val(result[0].accessCode);
-                var a = $('#access').val();
-                 $('#secret').val(result[0].secretCode)
+               $('#access').val(result[0].accessCode);
+               var a = $('#access').val();
+                $('#secret').val(result[0].secretCode)
                 var b = $('#secret').val();
+
+
+                if($('#access').val() != '' && $('#secret').val() != '' ){
+
+                    var tbody = $('#Tb');
+
+
+
+                    $(document).ready(function(){
+
+                    })
+
+
+
+
+                           var accessCode = $('#access').val();
+                           var secretCode = $('#secret').val();
+                           var account = {
+                               accessCode: accessCode,
+                               secretCode: secretCode
+                           }
+
+
+                           if(accessCode==''){
+            					alert('엑세스키를 입력해주세요')
+            					return
+                           }
+
+                           if(secretCode==''){
+            					alert('시크릿키를 입력해주세요')
+            					return
+                          }
+
+                           $.ajax({
+                               url: "/account",
+                               type: "POST",
+                               data: JSON.stringify(account),
+                               contentType: "application/json",
+                               dataType: "json",
+                               success: function (result) {
+
+                            	  /*  console.log(result) */
+
+                            	   if(result.error && result.error.name === 'invalid_access_key'){
+
+                            	   	 alert('실패했습니다. 유효하지 않은 접근 키')
+            						 return false;
+                            	   }
+
+
+                                   $.each(result,function(i,item){
+                                       var row = $('<tr>');
+                                       var td1 = $('<td class="center">').text(item.currency);
+                                       row.append(td1);
+                                       var td2 = $('<td class="center">').text(item.balance);
+                                       row.append(td2);
+                                       tbody.append(row);
+
+                                       }
+
+                                   )
+
+                               }
+
+
+                               })
+
+
+                    var a = $('#access').val();
+                    var b = $('#secret').val();
+                    if(a !='' && b != ''){
+
+                    }
+
+                    function refreshTable(account2) {
+                        tbody.empty();
+                        $.each(account2, function (i, item) {
+                            var row = $('<tr>');
+                            var td1 = $('<td class="center">').text(item.currency);
+                            row.append(td1);
+                            var td2 = $('<td class="center">').text(item.balance);
+                            row.append(td2);
+                            tbody.append(row);
+                        })
+
+                   }
+
+
+                }
+
 
 
             }
 
         })
+
+
+
 
 
 
@@ -123,12 +358,27 @@
 
            $('#accountBtn').on('click',function() {
 
+        	   var tbody = $('#Tb');
+        	   tbody.empty();
+
                var accessCode = $('#access').val();
                var secretCode = $('#secret').val();
                var account = {
                    accessCode: accessCode,
                    secretCode: secretCode
                }
+
+
+               if(accessCode==''){
+					alert('엑세스키를 입력해주세요')
+					return
+               }
+
+               if(secretCode==''){
+					alert('시크릿키를 입력해주세요')
+					return
+              }
+
                $.ajax({
                    url: "/account",
                    type: "POST",
@@ -136,6 +386,8 @@
                    contentType: "application/json",
                    dataType: "json",
                    success: function (result) {
+
+                	  /*  console.log(result) */
 
                 	   if(result.error && result.error.name === 'invalid_access_key'){
 
@@ -165,7 +417,7 @@
         var a = $('#access').val();
         var b = $('#secret').val();
         if(a !='' && b != ''){
-            accountGet();
+
         }
 
         function refreshTable(account2) {
@@ -180,6 +432,8 @@
             })
 
        }
+
+
 
 
 
@@ -219,7 +473,10 @@
 			})
        })
 
-       $.ajax({
+
+
+
+    /*   $.ajax({
 			url:"/market",
 			type:"Get",
 			dataType:"json",
@@ -229,10 +486,10 @@
 				console.log(result);
 
 			}
-       })
+       })*/
 
 
-         $.ajax({
+    /*     $.ajax({
 			url:"/currentPrice",
 			type:"Get",
 			dataType:"json",
@@ -242,7 +499,7 @@
 				console.log(result);
 
 			}
-       })
+       })*/
 
 
     </script>
