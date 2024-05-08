@@ -87,6 +87,53 @@
 		    border-bottom: 1px solid #e5e5e5;
 		  }
 
+		input {
+		  font-size: 15px;
+		  color: #222222;
+		  width: 300px;
+		  border: none;
+		  border-bottom: solid #aaaaaa 1px;
+		  padding-bottom: 10px;
+		  padding-left: 10px;
+		  position: relative;
+		  background: none;
+		  z-index: 5;
+		}
+
+		input::placeholder { color: #aaaaaa; }
+		input:focus { outline: none; }
+
+		span {
+		  display: block;
+		  position: absolute;
+		  bottom: 0;
+		  left: 0%;  /* right로만 바꿔주면 오 - 왼 */
+		  background-color: #666;
+		  width: 0;
+		  height: 2px;
+		  border-radius: 2px;
+		  transition: 0.5s;
+		}
+
+		label {
+		  position: absolute;
+		  color: #aaa;
+		  left: 10px;
+		  font-size: 20px;
+		  bottom: 8px;
+		  transition: all .2s;
+		}
+
+		input:focus ~ label, input:valid ~ label {
+		  font-size: 16px;
+		  bottom: 40px;
+		  color: #666;
+		  font-weight: bold;
+		}
+
+		input:focus ~ span, input:valid ~ span {
+		  width: 100%;
+		}
 
 	</style>
 </head>
@@ -95,19 +142,22 @@
 
 		<div id="header"></div>
 		<div style="margin-top:150px; margin-left:100px; margin-right:100px;">
-		<h1 style=" text-align: center; margin-bottom:100px;">차트</h3>
-	    <h2 style=" margin-bottom:100px; margin-left:700px;">업비트</h3>
+		<h1 style=" text-align: center; margin-bottom:100px;">차트</h1>
+	    <h2 style=" margin-bottom:100px; margin-left:700px;">업비트</h2>
+
+
+
 		 <table style="width:1500px;">
 			  <thead>
 			    <tr id="Tr">
-					<th style="">코인</th>
-					<th style="">현재가</th>
-					<th style="">변화</th>
+					<th>코인</th>
+					<th>현재가</th>
+					<th>변화</th>
 			    </tr>
 			  </thead>
 			  <tbody id ="Tb">
 
-			   </tbody>
+			  </tbody>
 		</table>
 	</div>
 
@@ -122,10 +172,7 @@
 				dataType:"json",
 				contentType:"application/json",
 				success:function(result){
-					// 이걸 표로 만들기
-				/* 	console.log("-----------마켓-----------------")
-				/*	console.log(result)*/
-				/*	console.log("----------------------------") */
+
 
 				  	$.ajax({
 						url:"/currentPrice",
@@ -133,21 +180,16 @@
 						dataType:"json",
 						contentType:"application/json",
 						success:function(result2){
-							// 이걸 표로 만들기
-							/* console.log("------------현재가----------------")
-							console.log("코인 : "+result2[0].market)
-							console.log("현재가: "+result2[0].trade_price)
-							console.log("오늘 시작 가격: "+result2[0].opening_price)
-							console.log("전 날 가격: "+result2[0].prev_closing_price)
-							console.log("----------------------------") */
 
 
-
+                            var tablecheck = 1;
 
 							var tbody = $('#Tb');
+
 							$.each(result,function(index,item){
 
 									var market = result[index].market
+
 
 								 $.each(result2, function(index2, item2){
 
@@ -157,40 +199,41 @@
 
 										    var row = $('<tr>');
 
-				                            var td1 = $('<td style="">').text(result[index].korean_name+"["+result[index].market+"]");
+				                            var td1 = $('<td id='+tablecheck+'>').text(result[index].korean_name+"["+result[index].market+"]");
+				                            tablecheck++;
 				                            row.append(td1);
-				                            var td2 = $('<td style="">').text(result2[index2].trade_price+"원");
+				                            var td2 = $('<td id='+tablecheck+'>').text(result2[index2].trade_price+"원");
+				                            tablecheck++;
 				                            row.append(td2);
 
 
-											/* console.log("코인 : "+result[index].korean_name+"["+result[index].market+"]")
-											console.log("현재가: "+result2[index2].trade_price) */
-									 		/*  console.log("오늘 시작 가격: "+result2[index2].opening_price)*/
 
 									 		if(result2[index2].opening_price > result2[index2].trade_price){
 
-									 			var td3 = $('<td style="color:red; font-weight:bold; ">').text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
+									 			var td3 = $('<td style="color:red; font-weight:bold;" id='+tablecheck+'>').text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
 					                            row.append(td3);
 					                            tbody.append(row);
-									 			/* console.log("변화율 :  -"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) ) */
+
 
 									 		}else if(result2[index2].trade_price > result2[index2].opening_price){
 
 
-									 			var td3 = $('<td style="color:black; font-weight:bold; ">').text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
+									 			var td3 = $('<td style="color:black; font-weight:bold;" id='+tablecheck+'>').text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
 					                            row.append(td3);
 					                            tbody.append(row);
-					                            /* console.log("변화율 :  +"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)) */
+
 
 
 									 		}else if(result2[index2].opening_price = result2[index2].trade_price){
 
-									 			/*console.log("변화율 : 0.0 ")*/
-									 			var td3 = $('<td class="table-primary" style="color:black; font-weight:bold; ">').text("0.0%");
+
+									 			var td3 = $('<td class="table-primary" style="color:black; font-weight:bold;" id='+tablecheck+'>').text("0.0%");
 					                            row.append(td3);
 					                            tbody.append(row);
 
 									 		}
+
+									 		tablecheck++;
 
 									 }
 
@@ -213,21 +256,18 @@
 
 	  		var tbody = $('#Tb');
 
-	  		 tbody.empty();
+	  		 //tbody.empty();
 
-
+			tablecheck = 0;
 		  	$.ajax({
 				url:"/market",
 				type:"GET",
 				dataType:"json",
 				contentType:"application/json",
 				success:function(result){
-					// 이걸 표로 만들기
-				/* 	console.log("-----------마켓-----------------")
-				/*	console.log(result)*/
-				/*	console.log("----------------------------") */
 
-					console.log(result)
+					var tablecheck = 0;
+
 
 				  	$.ajax({
 						url:"/currentPrice",
@@ -235,19 +275,64 @@
 						dataType:"json",
 						contentType:"application/json",
 						success:function(result2){
-							// 이걸 표로 만들기
-							/* console.log("------------현재가----------------")
-							console.log("코인 : "+result2[0].market)
-							console.log("현재가: "+result2[0].trade_price)
-							console.log("오늘 시작 가격: "+result2[0].opening_price)
-							console.log("전 날 가격: "+result2[0].prev_closing_price)
-							console.log("----------------------------") */
 
-							console.log(result2)
-
-							var tbody = $('#Tb');
+							tablecheck = 1;
 
 							$.each(result,function(index,item){
+
+								var market = result[index].market
+
+							 $.each(result2, function(index2, item2){
+
+								 if(market == result2[index2].market){
+
+
+
+										var tr2 = $('#'+tablecheck)
+
+			                            $('#'+tablecheck).text(result[index].korean_name+"["+result[index].market+"]");
+
+										tablecheck++;
+			                            $('#'+tablecheck).text(result2[index2].trade_price+"원");
+
+			                            tablecheck++;
+
+								 		if(result2[index2].opening_price > result2[index2].trade_price){
+
+								 			$('#'+tablecheck).text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
+
+
+
+								 		}else if(result2[index2].trade_price > result2[index2].opening_price){
+
+
+								 			 $('#'+tablecheck).text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
+
+
+
+
+								 		}else if(result2[index2].opening_price = result2[index2].trade_price){
+
+
+								 			 $('#'+tablecheck).text("0.0%");
+
+
+								 		}
+								 		tablecheck++;
+
+								 }
+
+							 })
+
+						})
+
+
+
+							//console.log(result2)
+
+							//var tbody = $('#Tb');
+
+		/* 					$.each(result,function(index,item){
 
 									var market = result[index].market
 
@@ -255,7 +340,8 @@
 
 									 if(market == result2[index2].market){
 
-										    var row = $('<tr>');
+										   var row = $('<tr>');
+
 
 				                            var td1 = $('<td style="">').text(result[index].korean_name+"["+result[index].market+"]");
 				                            row.append(td1);
@@ -263,16 +349,14 @@
 				                            row.append(td2);
 
 
-											/* console.log("코인 : "+result[index].korean_name+"["+result[index].market+"]")
-											console.log("현재가: "+result2[index2].trade_price) */
-									 		/*  console.log("오늘 시작 가격: "+result2[index2].opening_price)*/
+
 
 									 		if(result2[index2].opening_price > result2[index2].trade_price){
 
 									 			var td3 = $('<td style="color:red; font-weight:bold;">').text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
 					                            row.append(td3);
 					                            tbody.append(row);
-									 			/* console.log("변화율 :  -"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) ) */
+
 
 									 		}else if(result2[index2].trade_price > result2[index2].opening_price){
 
@@ -280,12 +364,12 @@
 									 			var td3 = $('<td style="color:black; font-weight:bold; ">').text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
 					                            row.append(td3);
 					                            tbody.append(row);
-					                            /* console.log("변화율 :  +"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)) */
+
 
 
 									 		}else if(result2[index2].opening_price = result2[index2].trade_price){
 
-									 			/*console.log("변화율 : 0.0 ")*/
+
 									 			var td3 = $('<td class="table-primary" style="color:black; font-weight:bold; ">').text("0.0%");
 					                            row.append(td3);
 					                            tbody.append(row);
@@ -296,7 +380,7 @@
 
 								 })
 
-							})
+							}) */
 						}
 
 			  		})
@@ -304,7 +388,7 @@
 				}
 
 		  	})
-	  		}, 5000);
+	  		}, 3000);
 	  	})
 		</script>
 	</body>
