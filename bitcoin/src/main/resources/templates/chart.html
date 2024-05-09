@@ -135,6 +135,10 @@
 		  width: 100%;
 		}
 
+		.highlight {
+		  background-color: yellow; /* 예시로 노란색을 사용합니다. */
+		}
+
 	</style>
 </head>
 
@@ -299,14 +303,32 @@
 
 								 		if(result2[index2].opening_price > result2[index2].trade_price){
 
-								 			$('#'+tablecheck).text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
+								 			if($('#'+tablecheck).text() != "-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%"){
+
+								 				$('#'+tablecheck).text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
+								 				$('#'+tablecheck).css("background-color","yellow");
+								 			}else{
+								 				$('#'+tablecheck).text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
+								 				$('#'+tablecheck).css("background-color","white");
+								 			}
+
+
 
 
 
 								 		}else if(result2[index2].trade_price > result2[index2].opening_price){
 
 
-								 			 $('#'+tablecheck).text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
+								 			if($('#'+tablecheck).text() != "+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%"){
+
+								 				$('#'+tablecheck).text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
+								 				$('#'+tablecheck).css("background-color","yellow");
+								 			}else{
+								 				$('#'+tablecheck).text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
+								 				$('#'+tablecheck).css("background-color","white");
+								 			}
+
+
 
 
 
@@ -327,60 +349,6 @@
 						})
 
 
-
-							//console.log(result2)
-
-							//var tbody = $('#Tb');
-
-		/* 					$.each(result,function(index,item){
-
-									var market = result[index].market
-
-								 $.each(result2, function(index2, item2){
-
-									 if(market == result2[index2].market){
-
-										   var row = $('<tr>');
-
-
-				                            var td1 = $('<td style="">').text(result[index].korean_name+"["+result[index].market+"]");
-				                            row.append(td1);
-				                            var td2 = $('<td style="">').text(result2[index2].trade_price+"원");
-				                            row.append(td2);
-
-
-
-
-									 		if(result2[index2].opening_price > result2[index2].trade_price){
-
-									 			var td3 = $('<td style="color:red; font-weight:bold;">').text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
-					                            row.append(td3);
-					                            tbody.append(row);
-
-
-									 		}else if(result2[index2].trade_price > result2[index2].opening_price){
-
-
-									 			var td3 = $('<td style="color:black; font-weight:bold; ">').text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
-					                            row.append(td3);
-					                            tbody.append(row);
-
-
-
-									 		}else if(result2[index2].opening_price = result2[index2].trade_price){
-
-
-									 			var td3 = $('<td class="table-primary" style="color:black; font-weight:bold; ">').text("0.0%");
-					                            row.append(td3);
-					                            tbody.append(row);
-
-									 		}
-
-									 }
-
-								 })
-
-							}) */
 						}
 
 			  		})
