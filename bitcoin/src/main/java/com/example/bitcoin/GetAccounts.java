@@ -1,14 +1,15 @@
 package com.example.bitcoin;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -16,6 +17,8 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +41,6 @@ import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import okhttp3.OkHttpClient;
@@ -309,6 +310,66 @@ public class GetAccounts<ChartData> {
 		return tickerResponseBody;
 	}
 
+	@ResponseBody
+	@PostMapping("/order")
+	public void order() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+		String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";
+		/* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
+		/*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
+		String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";
+			/* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
+		/*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
+		String serverUrl = "https://api.upbit.com";
+
+		        HashMap<String, String> params = new HashMap<>();
+		        params.put("market", "KRW-BTC");
+		        params.put("side", "bid");               //bid : 매수 ,  ask: 매도
+
+		        params.put("price", "10000");
+		        params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
+
+		        ArrayList<String> queryElements = new ArrayList<>();
+		        for(Map.Entry<String, String> entity : params.entrySet()) {
+		            queryElements.add(entity.getKey() + "=" + entity.getValue());
+		        }
+
+		        String queryString = String.join("&", queryElements.toArray(new String[0]));
+
+		        MessageDigest md = MessageDigest.getInstance("SHA-512");
+		        md.update(queryString.getBytes("UTF-8"));
+
+		        String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));
+
+		        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+		        String jwtToken = JWT.create()
+		                .withClaim("access_key", accessKey)
+		                .withClaim("nonce", UUID.randomUUID().toString())
+		                .withClaim("query_hash", queryHash)
+		                .withClaim("query_hash_alg", "SHA512")
+		                .sign(algorithm);
+
+		        String authenticationToken = "Bearer " + jwtToken;
+
+		        try {
+		            HttpClient client = HttpClientBuilder.create().build();
+		            HttpPost request = new HttpPost(serverUrl + "/v1/orders");
+		            request.setHeader("Content-Type", "application/json");
+		            request.addHeader("Authorization", authenticationToken);
+		            request.setEntity(new StringEntity(new Gson().toJson(params)));
+
+		            HttpResponse response = client.execute(request);
+		            HttpEntity entity = response.getEntity();
+
+		            System.out.println(EntityUtils.toString(entity, "UTF-8"));
+		        } catch (IOException e) {
+		            e.printStackTrace();
+		        }
+		    }
+
+
+	}
+
 
 //	//코인 검색(이름)
 //	//현재가 정보
@@ -549,4 +610,4 @@ public class GetAccounts<ChartData> {
 
 
 	}*/
-}
+

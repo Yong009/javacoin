@@ -185,6 +185,7 @@ input {
         <h2 style="margin-left:30px; margin-bottom:30px; font-weight:bold;">업비트 api코드</h2>
         <button type="button" id = "accountBtn" class="btn btn-primary" style="float:right; margin-left:15px;">잔고 조회</button>
         <button type="button" id = "accountSaveBtn" class="btn btn-primary" style="float:right; margin-bottom:30px;">코드 저장</button><br/>
+        <button type="button" id = "orderBtn" class="btn btn-primary" style="float:right; margin-bottom:30px;">주문</button><br/>
           <label for="access" style="margin-top:15px;">access코드</label><br/><br/>
           <input id="access" type="text" class="form-control"/><br/><br/>
           <label for="secret">secret코드</label><br/><br/>
@@ -475,6 +476,32 @@ input {
 
 
 
+        $('#orderBtn').on('click',function(){
+
+        	$.ajax({
+
+        		url:"/order",
+        		type:"POST",
+        		dataType:"json",
+        		contentType:"applcation/json",
+        		success: function(result){
+
+
+
+        			}
+
+
+
+        	})
+
+
+
+
+
+        })
+
+
+
 
     /*   $.ajax({
 			url:"/market",
@@ -486,10 +513,10 @@ input {
 				console.log(result);
 
 			}
-       })*/
+       })
 
 
-    /*     $.ajax({
+         $.ajax({
 			url:"/currentPrice",
 			type:"Get",
 			dataType:"json",
