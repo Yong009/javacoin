@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import com.example.bitcoin.dto.*;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -33,10 +34,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.bitcoin.dto.BoardVO;
-import com.example.bitcoin.dto.MarketVO;
-import com.example.bitcoin.dto.MemberVO;
-import com.example.bitcoin.dto.TickerVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
@@ -49,161 +46,172 @@ import okhttp3.OkHttpClient;
 public class GetAccounts<ChartData> {
 
 
-	@Autowired
-	coinservice coinservice2;
+    @Autowired
+    coinservice coinservice2;
 
-	@Autowired
-	coinmapper coinmapper4;
+    @Autowired
+    coinmapper coinmapper4;
 
-	@Autowired
-	coinserviceimpl coinserviceimpl2;
+    @Autowired
+    coinserviceimpl coinserviceimpl2;
 
     public GetAccounts(coinserviceimpl coinserviceimpl2) {
         this.coinserviceimpl2 = coinserviceimpl2;
     }
 
 
+    // 시작 시 첫 페이지
+    @GetMapping("/")
+    public String loginPage2() {
+        return "/mainPage.html";
+    }
 
-	// 시작 시 첫 페이지
-	@GetMapping("/")
-	public String loginPage2() {
-		return "/mainPage.html";
-	}
+    // 로그인 페이지
+    @GetMapping("/login")
+    public String loginPage() {
+        return "/login.html";
+    }
 
-	// 로그인 페이지
-	@GetMapping("/login")
-	public String loginPage() {
-		return "/login.html";
-	}
+    //회원가입 페이지
+    @GetMapping("/memberJoin")
+    public String joinPage() {
+        return "/memberJoin.html";
+    }
 
-	//회원가입 페이지
-	@GetMapping("/memberJoin")
-	public String joinPage() {
-		return "/memberJoin.html";
-	}
+    //차트
+    @GetMapping("/chart")
+    public String chart() {
+        return "/chart.html";
 
+    }
 
-	@GetMapping("/chart")
-	public String chart() {
-		return "/chart.html";
-
-	}
-
-	//회원가입
-	/*@PostMapping("/join")
-	public ResponseEntity<String> registerMember(@RequestBody MemberVO member){
-		try{
-			coinservice2.join(member);
-			return ResponseEntity.ok().body("성공");
-		} catch (Exception e){
-			e.printStackTrace();
-			return ResponseEntity.badRequest().body("실패");
-		}
-
-
-	}*/
-
-	@GetMapping("/bit")
-	public String image(){
-		return "bitcoin.jpg";
-	}
-
-	@GetMapping("/home")
-	public String logout() {
-		return "/home.html";
-	}
+    //회원가입
+    /*@PostMapping("/join")
+    public ResponseEntity<String> registerMember(@RequestBody MemberVO member){
+        try{
+            coinservice2.join(member);
+            return ResponseEntity.ok().body("성공");
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("실패");
+        }
 
 
-	// 잔고 조회
-	@ResponseBody
-	@PostMapping("/account")
-	public String account(@RequestBody MemberVO vo) {
+    }*/
 
-		String accessKey = vo.getAccessCode();
-		/* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
-		/*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
-		String secretKey = vo.getSecretCode();
-			/* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
-		/*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
-		String serverUrl = "https://api.upbit.com";
+    //이미지
+    @GetMapping("/bit")
+    public String image() {
+        return "bitcoin.jpg";
+    }
 
-		Algorithm algorithm = Algorithm.HMAC256(secretKey);
-		String jwtToken = JWT.create().withClaim("access_key", accessKey)
-				.withClaim("nonce", UUID.randomUUID().toString()).sign(algorithm);
+    //이미지2
+    @GetMapping("/bit2")
+    public String image2() {
+        return "bitcoin_cash";
+    }
 
-		String authenticationToken = "Bearer " + jwtToken;
+    @GetMapping("/home")
+    public String logout() {
+        return "/home.html";
+    }
 
-		HttpClient client = HttpClientBuilder.create().build();
-		HttpGet request = new HttpGet(serverUrl + "/v1/accounts");
-		request.setHeader("Content-Type", "application/json");
-		request.addHeader("Authorization", authenticationToken);
-
-		HttpResponse response = null;
-		try {
-			response = client.execute(request);
+    //주문하기 페이지
+    @GetMapping("/orderPage")
+    public String orderPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        model.addAttribute("user", userDetails.getUsername());
+        return "/order.html";
+    }
 
 
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+    // 잔고 조회
+    @ResponseBody
+    @PostMapping("/account")
+    public String account(@RequestBody MemberVO vo) {
 
-		HttpEntity entity = response.getEntity();
-		String result = null;
-		try {
+        String accessKey = vo.getAccessCode();
+        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
+        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
+        String secretKey = vo.getSecretCode();
+        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
+        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
+        String serverUrl = "https://api.upbit.com";
 
-			result = EntityUtils.toString(entity, "UTF-8");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        String jwtToken = JWT.create().withClaim("access_key", accessKey)
+                .withClaim("nonce", UUID.randomUUID().toString()).sign(algorithm);
 
-		return result;
-	}
+        String authenticationToken = "Bearer " + jwtToken;
 
-	// 로그인 후 첫 페이지 ( 로그인 정보 가져옴 )
-	@GetMapping("/mainPage")
-	public String getUserInfo(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-		model.addAttribute("user",userDetails.getUsername());
-		return "/mainPage.html";
-	}
+        HttpClient client = HttpClientBuilder.create().build();
+        HttpGet request = new HttpGet(serverUrl + "/v1/accounts");
+        request.setHeader("Content-Type", "application/json");
+        request.addHeader("Authorization", authenticationToken);
 
-
-
-
-	// 로그인 후 코드 가져오기
-	@ResponseBody
-	@PostMapping("/getCode")
-	public List<MemberVO> getCode(@RequestBody MemberVO vo){
-
-		List<MemberVO> vo2 = new ArrayList<>();
+        HttpResponse response = null;
+        try {
+            response = client.execute(request);
 
 
-		vo2 = coinservice2.getCode(vo.getId());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-		return vo2;
+        HttpEntity entity = response.getEntity();
+        String result = null;
+        try {
 
-	}
+            result = EntityUtils.toString(entity, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-	//코드 저장
-	@ResponseBody
-	@PostMapping("/saveCode")
-	public boolean saveCode(@RequestBody MemberVO vo){
+        return result;
+    }
 
-		List<MemberVO> vo2 = new ArrayList<>();
+    // 로그인 후 첫 페이지 ( 로그인 정보 가져옴 )
+    @GetMapping("/mainPage")
+    public String getUserInfo(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        model.addAttribute("user", userDetails.getUsername());
+        return "/mainPage.html";
+    }
 
-		boolean a = coinservice2.saveCode(vo);
 
-		return a;
-	}
+    // 로그인 후 코드 가져오기
+    @ResponseBody
+    @PostMapping("/getCode")
+    public List<MemberVO> getCode(@RequestBody MemberVO vo) {
 
-	//게시판 페이지 이동
-	@GetMapping("/board")
-	public String board() {
+        List<MemberVO> vo2 = new ArrayList<>();
 
-		return "/board.html";
-	}
 
-	//게시판 전체 리스트
-	@ResponseBody
+        vo2 = coinservice2.getCode(vo.getId());
+
+        return vo2;
+
+    }
+
+    //코드 저장
+    @ResponseBody
+    @PostMapping("/saveCode")
+    public boolean saveCode(@RequestBody MemberVO vo) {
+
+        List<MemberVO> vo2 = new ArrayList<>();
+
+        boolean a = coinservice2.saveCode(vo);
+
+        return a;
+    }
+
+    //게시판 페이지 이동
+    @GetMapping("/board")
+    public String board() {
+
+        return "/board.html";
+    }
+
+    //게시판 전체 리스트
+    @ResponseBody
     @GetMapping("/boardListAjax")
     public List<BoardVO> boardListAjax() {
 
@@ -212,163 +220,232 @@ public class GetAccounts<ChartData> {
         return list;
     }
 
-	//헤더 호출
-	@GetMapping("/header.html")
-	public String header() {
-		return "header.html";
-	}
+    //헤더 호출
+    @GetMapping("/header.html")
+    public String header() {
+        return "header.html";
+    }
 
-	//마켓 정보
-	@ResponseBody
-	@GetMapping("/market")
-	public String market() {
-
-
-		OkHttpClient client4 = new OkHttpClient();
+    //마켓 정보
+    @ResponseBody
+    @GetMapping("/market")
+    public String market() {
 
 
-		okhttp3.Request request4 = new okhttp3.Request.Builder()
-		  .url("https://api.upbit.com/v1/market/all")
-		  .get()
-		  .addHeader("accept", "application/json")
-		  .build();
-
-		String responseBody = null;
-		try {
-
-			okhttp3.Response response4 = client4.newCall(request4).execute();
-			responseBody = response4.body().string();
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-
-		/* System.out.println(responseBody); */
-		return responseBody;
-	}
-
-	//현재가 정보
-	@ResponseBody
-	@GetMapping("/currentPrice")
-	public String currentPrice() {
+        OkHttpClient client4 = new OkHttpClient();
 
 
-		OkHttpClient client4 = new OkHttpClient();
+        okhttp3.Request request4 = new okhttp3.Request.Builder()
+                .url("https://api.upbit.com/v1/market/all")
+                .get()
+                .addHeader("accept", "application/json")
+                .build();
+
+        String responseBody = null;
+        try {
+
+            okhttp3.Response response4 = client4.newCall(request4).execute();
+            responseBody = response4.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /* System.out.println(responseBody); */
+        return responseBody;
+    }
+
+    //현재가 정보
+    @ResponseBody
+    @GetMapping("/currentPrice")
+    public String currentPrice() {
 
 
-		okhttp3.Request request4 = new okhttp3.Request.Builder()
-		  .url("https://api.upbit.com/v1/market/all")
-		  .get()
-		  .addHeader("accept", "application/json")
-		  .build();
-
-		String responseBody = null;
-		try {
-
-			okhttp3.Response response4 = client4.newCall(request4).execute();
-			responseBody = response4.body().string();
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
+        OkHttpClient client4 = new OkHttpClient();
 
 
+        okhttp3.Request request4 = new okhttp3.Request.Builder()
+                .url("https://api.upbit.com/v1/market/all")
+                .get()
+                .addHeader("accept", "application/json")
+                .build();
 
-		Gson gson = new Gson();
-		Type marketListType = new TypeToken<ArrayList<MarketVO>>(){}.getType();
-		ArrayList<MarketVO> allMarkets = gson.fromJson(responseBody, marketListType);
+        String responseBody = null;
+        try {
 
-
-		List<String> krwMarkets = allMarkets.stream()
-				 .filter(market -> market.getMarket().startsWith("KRW-")) // getMarket()으로 수정
-				    .map(market -> market.getMarket()) // getMarket()으로 수정
-				    .collect(Collectors.toList());
-
-		/*String marketParam = String.join(",", krwMarkets.subList(0, Math.min(krwMarkets.size(), 10)));*/
-		String marketParam = String.join(",", krwMarkets);
-
-		okhttp3.Request tickerRequest = new okhttp3.Request.Builder()
-		  .url("https://api.upbit.com/v1/ticker?markets=" + marketParam)  //marketParam
-		  .get()
-		  .addHeader("Accept", "application/json")
-		  .build();
+            okhttp3.Response response4 = client4.newCall(request4).execute();
+            responseBody = response4.body().string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 
-		OkHttpClient client5 = new OkHttpClient();
-		String tickerResponseBody = null;
-		TickerVO tickerResponseBody2 = null;
-		try {
-		okhttp3.Response tickerResponse = client5.newCall(tickerRequest).execute();
-		tickerResponseBody = tickerResponse.body().string();
-
-		}catch(IOException e) {
-			e.printStackTrace();
-		}
-
-		/* System.out.println(tickerResponseBody); */
+        Gson gson = new Gson();
+        Type marketListType = new TypeToken<ArrayList<MarketVO>>() {
+        }.getType();
+        ArrayList<MarketVO> allMarkets = gson.fromJson(responseBody, marketListType);
 
 
+        List<String> krwMarkets = allMarkets.stream()
+                .filter(market -> market.getMarket().startsWith("KRW-")) // getMarket()으로 수정
+                .map(market -> market.getMarket()) // getMarket()으로 수정
+                .collect(Collectors.toList());
 
-		return tickerResponseBody;
-	}
+        /*String marketParam = String.join(",", krwMarkets.subList(0, Math.min(krwMarkets.size(), 10)));*/
+        String marketParam = String.join(",", krwMarkets);
 
-	@ResponseBody
-	@PostMapping("/order")
-	public void order() throws NoSuchAlgorithmException, UnsupportedEncodingException {
-
-		String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";
-		/* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
-		/*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
-		String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";
-			/* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
-		/*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
-		String serverUrl = "https://api.upbit.com";
-
-		        HashMap<String, String> params = new HashMap<>();
-		        params.put("market", "KRW-BTC");
-		        params.put("side", "bid");               //bid : 매수 ,  ask: 매도
-
-		        params.put("price", "10000");
-		        params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
-
-		        ArrayList<String> queryElements = new ArrayList<>();
-		        for(Map.Entry<String, String> entity : params.entrySet()) {
-		            queryElements.add(entity.getKey() + "=" + entity.getValue());
-		        }
-
-		        String queryString = String.join("&", queryElements.toArray(new String[0]));
-
-		        MessageDigest md = MessageDigest.getInstance("SHA-512");
-		        md.update(queryString.getBytes("UTF-8"));
-
-		        String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));
-
-		        Algorithm algorithm = Algorithm.HMAC256(secretKey);
-		        String jwtToken = JWT.create()
-		                .withClaim("access_key", accessKey)
-		                .withClaim("nonce", UUID.randomUUID().toString())
-		                .withClaim("query_hash", queryHash)
-		                .withClaim("query_hash_alg", "SHA512")
-		                .sign(algorithm);
-
-		        String authenticationToken = "Bearer " + jwtToken;
-
-		        try {
-		            HttpClient client = HttpClientBuilder.create().build();
-		            HttpPost request = new HttpPost(serverUrl + "/v1/orders");
-		            request.setHeader("Content-Type", "application/json");
-		            request.addHeader("Authorization", authenticationToken);
-		            request.setEntity(new StringEntity(new Gson().toJson(params)));
-
-		            HttpResponse response = client.execute(request);
-		            HttpEntity entity = response.getEntity();
-
-		            System.out.println(EntityUtils.toString(entity, "UTF-8"));
-		        } catch (IOException e) {
-		            e.printStackTrace();
-		        }
-		    }
+        okhttp3.Request tickerRequest = new okhttp3.Request.Builder()
+                .url("https://api.upbit.com/v1/ticker?markets=" + marketParam)  //marketParam
+                .get()
+                .addHeader("Accept", "application/json")
+                .build();
 
 
-	}
+        OkHttpClient client5 = new OkHttpClient();
+        String tickerResponseBody = null;
+        TickerVO tickerResponseBody2 = null;
+        try {
+            okhttp3.Response tickerResponse = client5.newCall(tickerRequest).execute();
+            tickerResponseBody = tickerResponse.body().string();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /* System.out.println(tickerResponseBody); */
+
+
+        return tickerResponseBody;
+    }
+
+    // 매수 주문하기
+    @ResponseBody
+    @PostMapping("/order")
+    public void order(@RequestBody OrderVO vo) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+        String accessKey = vo.getAccessCode();
+        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
+        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
+        String secretKey = vo.getSecretCode();
+        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
+        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
+        String serverUrl = "https://api.upbit.com";
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("market", vo.getCoin());
+        System.out.println(vo.getCoin());
+        System.out.println(vo.getOrderType());
+        System.out.println(vo.getPrice());
+        System.out.println(vo.getAccessCode());
+        System.out.println(vo.getSecretCode());
+        //params.put("market", "KRW-BTC");
+        params.put("side", vo.getOrderType());               //bid : 매수 ,  ask: 매도
+        //params.put("side", "bid");               //bid : 매수 ,  ask: 매도
+        //params.put("price", "10000");
+        params.put("price", vo.getPrice());
+        params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
+
+        ArrayList<String> queryElements = new ArrayList<>();
+        for (Map.Entry<String, String> entity : params.entrySet()) {
+            queryElements.add(entity.getKey() + "=" + entity.getValue());
+        }
+
+        String queryString = String.join("&", queryElements.toArray(new String[0]));
+
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(queryString.getBytes("UTF-8"));
+
+        String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));
+
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        String jwtToken = JWT.create()
+                .withClaim("access_key", accessKey)
+                .withClaim("nonce", UUID.randomUUID().toString())
+                .withClaim("query_hash", queryHash)
+                .withClaim("query_hash_alg", "SHA512")
+                .sign(algorithm);
+
+        String authenticationToken = "Bearer " + jwtToken;
+
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpPost request = new HttpPost(serverUrl + "/v1/orders");
+            request.setHeader("Content-Type", "application/json");
+            request.addHeader("Authorization", authenticationToken);
+            request.setEntity(new StringEntity(new Gson().toJson(params)));
+
+            HttpResponse response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+
+            System.out.println(EntityUtils.toString(entity, "UTF-8"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //매도하기
+    @ResponseBody
+    @PostMapping("/sell")
+    public void sell(@RequestBody OrderVO vo) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+        String accessKey = vo.getAccessCode();
+        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
+        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
+        String secretKey = vo.getSecretCode();
+        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
+        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
+        String serverUrl = "https://api.upbit.com";
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("market", vo.getCoin());
+        System.out.println(vo.getCoin());
+        System.out.println(vo.getOrderType());
+        System.out.println(vo.getAccessCode());
+        System.out.println(vo.getSecretCode());
+        //params.put("market", "KRW-BTC");
+        params.put("side", vo.getOrderType());
+        params.put("volume", "0.01");//bid : 매수 ,  ask: 매도
+        //params.put("price", vo.getPrice());
+        params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
+
+        ArrayList<String> queryElements = new ArrayList<>();
+        for (Map.Entry<String, String> entity : params.entrySet()) {
+            queryElements.add(entity.getKey() + "=" + entity.getValue());
+        }
+
+        String queryString = String.join("&", queryElements.toArray(new String[0]));
+
+        MessageDigest md = MessageDigest.getInstance("SHA-512");
+        md.update(queryString.getBytes("UTF-8"));
+
+        String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));
+
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        String jwtToken = JWT.create()
+                .withClaim("access_key", accessKey)
+                .withClaim("nonce", UUID.randomUUID().toString())
+                .withClaim("query_hash", queryHash)
+                .withClaim("query_hash_alg", "SHA512")
+                .sign(algorithm);
+
+        String authenticationToken = "Bearer " + jwtToken;
+
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpPost request = new HttpPost(serverUrl + "/v1/orders");
+            request.setHeader("Content-Type", "application/json");
+            request.addHeader("Authorization", authenticationToken);
+            request.setEntity(new StringEntity(new Gson().toJson(params)));
+
+            HttpResponse response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+
+            System.out.println(EntityUtils.toString(entity, "UTF-8"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
 
 
 //	//코인 검색(이름)
@@ -484,130 +561,130 @@ public class GetAccounts<ChartData> {
 //
 //
 //	}
-	/*public static void main2(String[] args) {
+    /*public static void main2(String[] args) {
 
-		String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";
-		System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  // access 코드
-		String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";
-		System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  // secret 코드
-		String serverUrl = "https://api.upbit.com";
+        String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";
+        System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  // access 코드
+        String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";
+        System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  // secret 코드
+        String serverUrl = "https://api.upbit.com";
 
-		Algorithm algorithm = Algorithm.HMAC256(secretKey);
-		String jwtToken = JWT.create().withClaim("access_key", accessKey)
-				.withClaim("nonce", UUID.randomUUID().toString()).sign(algorithm);
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        String jwtToken = JWT.create().withClaim("access_key", accessKey)
+                .withClaim("nonce", UUID.randomUUID().toString()).sign(algorithm);
 
-		String authenticationToken = "Bearer " + jwtToken;
-
-
-
-
-
-
-		// 내 자산 정보
-
-		try {
-			HttpClient client = HttpClientBuilder.create().build();
-			HttpGet request = new HttpGet(serverUrl + "/v1/accounts");
-			request.setHeader("Content-Type", "application/json");
-			request.addHeader("Authorization", authenticationToken);
-
-			HttpResponse response = client.execute(request);
-			HttpEntity entity = response.getEntity();
-
-			System.out.println(EntityUtils.toString(entity, "UTF-8"));
-
-			// 마켓 정보
-
-			OkHttpClient clients = new OkHttpClient();
-
-			okhttp3.Request requests = new okhttp3.Request.Builder()
-					.url("https://api.upbit.com/v1/market/all?isDetails=true").get()         //true = 상세한 정보, false = 간단한 정보
-					.addHeader("accept", "application/json").build();
-
-			try {
-				Response responses = clients.newCall(requests).execute();
-				// 응답처리
-				if (responses.body() != null) {
-					String responseBody = responses.body().string();
-					System.out.println(responseBody);
-				} else {
-					// 응답 본문이 null인 경우의 처리
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				//IOException 처리
-			}
-
-			// 현재가 정보
-
-			OkHttpClient client2 = new OkHttpClient();
-
-			okhttp3.Request request2 = new okhttp3.Request.Builder()
-					.url("https://api.upbit.com/v1/ticker?markets=KRW-BTC").get()               //?markets=KRW-BTC" 비트코인
-					.addHeader("accept", "application/json").build();
-
-			// Response response2 = client.newCall(request).execute();
-			try {
-				Response response2 = client2.newCall(request2).execute();
-				// 응답 처리
-				if (response2.body() != null) {
-					String responseBody2 = response2.body().string();
-					System.out.println(responseBody2);
-				} else {
-					// 응답 본문이 null인 경우의 처리
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-				// IOException 처리
-			}
-
-
-			//최근 체결 내역
-
-			OkHttpClient client3 = new OkHttpClient();
-
-			okhttp3.Request request3 = new okhttp3.Request.Builder()
-			  .url("https://api.upbit.com/v1/trades/ticks?market=KRW-BTC&count=1")
-			  .get()
-			  .addHeader("accept", "application/json")
-			  .build();
-
-			try {
-				Response response3 = client3.newCall(request3).execute();
-				if(response3.body() != null) {
-					String responseBody3 = response3.body().string();
-					System.out.println(responseBody3);
-				}
-
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
-
-			//시세 캔들 조회
-
-			OkHttpClient client4 = new OkHttpClient();
-
-			okhttp3.Request request4 = new okhttp3.Request.Builder()
-			  .url("https://api.upbit.com/v1/candles/minutes/1?market=KRW-BTC&count=1")   //minutes(분봉), days(일봉),  weeks(주봉), months(월봉)
-			  .get()
-			  .addHeader("accept", "application/json")
-			  .build();
-
-			try {
-
-				Response response4 = client4.newCall(request4).execute();
-			}catch(IOException e) {
-				e.printStackTrace();
-			}
+        String authenticationToken = "Bearer " + jwtToken;
 
 
 
 
 
 
+        // 내 자산 정보
+
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(serverUrl + "/v1/accounts");
+            request.setHeader("Content-Type", "application/json");
+            request.addHeader("Authorization", authenticationToken);
+
+            HttpResponse response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+
+            System.out.println(EntityUtils.toString(entity, "UTF-8"));
+
+            // 마켓 정보
+
+            OkHttpClient clients = new OkHttpClient();
+
+            okhttp3.Request requests = new okhttp3.Request.Builder()
+                    .url("https://api.upbit.com/v1/market/all?isDetails=true").get()         //true = 상세한 정보, false = 간단한 정보
+                    .addHeader("accept", "application/json").build();
+
+            try {
+                Response responses = clients.newCall(requests).execute();
+                // 응답처리
+                if (responses.body() != null) {
+                    String responseBody = responses.body().string();
+                    System.out.println(responseBody);
+                } else {
+                    // 응답 본문이 null인 경우의 처리
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                //IOException 처리
+            }
+
+            // 현재가 정보
+
+            OkHttpClient client2 = new OkHttpClient();
+
+            okhttp3.Request request2 = new okhttp3.Request.Builder()
+                    .url("https://api.upbit.com/v1/ticker?markets=KRW-BTC").get()               //?markets=KRW-BTC" 비트코인
+                    .addHeader("accept", "application/json").build();
+
+            // Response response2 = client.newCall(request).execute();
+            try {
+                Response response2 = client2.newCall(request2).execute();
+                // 응답 처리
+                if (response2.body() != null) {
+                    String responseBody2 = response2.body().string();
+                    System.out.println(responseBody2);
+                } else {
+                    // 응답 본문이 null인 경우의 처리
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                // IOException 처리
+            }
 
 
-	}*/
+            //최근 체결 내역
+
+            OkHttpClient client3 = new OkHttpClient();
+
+            okhttp3.Request request3 = new okhttp3.Request.Builder()
+              .url("https://api.upbit.com/v1/trades/ticks?market=KRW-BTC&count=1")
+              .get()
+              .addHeader("accept", "application/json")
+              .build();
+
+            try {
+                Response response3 = client3.newCall(request3).execute();
+                if(response3.body() != null) {
+                    String responseBody3 = response3.body().string();
+                    System.out.println(responseBody3);
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            //시세 캔들 조회
+
+            OkHttpClient client4 = new OkHttpClient();
+
+            okhttp3.Request request4 = new okhttp3.Request.Builder()
+              .url("https://api.upbit.com/v1/candles/minutes/1?market=KRW-BTC&count=1")   //minutes(분봉), days(일봉),  weeks(주봉), months(월봉)
+              .get()
+              .addHeader("accept", "application/json")
+              .build();
+
+            try {
+
+                Response response4 = client4.newCall(request4).execute();
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+
+
+
+
+
+    }*/
 

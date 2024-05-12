@@ -1,151 +1,10 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security
-				xmlns:layout=" http://www.ultraq.net.nz/thymeleaf/layout"
-layout:decorate="~{layouts/layout}"">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>myPage</title>
+    <title>주문하기</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
     <style>
-
-        body {
-            background-color: #3e94ec;
-            font-family: "Roboto", helvetica, arial, sans-serif;
-            font-size: 16px;
-            font-weight: 400;
-            text-rendering: optimizeLegibility;
-        }
-
-        div.table-title {
-            display: block;
-            margin: auto;
-            max-width: 600px;
-            padding: 5px;
-            width: 100%;
-        }
-
-        .table-title h3 {
-            color: #fafafa;
-            font-size: 30px;
-            font-weight: 400;
-            font-style: normal;
-            font-family: "Roboto", helvetica, arial, sans-serif;
-            text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
-            text-transform: uppercase;
-        }
-
-
-        /*** Table Styles **/
-
-        .table-fill {
-            background: white;
-            border-radius: 3px;
-            border-collapse: collapse;
-            height: 320px;
-            margin: auto;
-            max-width: 600px;
-            padding: 5px;
-            width: 100%;
-            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-            animation: float 5s infinite;
-        }
-
-        th {
-            color: #D5DDE5;;
-            background: #1b1e24;
-            border-bottom: 4px solid #9ea7af;
-            border-right: 1px solid #343a45;
-            font-size: 23px;
-            font-weight: 100;
-            padding: 24px;
-            text-align: left;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-            vertical-align: middle;
-        }
-
-        th:first-child {
-            border-top-left-radius: 3px;
-        }
-
-        th:last-child {
-            border-top-right-radius: 3px;
-            border-right: none;
-        }
-
-        tr {
-            border-top: 1px solid #C1C3D1;
-            border-bottom-: 1px solid #C1C3D1;
-            color: #666B85;
-            font-size: 16px;
-            font-weight: normal;
-            text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
-        }
-
-
-        tr:first-child {
-            border-top: none;
-        }
-
-        tr:last-child {
-            border-bottom: none;
-        }
-
-        tr:nth-child(odd) td {
-            background: #EBEBEB;
-        }
-
-
-        tr:last-child td:first-child {
-            border-bottom-left-radius: 3px;
-        }
-
-        tr:last-child td:last-child {
-            border-bottom-right-radius: 3px;
-        }
-
-        td {
-            background: #FFFFFF;
-            padding: 20px;
-            text-align: left;
-            vertical-align: middle;
-            font-weight: 300;
-            font-size: 18px;
-            text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
-            border-right: 1px solid #C1C3D1;
-            color: black;
-        }
-
-        td:last-child {
-            border-right: 0px;
-        }
-
-        th.text-left {
-            text-align: left;
-        }
-
-        th.text-center {
-            text-align: center;
-        }
-
-        th.text-right {
-            text-align: right;
-        }
-
-        td.text-left {
-            text-align: left;
-        }
-
-        td.text-center {
-            text-align: center;
-            font-weight: bold;
-            color: black;
-        }
-
-        td.text-right {
-            text-align: right;
-        }
-
         input {
             background-color: #fff;
 
@@ -665,82 +524,33 @@ layout:decorate="~{layouts/layout}"">
             background: #72B08E;
         }
 
-    </style>
 
+    </style>
 </head>
 <body style="background-color:white;">
-
-
 <div id="header"></div>
+<div style="margin-top:300px; margin-left:300px; width:400px; ">
+    <h2 style="text-align: center; ">주문하기</h2>
+    <button type="button" id="accountSaveBtn" class="btn-gradient blue" style="float:right; margin-bottom:30px;"> 저장
+    </button>
+    <br/><br/>
+    <label for="access" style="font-weight: bold; ">access키</label><br/><br/>
+    <input id="access" type="text" class="form-control" style="width:300px;"/><br/><br/>
+    <label for="secret" style="font-weight: bold; ">secret키</label><br/><br/>
+    <input id="secret" type="text" style="margin-left:4px; width:300px;" class="form-control"/><br/>
+</div>
+<div style="margin-top:50px; margin-left:300px; width:400px; ">
+    <button id="orderBtn" type="button" class="btn-gradient red" style="float:right; margin-bottom:30px;">매수</button>
+    <br/><br/>
+    <label for="coin" style="font-weight: bold; ">코인</label><br/><br/>
+    <input id="coin" type="text" class="form-control" style="width:300px;"/><br/><br/>
+    <label for="price" style="font-weight: bold;">금액</label><br/><br/>
+    <input id="price" type="text" class="form-control" style="width:300px;"/>
+</div>
 
-
-<table width="100%" style="border:none">
-    <tr>
-        <td colspan="2" style="background-color:white; ">
-
-            <h4 id="userid" style="margin-top:100px;"><span th:text="${user}"
-                                                            style="font-weight:bold; color:black;"></span>님 환영합니다.</h4>
-
-            <form id="logoutForm" action="/logout" method="post">
-                <button type="submit" class="btn-gradient green">로그아웃</button>
-            </form>
-
-
-        </td>
-    </tr>
-    <tr>
-        <td style="background-color:white; color:black; width:20%">
-            <h2 style="margin-left:60px; margin-bottom:30px; font-weight:bold;">업비트 api코드</h2>
-            <button type="button" id="accountBtn" class="btn-gradient blue" style="float:right; margin-left:15px;">잔고 조회
-            </button>
-            <button type="button" id="accountSaveBtn" class="btn-gradient blue"
-                    style="float:right; margin-bottom:30px;">
-                Key 저장
-            </button>
-            <br/>
-
-            <br/>
-            <label for="access" style="margin-top:15px; font-weight: bold;">access키</label><br/><br/>
-            <input id="access" type="text" class="form-control"/><br/><br/>
-            <label for="secret" style="font-weight: bold;">secret키</label><br/><br/>
-            <input id="secret" type="text" style="margin-left:4px;" class="form-control"/>
-
-        </td>
-        <td style="height:200px; text-align:left">
-            <h4 style="text-align:center; color:red">매도 예약 주문이 걸려 있으면 수량이 '0'으로 뜹니다!!!</h4>
-            <h2 style="font-weight:bold; color:black; text-align:center; margin-bottom:40px;">my 잔고</h2>
-
-
-            <table class="table-fill">
-                <thead>
-                <tr>
-                    <th scope="row">코인</th>
-                    <th scope="row">수량</th>
-                    <th scope="row">매도</th>
-
-                </tr>
-                </thead>
-                <tbody id="Tb">
-
-                </tbody>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td colspan="2" style="">
-            <h2>FOOTER 영역</h2>
-        </td>
-    </tr>
-</table>
 
 <script>
-
     $('#header').load('header.html')
-
-
-    $('a').click(function (event) {
-        event.preventDefault();
-    });
 
     var username = '[[${user}]]';
     console.log(username);
@@ -748,7 +558,6 @@ layout:decorate="~{layouts/layout}"">
     var userid = {
         id: username
     }
-
 
     $.ajax({
         url: "/getCode",
@@ -790,328 +599,79 @@ layout:decorate="~{layouts/layout}"">
                     alert('시크릿키를 입력해주세요')
                     return
                 }
-
-                $.ajax({
-                    url: "/account",
-                    type: "POST",
-                    data: JSON.stringify(account),
-                    contentType: "application/json",
-                    dataType: "json",
-                    success: function (result) {
-
-                        /*  console.log(result) */
-
-                        $.ajax({
-                            url: "/market",
-                            type: "Get",
-                            dataType: "json",
-                            contentType: "application/json",
-                            success: function (result2) {
-
-                                if (result.error && result.error.name === 'invalid_access_key') {
-
-                                    alert('실패했습니다. 유효하지 않은 접근 키')
-                                    return false;
-                                }
-
-                                $.each(result, function (i, item) {
-
-                                    if (item.currency == 'KRW') {
-                                        item.currency = '원화';
-                                        item.balance = Math.floor(item.balance) + '원';
-                                    }
-
-                                    $.each(result2, function (j, item) {
-
-                                        if (result2[j].market.includes('KRW')) {
-
-                                            if (('KRW-' + result[i].currency) == result2[j].market) {
-                                                console.log('KRW-' + result[i].currency);
-                                                console.log(result2[j].market);
-                                                result[i].currency = result2[j].korean_name;
-
-                                            } else {
+            }
+        }
+    })
 
 
-                                            }
+    $('#orderBtn').on('click', function () {
 
+        var coin = $('#coin').val();
+        var coin2;
+        $.ajax({
+            url: "/market",
+            type: "Get",
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result2) {
 
-                                        }
+                $.each(result2, function(i,item){
 
+                    if(result2[i].korean_name.includes(coin) && result2[i].market.includes('KRW-')){
 
-                                    })
-
-                                    var row = $('<tr>');
-                                    var td1 = $('<td class="center" style="font-weight: bold;">').text(item.currency);
-                                    row.append(td1);
-                                    var td2 = $('<td class="center">').text(item.balance);
-                                    row.append(td2);
-                                    var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:50px; text-align: center;">').val('매도');
-                                    var td3 = $('<td class="center">').append(sell);
-                                    row.append(td3);
-                                    tbody.append(row);
-
-
-                                })
-
-                            }
-                        })
+                        coin2 = result2[i].market;
 
 
                     }
 
 
+
                 })
 
-
-                var a = $('#access').val();
-                var b = $('#secret').val();
-                if (a != '' && b != '') {
-
+                var type = 'bid';
+                var price = $('#price').val();
+                var accessCode = $('#access').val();
+                var secretCode = $('#secret').val();
+                var order = {
+                    coin:coin2,
+                    orderType:type,
+                    price:price,
+                    accessCode:accessCode,
+                    secretCode:secretCode
                 }
 
-                function refreshTable(account2) {
-                    tbody.empty();
-                    $.each(account2, function (i, item) {
-                        var row = $('<tr>');
-                        var td1 = $('<td class="center" style="font-weight: bold;">').text(item.currency);
-                        row.append(td1);
-                        var td2 = $('<td class="center">').text(item.balance);
-                        row.append(td2);
-                        var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:50px;" text-align: center;>').val('매도');
-                        var td3 = $('<td class="center">').append(sell);
-                        row.append(td3);
-                        tbody.append(row);
-                    })
+                $('#orderBtn').on('click', function () {
 
-                }
+                    $.ajax({
 
+                        url: "/order",
+                        type: "POST",
+                        dataType: "json",
+                        data:JSON.stringify(order),
+                        contentType: "application/json",
+                        success: function (result) {
 
-            }
+                            alert(coin+"을"+price+"원치"+"매수하였습니다.");
+                            console(result);
 
-
-        }
-
-    })
-
-
-    var tbody = $('#Tb');
-
-    function account(currency, balance) {
-        this.currency = currency;
-        this.balance = balance;
-    }
-
-    $(document).ready(function () {
-
-    })
-
-
-    $('#accountBtn').on('click', function () {
-
-        var tbody = $('#Tb');
-        tbody.empty();
-
-        var accessCode = $('#access').val();
-        var secretCode = $('#secret').val();
-        var account = {
-            accessCode: accessCode,
-            secretCode: secretCode
-        }
-
-
-        if (accessCode == '') {
-            alert('엑세스키를 입력해주세요')
-            return
-        }
-
-        if (secretCode == '') {
-            alert('시크릿키를 입력해주세요')
-            return
-        }
-
-        $.ajax({
-            url: "/account",
-            type: "POST",
-            data: JSON.stringify(account),
-            contentType: "application/json",
-            dataType: "json",
-            success: function (result) {
-
-                /*  console.log(result) */
-
-                $.ajax({
-                    url: "/market",
-                    type: "Get",
-                    dataType: "json",
-                    contentType: "application/json",
-                    success: function (result2) {
-
-                        if (result.error && result.error.name === 'invalid_access_key') {
-
-                            alert('실패했습니다. 유효하지 않은 접근 키')
-                            return false;
                         }
 
 
-                        $.each(result2, function (i, item) {
+                    })
 
 
-                        })
-
-
-                        $.each(result, function (i, item) {
-
-                            if (item.currency == 'KRW') {
-                                item.currency = '원화';
-                                item.balance = Math.floor(item.balance) + '원';
-                            }
-
-                            $.each(result2, function (j, item) {
-
-                                if (result2[j].market.includes('KRW')) {
-
-                                    if (('KRW-' + result[i].currency) == result2[j].market) {
-                                        console.log('KRW-' + result[i].currency);
-                                        console.log(result2[j].market);
-                                        result[i].currency = result2[j].korean_name;
-
-                                    } else {
-
-
-                                    }
-
-
-                                }
-
-
-                            })
-
-                            var row = $('<tr>');
-                            var td1 = $('<td class="center" style="font-weight: bold;">').text(item.currency);
-                            row.append(td1);
-                            var td2 = $('<td class="center">').text(item.balance);
-                            row.append(td2);
-                            var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:25px; text-align: center;" >').val('매도');
-                            var td3 = $('<td class="center">').append(sell);
-                            row.append(td3);
-                            tbody.append(row);
-
-
-                        })
-
-                    }
                 })
 
-
             }
-
-
         })
+
+
+
+
+
 
     })
-
-    var a = $('#access').val();
-    var b = $('#secret').val();
-    if (a != '' && b != '') {
-
-    }
-
-    function refreshTable(account2) {
-        tbody.empty();
-        $.each(account2, function (i, item) {
-            var row = $('<tr>');
-            var td1 = $('<td class="center" style="font-weight: bold;">').text(item.currency);
-            row.append(td1);
-            var td2 = $('<td class="center">').text(item.balance);
-            row.append(td2);
-            tbody.append(row);
-        })
-
-    }
-
-
-    $('#accountSaveBtn').on('click', function () {
-
-        var id = '[[${user}]]'
-        var accessCode = $('#access').val();
-        var secretCode = $('#secret').val();
-
-        var member = {
-            id: id,
-            accessCode: accessCode,
-            secretCode: secretCode
-
-        }
-
-
-        $.ajax({
-            url: "/saveCode",
-            type: "post",
-            data: JSON.stringify(member),
-            dataType: "json",
-            contentType: "application/json",
-            success: function (result) {
-
-                if (result) {
-                    alert('저장 성공!!')
-                } else {
-                    alert('저장 실패!!')
-                }
-            }
-
-
-        })
-    })
-
-
-    // $('#orderBtn').on('click', function () {
-    //
-    //     $.ajax({
-    //
-    //         url: "/order",
-    //         type: "POST",
-    //         dataType: "json",
-    //         contentType: "applcation/json",
-    //         success: function (result) {
-    //
-    //
-    //         }
-    //
-    //
-    //     })
-    //
-    //
-    // })
-
-
-    // $.ajax({
-    // 	url:"/market",
-    // 	type:"Get",
-    // 	dataType:"json",
-    // 	contentType:"application/json",
-    // 	success: function(result){
-    //
-    // 		console.log(result);
-    //
-    // 	}
-    // })
-    //
-    //
-    //   $.ajax({
-    // 	url:"/currentPrice",
-    // 	type:"Get",
-    // 	dataType:"json",
-    // 	contentType:"application/json",
-    // 	success: function(result){
-    //
-    // 		console.log(result);
-    //
-    // 	}
-    // })
-
 
 </script>
-
 </body>
 </html>

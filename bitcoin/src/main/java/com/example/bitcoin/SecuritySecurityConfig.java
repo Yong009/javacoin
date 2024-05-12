@@ -27,6 +27,7 @@ public class SecuritySecurityConfig {
 
 		.authorizeHttpRequests(request -> request
 				.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+						.requestMatchers("/board","/static/**","/*.jpg","/*.png").permitAll()
                 .anyRequest().authenticated()
 
 

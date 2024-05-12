@@ -1,363 +1,354 @@
 <!DOCTYPE html>
-
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-	<title>차트</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<style>
+    <title>차트</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
 
 
-	  	body {
-		  padding:1.5em;
-		  background: #f5f5f5
-			}
+        body {
+            padding: 1.5em;
+            background: #f5f5f5
+        }
 
-		table {
-		  border: 1px #a39485 solid;
-		  font-size: .9em;
-		  box-shadow: 0 2px 5px rgba(0,0,0,.25);
-		  width: 100%;
-		  border-collapse: collapse;
-		  border-radius: 5px;
-		  overflow: hidden;
-		   position: relative;
-		    padding-bottom: 0;
-		    border: none;
-		    box-shadow: 0 0 10px rgba(0,0,0,.2);
-
-
-			}
-
-		th {
-		  text-align: left;
-			}
-
-		thead {
-		  font-weight: bold;
-		  color: #fff;
-		  background: #73685d;
-			}
-
-		 td, th {
-		  padding: 1em .5em;
-		  vertical-align: middle;
-			}
-
-		 td {
-		  border-bottom: 1px solid rgba(0,0,0,.1);
-		  background: #fff;
-			}
-
-		a {
-		  color: #73685d;
-		}
-
-		 @media all and (max-width: 768px) {
-
-		  table, thead, tbody, th, td, tr {
-		    display: block;
-		  	}
-
-		  th {
-		    text-align: right;
-		    border-bottom: 1px solid #a39485;
-		  	}
+        table {
+            border: 1px #a39485 solid;
+            font-size: .9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            padding-bottom: 0;
+            border: none;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .2);
 
 
-		  thead {
-		    float: left;
-		    white-space: nowrap;
-		  }
+        }
 
-		  tbody {
-		    overflow-x: auto;
-		    overflow-y: hidden;
-		    position: relative;
-		    white-space: nowrap;
-		  }
+        th {
+            text-align: left;
+        }
 
-		  tr {
-		    display: inline-block;
-		    vertical-align: top;
-		  }
+        thead {
+            font-weight: bold;
+            color: #fff;
+            background: #73685d;
+        }
+
+        td, th {
+            padding: 1em .5em;
+            vertical-align: middle;
+        }
+
+        td {
+            border-bottom: 1px solid rgba(0, 0, 0, .1);
+            background: #fff;
+        }
+
+        a {
+            color: #73685d;
+        }
+
+        @media all and (max-width: 768px) {
+
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+
+            th {
+                text-align: right;
+                border-bottom: 1px solid #a39485;
+            }
 
 
+            thead {
+                float: left;
+                white-space: nowrap;
+            }
 
-		  td {
-		    border-bottom: 1px solid #e5e5e5;
-		  }
+            tbody {
+                overflow-x: auto;
+                overflow-y: hidden;
+                position: relative;
+                white-space: nowrap;
+            }
 
-		input {
-		  font-size: 15px;
-		  color: #222222;
-		  width: 300px;
-		  border: none;
-		  border-bottom: solid #aaaaaa 1px;
-		  padding-bottom: 10px;
-		  padding-left: 10px;
-		  position: relative;
-		  background: none;
-		  z-index: 5;
-		}
+            tr {
+                display: inline-block;
+                vertical-align: top;
+            }
 
-		input::placeholder { color: #aaaaaa; }
-		input:focus { outline: none; }
 
-		span {
-		  display: block;
-		  position: absolute;
-		  bottom: 0;
-		  left: 0%;  /* right로만 바꿔주면 오 - 왼 */
-		  background-color: #666;
-		  width: 0;
-		  height: 2px;
-		  border-radius: 2px;
-		  transition: 0.5s;
-		}
+            td {
+                border-bottom: 1px solid #e5e5e5;
+            }
 
-		label {
-		  position: absolute;
-		  color: #aaa;
-		  left: 10px;
-		  font-size: 20px;
-		  bottom: 8px;
-		  transition: all .2s;
-		}
+            input {
+                font-size: 15px;
+                color: #222222;
+                width: 300px;
+                border: none;
+                border-bottom: solid #aaaaaa 1px;
+                padding-bottom: 10px;
+                padding-left: 10px;
+                position: relative;
+                background: none;
+                z-index: 5;
+            }
 
-		input:focus ~ label, input:valid ~ label {
-		  font-size: 16px;
-		  bottom: 40px;
-		  color: #666;
-		  font-weight: bold;
-		}
+            input::placeholder {
+                color: #aaaaaa;
+            }
 
-		input:focus ~ span, input:valid ~ span {
-		  width: 100%;
-		}
+            input:focus {
+                outline: none;
+            }
 
-		.highlight {
-		  background-color: yellow; /* 예시로 노란색을 사용합니다. */
-		}
+            span {
+                display: block;
+                position: absolute;
+                bottom: 0;
+                left: 0%; /* right로만 바꿔주면 오 - 왼 */
+                background-color: #666;
+                width: 0;
+                height: 2px;
+                border-radius: 2px;
+                transition: 0.5s;
+            }
 
-	</style>
+            label {
+                position: absolute;
+                color: #aaa;
+                left: 10px;
+                font-size: 20px;
+                bottom: 8px;
+                transition: all .2s;
+            }
+
+            input:focus ~ label, input:valid ~ label {
+                font-size: 16px;
+                bottom: 40px;
+                color: #666;
+                font-weight: bold;
+            }
+
+            input:focus ~ span, input:valid ~ span {
+                width: 100%;
+            }
+
+            .highlight {
+                background-color: yellow; /* 예시로 노란색을 사용합니다. */
+            }
+
+    </style>
 </head>
 
-<body  style="background-color:white;">
+<body style="background-color:white;">
 
-		<div id="header"></div>
-		<div style="margin-top:150px; margin-left:100px; margin-right:100px;">
-		<h1 style=" text-align: center; margin-bottom:100px;">차트</h1>
-	    <h2 style=" margin-bottom:100px; margin-left:700px;">업비트</h2>
+<div id="header"></div>
+<div style="margin-top:150px; margin-left:100px; margin-right:100px;">
+    <h1 style=" text-align: center; margin-bottom:100px;">차트</h1>
+    <h2 style=" margin-bottom:100px; margin-left:700px;">업비트</h2>
 
 
+    <table style="width:1500px;">
+        <thead>
+        <tr id="Tr">
+            <th style="font-weight:normal">코인</th>
+            <th style="font-weight:normal">현재가</th>
+            <th style="font-weight:normal">변화</th>
+        </tr>
+        </thead>
+        <tbody id="Tb">
 
-		 <table style="width:1500px;">
-			  <thead>
-			    <tr id="Tr">
-					<th>코인</th>
-					<th>현재가</th>
-					<th>변화</th>
-			    </tr>
-			  </thead>
-			  <tbody id ="Tb">
+        </tbody>
+    </table>
+</div>
 
-			  </tbody>
-		</table>
-	</div>
+<script>
 
-	<script>
+    $('#header').load('header.html')
 
-	  	$('#header').load('header.html')
 
+    $.ajax({
+        url: "/market",
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
 
-	  		  	$.ajax({
-				url:"/market",
-				type:"GET",
-				dataType:"json",
-				contentType:"application/json",
-				success:function(result){
 
+            $.ajax({
+                url: "/currentPrice",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+                success: function (result2) {
 
-				  	$.ajax({
-						url:"/currentPrice",
-						type:"GET",
-						dataType:"json",
-						contentType:"application/json",
-						success:function(result2){
 
+                    var tablecheck = 1;
 
-                            var tablecheck = 1;
+                    var tbody = $('#Tb');
 
-							var tbody = $('#Tb');
+                    $.each(result, function (index, item) {
 
-							$.each(result,function(index,item){
+                        var market = result[index].market
 
-									var market = result[index].market
 
+                        $.each(result2, function (index2, item2) {
 
-								 $.each(result2, function(index2, item2){
 
+                            if (market == result2[index2].market) {
 
+                                var row = $('<tr>');
 
-									 if(market == result2[index2].market){
+                                var td1 = $('<td style="font-weight: bold;" id=' + tablecheck + ' >').text(result[index].korean_name + "[" + result[index].market + "]");
+                                tablecheck++;
+                                row.append(td1);
+                                var td2 = $('<td style="font-weight: bold;" id=' + tablecheck + '>').text(result2[index2].trade_price + "원");
+                                tablecheck++;
+                                row.append(td2);
 
-										    var row = $('<tr>');
 
-				                            var td1 = $('<td id='+tablecheck+'>').text(result[index].korean_name+"["+result[index].market+"]");
-				                            tablecheck++;
-				                            row.append(td1);
-				                            var td2 = $('<td id='+tablecheck+'>').text(result2[index2].trade_price+"원");
-				                            tablecheck++;
-				                            row.append(td2);
+                                if (result2[index2].opening_price > result2[index2].trade_price) {
 
+                                    var td3 = $('<td style="color:blue; font-weight:bold;" id=' + tablecheck + '>').text("-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+                                    row.append(td3);
+                                    tbody.append(row);
 
 
-									 		if(result2[index2].opening_price > result2[index2].trade_price){
+                                } else if (result2[index2].trade_price > result2[index2].opening_price) {
 
-									 			var td3 = $('<td style="color:red; font-weight:bold;" id='+tablecheck+'>').text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
-					                            row.append(td3);
-					                            tbody.append(row);
 
+                                    var td3 = $('<td style="color:red; font-weight:bold;" id=' + tablecheck + '>').text("+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+                                    row.append(td3);
+                                    tbody.append(row);
 
-									 		}else if(result2[index2].trade_price > result2[index2].opening_price){
 
+                                } else if (result2[index2].opening_price = result2[index2].trade_price) {
 
-									 			var td3 = $('<td style="color:black; font-weight:bold;" id='+tablecheck+'>').text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
-					                            row.append(td3);
-					                            tbody.append(row);
 
+                                    var td3 = $('<td class="table-primary" style="color:black; font-weight:bold;" id=' + tablecheck + '>').text("0.0%");
+                                    row.append(td3);
+                                    tbody.append(row);
 
+                                }
 
-									 		}else if(result2[index2].opening_price = result2[index2].trade_price){
+                                tablecheck++;
 
+                            }
 
-									 			var td3 = $('<td class="table-primary" style="color:black; font-weight:bold;" id='+tablecheck+'>').text("0.0%");
-					                            row.append(td3);
-					                            tbody.append(row);
+                        })
 
-									 		}
+                    })
+                }
 
-									 		tablecheck++;
+            })
 
-									 }
+        }
 
-								 })
+    })
 
-							})
-						}
 
-			  		})
+    $(document).ready(function () {
 
-				}
+        setInterval(function () {
 
-		  	})
+            var tbody = $('#Tb');
 
+            //tbody.empty();
 
+            tablecheck = 0;
+            $.ajax({
+                url: "/market",
+                type: "GET",
+                dataType: "json",
+                contentType: "application/json",
+                success: function (result) {
 
-	  	$(document).ready(function(){
+                    var tablecheck = 0;
 
-	  	  setInterval(function(){
 
-	  		var tbody = $('#Tb');
+                    $.ajax({
+                        url: "/currentPrice",
+                        type: "GET",
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (result2) {
 
-	  		 //tbody.empty();
+                            tablecheck = 1;
 
-			tablecheck = 0;
-		  	$.ajax({
-				url:"/market",
-				type:"GET",
-				dataType:"json",
-				contentType:"application/json",
-				success:function(result){
+                            $.each(result, function (index, item) {
 
-					var tablecheck = 0;
+                                var market = result[index].market
 
+                                $.each(result2, function (index2, item2) {
 
-				  	$.ajax({
-						url:"/currentPrice",
-						type:"GET",
-						dataType:"json",
-						contentType:"application/json",
-						success:function(result2){
+                                    if (market == result2[index2].market) {
 
-							tablecheck = 1;
 
-							$.each(result,function(index,item){
+                                        var tr2 = $('#' + tablecheck)
 
-								var market = result[index].market
+                                        $('#' + tablecheck).text(result[index].korean_name + "[" + result[index].market + "]");
 
-							 $.each(result2, function(index2, item2){
+                                        tablecheck++;
+                                        $('#' + tablecheck).text(result2[index2].trade_price + "원");
 
-								 if(market == result2[index2].market){
+                                        tablecheck++;
 
+                                        if (result2[index2].opening_price > result2[index2].trade_price) {
 
+                                            if ($('#' + tablecheck).text() != "-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%") {
 
-										var tr2 = $('#'+tablecheck)
+                                                $('#' + tablecheck).text("-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+                                                $('#' + tablecheck).css("background-color", "yellow");
+                                            } else {
+                                                $('#' + tablecheck).text("-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+                                                $('#' + tablecheck).css("background-color", "white");
+                                            }
 
-			                            $('#'+tablecheck).text(result[index].korean_name+"["+result[index].market+"]");
 
-										tablecheck++;
-			                            $('#'+tablecheck).text(result2[index2].trade_price+"원");
+                                        } else if (result2[index2].trade_price > result2[index2].opening_price) {
 
-			                            tablecheck++;
 
-								 		if(result2[index2].opening_price > result2[index2].trade_price){
+                                            if ($('#' + tablecheck).text() != "+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%") {
 
-								 			if($('#'+tablecheck).text() != "-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%"){
+                                                $('#' + tablecheck).text("+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+                                                $('#' + tablecheck).css("background-color", "yellow");
+                                            } else {
+                                                $('#' + tablecheck).text("+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+                                                $('#' + tablecheck).css("background-color", "white");
+                                            }
 
-								 				$('#'+tablecheck).text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
-								 				$('#'+tablecheck).css("background-color","yellow");
-								 			}else{
-								 				$('#'+tablecheck).text("-"+((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2)+"%");
-								 				$('#'+tablecheck).css("background-color","white");
-								 			}
 
+                                        } else if (result2[index2].opening_price = result2[index2].trade_price) {
 
 
+                                            $('#' + tablecheck).text("0.0%");
 
 
-								 		}else if(result2[index2].trade_price > result2[index2].opening_price){
+                                        }
+                                        tablecheck++;
 
+                                    }
 
-								 			if($('#'+tablecheck).text() != "+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%"){
+                                })
 
-								 				$('#'+tablecheck).text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
-								 				$('#'+tablecheck).css("background-color","yellow");
-								 			}else{
-								 				$('#'+tablecheck).text("+"+((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100 ).toFixed(2)+"%");
-								 				$('#'+tablecheck).css("background-color","white");
-								 			}
+                            })
 
 
+                        }
 
+                    })
 
+                }
 
-
-								 		}else if(result2[index2].opening_price = result2[index2].trade_price){
-
-
-								 			 $('#'+tablecheck).text("0.0%");
-
-
-								 		}
-								 		tablecheck++;
-
-								 }
-
-							 })
-
-						})
-
-
-						}
-
-			  		})
-
-				}
-
-		  	})
-	  		}, 3000);
-	  	})
-		</script>
-	</body>
+            })
+        }, 3000);
+    })
+</script>
+</body>
 </html>
