@@ -809,11 +809,11 @@ layout:decorate="~{layouts/layout}"">
                             success: function (result2) {
 
                                 if (result.error && result.error.name === 'invalid_access_key') {
-
                                     alert('실패했습니다. 유효하지 않은 접근 키')
                                     return false;
                                 }
 
+                                var check = [];
                                 $.each(result, function (i, item) {
 
                                     if (item.currency == 'KRW') {
@@ -826,10 +826,11 @@ layout:decorate="~{layouts/layout}"">
                                         if (result2[j].market.includes('KRW')) {
 
                                             if (('KRW-' + result[i].currency) == result2[j].market) {
-                                                console.log('KRW-' + result[i].currency);
-                                                console.log(result2[j].market);
-                                                result[i].currency = result2[j].korean_name;
 
+                                                //console.log('KRW-' + result[i].currency);
+                                                //console.log(result2[j].market);
+                                                result[i].currency = result2[j].korean_name;
+                                                check.push(result2[j].korean_name);
                                             } else {
 
 
@@ -846,9 +847,57 @@ layout:decorate="~{layouts/layout}"">
                                     row.append(td1);
                                     var td2 = $('<td class="center">').text(item.balance);
                                     row.append(td2);
-                                    var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:50px; text-align: center;">').val('매도');
-                                    var td3 = $('<td class="center">').append(sell);
-                                    row.append(td3);
+
+                                    if(item.currency == '원화'){
+                                        var sell2 = $('<td class="center">').val('');
+                                        var td3 = $('<td class="center">').append(sell2);
+                                        row.append(td3);
+
+                                    }else if(check.includes(item.currency)==true) {
+                                        var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:50px; text-align: center;">').val('매도');
+                                        var td3 = $('<td class="center">').append(sell);
+                                        row.append(td3);
+
+                                        sell.on('click',function(){
+                                            var accessCode = $('#access').val();
+                                            var secretCode = $('#secret').val();
+                                            var korean_name   = item.currency;
+                                            var volumn2       = item.balance;
+                                            var name;
+                                            $.ajax({
+                                            	url:"/market",
+                                            	type:"Get",
+                                            	dataType:"json",
+                                            	contentType:"application/json",
+                                            	success: function(result3){
+
+                                            		    $.each(result3,function(m,item){
+
+                                                            if(korean_name == result3[m].korean_name){
+                                                                name = result3[m].market;
+                                                            }
+                                                        })
+
+                                            	}
+                                            })
+
+                                            var order = {
+                                                coin:name,
+                                                volume:volumn2,
+                                                accessCode:accessCode,
+                                                secretCode:secretCode
+                                            }
+                                                // sell ajax 구현 ( 밑에 버튼에도 매도 버튼이랑 sell ajax 구현 )
+                                        })
+                                    }else{
+                                        var sell3 = $('<td class="center">').val('');
+                                        var td3 = $('<td class="center">').append(sell3);
+                                        row.append(td3);
+                                    }
+
+
+
+                                    console.log(item.currency)
                                     tbody.append(row);
 
 
