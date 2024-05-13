@@ -529,22 +529,22 @@
 </head>
 <body style="background-color:white;">
 <div id="header"></div>
-<div style="margin-top:300px; margin-left:300px; width:400px; ">
+<div style="margin-top:300px; margin-left:700px; width:400px; ">
     <h2 style="text-align: center; ">주문하기</h2>
+
     <button type="button" id="accountSaveBtn" class="btn-gradient blue" style="float:right; margin-bottom:30px;"> 저장
-    </button>
-    <br/><br/>
+    </button><br/><br/>
     <label for="access" style="font-weight: bold; ">access키</label><br/><br/>
     <input id="access" type="text" class="form-control" style="width:300px;"/><br/><br/>
     <label for="secret" style="font-weight: bold; ">secret키</label><br/><br/>
     <input id="secret" type="text" style="margin-left:4px; width:300px;" class="form-control"/><br/>
 </div>
-<div style="margin-top:50px; margin-left:300px; width:400px; ">
+<div style="margin-top:50px; margin-left:700px; width:400px; ">
     <button id="orderBtn" type="button" class="btn-gradient red" style="float:right; margin-bottom:30px;">매수</button>
     <br/><br/>
     <label for="coin" style="font-weight: bold; ">코인</label><br/><br/>
-    <input id="coin" type="text" class="form-control" style="width:300px;"/><br/><br/>
-    <label for="price" style="font-weight: bold;">금액</label><br/><br/>
+    <select id="coins" style="width:335px; height:50px; font-size:15px;"></select><br/><br/>
+        <label for="price" style="font-weight: bold;">금액(원)</label><br/><br/>
     <input id="price" type="text" class="form-control" style="width:300px;"/>
 </div>
 
@@ -604,9 +604,38 @@
     })
 
 
+      $.ajax({
+     	url:"/market",
+     	type:"Get",
+     	dataType:"json",
+     	contentType:"application/json",
+     	success: function(result){
+
+     		$.each(result,function(i,item){
+
+     			if(result[i].market.includes('KRW')){
+
+	     			var option = $('<option style="height:50px; font-size:15px;">');
+	     	     	var text = result[i].korean_name;
+
+	     	     	option.text(text);
+					$('#coins').append(option);
+
+
+     			}
+
+
+
+     		})
+
+    	 }
+      })
+
+
     $('#orderBtn').on('click', function () {
 
-        var coin = $('#coin').val();
+        //var coin = $('#coin').val();
+		var coin = $('#coin2').val();
         var coin2;
         $.ajax({
             url: "/market",
@@ -617,7 +646,7 @@
 
                 $.each(result2, function(i,item){
 
-                    if(result2[i].korean_name.includes(coin) && result2[i].market.includes('KRW-')){
+                    if(result2[i].korean_name == coin && result2[i].market.includes('KRW-')){
 
                         coin2 = result2[i].market;
 
@@ -630,6 +659,10 @@
 
                 var type = 'bid';
                 var price = $('#price').val();
+
+                if(price<5000){
+					alert('최소주문금액은 5000원 이상입니다!!!')
+                }
                 var accessCode = $('#access').val();
                 var secretCode = $('#secret').val();
                 var order = {
