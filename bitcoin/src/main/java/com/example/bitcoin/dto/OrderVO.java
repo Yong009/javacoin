@@ -10,7 +10,15 @@ import lombok.Setter;
 @Setter
 public class OrderVO {
 
-    String coin;   // 코인명 ( ex)KRW-BTC )
+    public String getVolume() {
+		return volume;
+	}
+
+	public void setVolume(String volume) {
+		this.volume = volume;
+	}
+
+	String coin;   // 코인명 ( ex)KRW-BTC )
     String orderType;  // 매수(bid) or 매도(ask)
     String price;      // 살 금액
     String accessCode; // 엑세스코드

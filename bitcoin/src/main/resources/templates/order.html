@@ -635,7 +635,8 @@
     $('#orderBtn').on('click', function () {
 
         //var coin = $('#coin').val();
-		var coin = $('#coin2').val();
+		var coin = $('#coins').val();
+		//console.log(coin);
         var coin2;
         $.ajax({
             url: "/market",
@@ -649,7 +650,7 @@
                     if(result2[i].korean_name == coin && result2[i].market.includes('KRW-')){
 
                         coin2 = result2[i].market;
-
+						console.log(coin2);
 
                     }
 
@@ -685,7 +686,7 @@
                         success: function (result) {
 
                             alert(coin+"을"+price+"원치"+"매수하였습니다.");
-                            console(result);
+                            console(result[0].market);
 
                         }
 

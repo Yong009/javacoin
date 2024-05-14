@@ -331,21 +331,29 @@ public class GetAccounts<ChartData> {
         String serverUrl = "https://api.upbit.com";
 
         HashMap<String, String> params = new HashMap<>();
+        //vo.setCoin("KRW-BTC");
         params.put("market", vo.getCoin());
+        //params.put("market", "KRW-BTC");
+        //params.put("side", "bid");
+        params.put("side", vo.getOrderType());               //bid : 매수 ,  ask: 매도
+        //params.put("side", "bid");               //bid : 매수 ,  ask: 매도
+//        if(vo.getOrderType() != "bid") {
+//        	params.put("volume", vo.getVolume());
+//        }
+        //params.put("price", "10000");
+
+        params.put("price", vo.getPrice());
+        //params.put("price", "10000");
+        params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
+
         System.out.println(vo.getCoin());
         System.out.println(vo.getOrderType());
         System.out.println(vo.getPrice());
         System.out.println(vo.getAccessCode());
         System.out.println(vo.getSecretCode());
-        //params.put("market", "KRW-BTC");
-        params.put("side", vo.getOrderType());               //bid : 매수 ,  ask: 매도
-        //params.put("side", "bid");               //bid : 매수 ,  ask: 매도
-        //params.put("price", "10000");
-        params.put("price", vo.getPrice());
-        params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
 
         ArrayList<String> queryElements = new ArrayList<>();
-        for (Map.Entry<String, String> entity : params.entrySet()) {
+        for(Map.Entry<String, String> entity : params.entrySet()) {
             queryElements.add(entity.getKey() + "=" + entity.getValue());
         }
 
