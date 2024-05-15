@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security
-				xmlns:layout=" http://www.ultraq.net.nz/thymeleaf/layout"
-layout:decorate="~{layouts/layout}"">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>myPage</title>
@@ -792,7 +790,7 @@ layout:decorate="~{layouts/layout}"">
                 }
 
                 $.ajax({
-                    url: "/account",
+                    url: "/account7",
                     type: "POST",
                     data: JSON.stringify(account),
                     contentType: "application/json",
@@ -802,7 +800,7 @@ layout:decorate="~{layouts/layout}"">
                         /*  console.log(result) */
 
                         $.ajax({
-                            url: "/market",
+                            url: "/market7",
                             type: "Get",
                             dataType: "json",
                             contentType: "application/json",
@@ -848,56 +846,73 @@ layout:decorate="~{layouts/layout}"">
                                     var td2 = $('<td class="center">').text(item.balance);
                                     row.append(td2);
 
-                                    if(item.currency == '원화'){
+                                    if (item.currency == '원화') {
                                         var sell2 = $('<td class="center">').val('');
                                         var td3 = $('<td class="center">').append(sell2);
                                         row.append(td3);
 
-                                    }else if(check.includes(item.currency)==true) {
-                                        var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:50px; text-align: center;">').val('매도');
+                                    } else if (check.includes(item.currency) == true) {
+                                        var sell = $('<button type="button" id="sellBtn" class="btn-gradient blue" style="height:30px; width:50px; text-align: center;">').text('매도');
                                         var td3 = $('<td class="center">').append(sell);
                                         row.append(td3);
 
-                                        sell.on('click',function(){
+                                        sell.on('click', function () {
+
                                             var accessCode = $('#access').val();
                                             var secretCode = $('#secret').val();
-                                            var korean_name   = item.currency;
-                                            var volumn2       = item.balance;
+                                            var korean_name = item.currency;
+                                            //console.log(korean_name)
+                                            var volume = item.balance;
+                                            var orderType = "ask";
                                             var name;
+
                                             $.ajax({
-                                            	url:"/market",
-                                            	type:"Get",
-                                            	dataType:"json",
-                                            	contentType:"application/json",
-                                            	success: function(result3){
+                                                url: "/market7",
+                                                type: "Get",
+                                                dataType: "json",
+                                                contentType: "application/json",
+                                                success: function (result3) {
 
-                                            		    $.each(result3,function(m,item){
+                                                    $.each(result3, function (m, item) {
 
-                                                            if(korean_name == result3[m].korean_name){
-                                                                name = result3[m].market;
+                                                        if (korean_name == result3[m].korean_name && result3[m].market.includes('KRW-')) {
+                                                            name = result3[m].market;
+                                                            var order = {
+                                                                coin: name,
+                                                                volume: volume,
+                                                                accessCode: accessCode,
+                                                                secretCode: secretCode,
+                                                                orderType: orderType
+
                                                             }
-                                                        })
+                                                            $.ajax({
+                                                                url: "/sell7",
+                                                                type: "POST",
+                                                                data: JSON.stringify(order),
+                                                                dataType: "json",
+                                                                contentType: "application/json",
+                                                                success: function (result) {
+                                                                    location.href = "/mainPage";
+                                                                }
 
-                                            	}
+
+                                                            })
+                                                        }
+                                                    })
+                                                }
                                             })
 
-                                            var order = {
-                                                coin:name,
-                                                volume:volumn2,
-                                                accessCode:accessCode,
-                                                secretCode:secretCode
-                                            }
-                                                // sell ajax 구현 ( 밑에 버튼에도 매도 버튼이랑 sell ajax 구현 )
+
+                                            // sell ajax 구현 ( 밑에 버튼에도 매도 버튼이랑 sell ajax 구현 )
                                         })
-                                    }else{
+                                    } else {
                                         var sell3 = $('<td class="center">').val('');
                                         var td3 = $('<td class="center">').append(sell3);
                                         row.append(td3);
                                     }
 
 
-
-                                    console.log(item.currency)
+                                    //console.log(item.currency)
                                     tbody.append(row);
 
 
@@ -913,12 +928,6 @@ layout:decorate="~{layouts/layout}"">
                 })
 
 
-                var a = $('#access').val();
-                var b = $('#secret').val();
-                if (a != '' && b != '') {
-
-                }
-
                 function refreshTable(account2) {
                     tbody.empty();
                     $.each(account2, function (i, item) {
@@ -927,7 +936,7 @@ layout:decorate="~{layouts/layout}"">
                         row.append(td1);
                         var td2 = $('<td class="center">').text(item.balance);
                         row.append(td2);
-                        var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:50px;" text-align: center;>').val('매도');
+                        var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:50px;" text-align: center;>').text('매도');
                         var td3 = $('<td class="center">').append(sell);
                         row.append(td3);
                         tbody.append(row);
@@ -950,11 +959,6 @@ layout:decorate="~{layouts/layout}"">
         this.currency = currency;
         this.balance = balance;
     }
-
-    $(document).ready(function () {
-
-    })
-
 
     $('#accountBtn').on('click', function () {
 
@@ -980,7 +984,7 @@ layout:decorate="~{layouts/layout}"">
         }
 
         $.ajax({
-            url: "/account",
+            url: "/account7",
             type: "POST",
             data: JSON.stringify(account),
             contentType: "application/json",
@@ -990,7 +994,7 @@ layout:decorate="~{layouts/layout}"">
                 /*  console.log(result) */
 
                 $.ajax({
-                    url: "/market",
+                    url: "/market7",
                     type: "Get",
                     dataType: "json",
                     contentType: "application/json",
@@ -1001,14 +1005,7 @@ layout:decorate="~{layouts/layout}"">
                             alert('실패했습니다. 유효하지 않은 접근 키')
                             return false;
                         }
-
-
-                        $.each(result2, function (i, item) {
-
-
-                        })
-
-
+                        var check = [];
                         $.each(result, function (i, item) {
 
                             if (item.currency == 'KRW') {
@@ -1021,19 +1018,13 @@ layout:decorate="~{layouts/layout}"">
                                 if (result2[j].market.includes('KRW')) {
 
                                     if (('KRW-' + result[i].currency) == result2[j].market) {
-                                        console.log('KRW-' + result[i].currency);
-                                        console.log(result2[j].market);
+                                        //console.log('KRW-' + result[i].currency);
+                                        // console.log(result2[j].market);
                                         result[i].currency = result2[j].korean_name;
-
-                                    } else {
-
+                                        check.push(result2[j].korean_name);
 
                                     }
-
-
                                 }
-
-
                             })
 
                             var row = $('<tr>');
@@ -1041,9 +1032,20 @@ layout:decorate="~{layouts/layout}"">
                             row.append(td1);
                             var td2 = $('<td class="center">').text(item.balance);
                             row.append(td2);
-                            var sell = $('<button type="button" id="sellBtn" class="btn-gradient blue" style="width:25px; text-align: center;" >').val('매도');
-                            var td3 = $('<td class="center">').append(sell);
-                            row.append(td3);
+                            if (item.currency == '원화') {
+                                var sell2 = $('<td class="center">').val('');
+                                var td3 = $('<td class="center">').append(sell2);
+                                row.append(td3);
+                            } else if (check.includes(item.currency) == true) {
+                                var sell = $('<button type="button" id="sellBtn" class="btn-gradient blue" style="height:30px; width:25px;">').text('매도');
+                                var td3 = $('<td class="center">').append(sell);
+                                row.append(td3);
+                            } else {
+                                var sell3 = $('<td class="center">').val('');
+                                var td3 = $('<td class="center">').append(sell3);
+                                row.append(td3);
+                            }
+
                             tbody.append(row);
 
 
@@ -1060,12 +1062,6 @@ layout:decorate="~{layouts/layout}"">
 
     })
 
-    var a = $('#access').val();
-    var b = $('#secret').val();
-    if (a != '' && b != '') {
-
-    }
-
     function refreshTable(account2) {
         tbody.empty();
         $.each(account2, function (i, item) {
@@ -1079,7 +1075,6 @@ layout:decorate="~{layouts/layout}"">
 
     }
 
-
     $('#accountSaveBtn').on('click', function () {
 
         var id = '[[${user}]]'
@@ -1092,7 +1087,6 @@ layout:decorate="~{layouts/layout}"">
             secretCode: secretCode
 
         }
-
 
         $.ajax({
             url: "/saveCode",
@@ -1108,7 +1102,6 @@ layout:decorate="~{layouts/layout}"">
                     alert('저장 실패!!')
                 }
             }
-
 
         })
     })
@@ -1135,7 +1128,7 @@ layout:decorate="~{layouts/layout}"">
 
 
     // $.ajax({
-    // 	url:"/market",
+    // 	url:"/market7",
     // 	type:"Get",
     // 	dataType:"json",
     // 	contentType:"application/json",
@@ -1148,7 +1141,7 @@ layout:decorate="~{layouts/layout}"">
     //
     //
     //   $.ajax({
-    // 	url:"/currentPrice",
+    // 	url:"/currentPrice7",
     // 	type:"Get",
     // 	dataType:"json",
     // 	contentType:"application/json",
