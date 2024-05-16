@@ -1,35 +1,14 @@
 package com.example.bitcoin;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
-import java.math.BigInteger;
-import java.security.MessageDigest;
+import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import com.example.bitcoin.dto.*;
-import com.google.gson.JsonParser;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,15 +20,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
+import com.example.bitcoin.dto.BoardVO;
+import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import okhttp3.OkHttpClient;
 
 @Controller
 public class GetAccounts<ChartData> {
@@ -147,50 +123,7 @@ public class GetAccounts<ChartData> {
         return result;
     }
 
-//    // 잔고 조회
-//    @ResponseBody
-//    @PostMapping("/account")
-//    public String account(@RequestBody MemberVO vo) {
-//
-//        String accessKey = vo.getAccessCode();
-//        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
-//        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
-//        String secretKey = vo.getSecretCode();
-//        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
-//        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
-//        String serverUrl = "https://api.upbit.com";
-//
-//        Algorithm algorithm = Algorithm.HMAC256(secretKey);
-//        String jwtToken = JWT.create().withClaim("access_key", accessKey)
-//                .withClaim("nonce", UUID.randomUUID().toString()).sign(algorithm);
-//
-//        String authenticationToken = "Bearer " + jwtToken;
-//
-//        HttpClient client = HttpClientBuilder.create().build();
-//        HttpGet request = new HttpGet(serverUrl + "/v1/accounts");
-//        request.setHeader("Content-Type", "application/json");
-//        request.addHeader("Authorization", authenticationToken);
-//
-//        HttpResponse response = null;
-//        try {
-//            response = client.execute(request);
-//
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        HttpEntity entity = response.getEntity();
-//        String result = null;
-//        try {
-//
-//            result = EntityUtils.toString(entity, "UTF-8");
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return result;
-//    }
+
 
     // 로그인 후 첫 페이지 ( 로그인 정보 가져옴 )
     @GetMapping("/mainPage")
@@ -257,54 +190,155 @@ public class GetAccounts<ChartData> {
         return coinservice2.market7();
     }
 
+    //변동성 돌파 전략
     @ResponseBody
     @GetMapping("/autoTrade")
-    public void auto() {
+    public void auto() throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
-        String a = coinservice2.market7();
-        String b = coinservice2.currentPrice7();
+    	boolean b1 = true;
 
-        System.out.println(a);
-        //JSONArray, JSONObject, JSON.parse 등 찾아보기
-        JSONArray jsonArray = new JSONArray(a);
+    	while(b1) {
 
-        for(int i=0; i<jsonArray.length(); i++){
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-            String koreanName = jsonObject.getString("korean_name");
-            System.out.println(koreanName);
-        }
+    		boolean b2 = true;
+	    	MemberVO vo = new MemberVO();
+			vo.setAccessCode("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");
+			vo.setSecretCode("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");
 
-        System.out.println(b);
+	        String a = coinservice2.market7();
+	        String b = coinservice2.currentPrice7();
+	        String c = coinservice2.account7(vo);
+	        String market;
+	        String market2;
+	        String koreanName;
+	        String currency;
+	        String balance;
+	        String coin2;
 
+	        BigDecimal lowPrice;
+	        BigDecimal highPrice;
+	        BigDecimal prevClosePrice;
+	        BigDecimal targetPrice;
+	        BigDecimal minus;
+	        BigDecimal multi;
+	        BigDecimal dotFive = new BigDecimal(0.5);
+	        BigDecimal nowPrice;
+
+	        JSONArray jsonArray = new JSONArray(a);   //마켓
+	        JSONArray jsonArray2 = new JSONArray(b);  //현재가
+	        JSONArray jsonArray3 = new JSONArray(c);  //잔고
+
+	        //for(int i=0; i<jsonArray.length(); i++){
+	            //JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+	            //market = jsonObject.getString("market");
+	            //koreanName = jsonObject.getString("korean_name");
+
+	            for(int j=0; j<jsonArray2.length(); j++) {
+
+	            	JSONObject jsonObject2 = jsonArray2.getJSONObject(j);
+	            	market2 = jsonObject2.getString("market");
+
+	            	if(market2.contains("KRW-BTC")) {
+
+	                	highPrice = jsonObject2.getBigDecimal("high_price");
+	                	lowPrice = jsonObject2.getBigDecimal("low_price");
+	                	prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
+	                	nowPrice = jsonObject2.getBigDecimal("trade_price");
+	                	minus = highPrice.subtract(lowPrice);
+	                	multi = minus.multiply(dotFive);
+	                	targetPrice = prevClosePrice.add(multi);
+
+	                	// add 덧셈 subtract 뺄셈, multiply 곱셈, divide 나눗셈
+
+
+	                	//-1 작은 경우,  0 같은 경우, 1 큰경우
+	                	if(targetPrice.compareTo(nowPrice) <= 0) {
+
+	                		System.out.println("목표 타겟 도달!!!");
+
+	                		for(int i=0; i<jsonArray3.length(); i++) {
+
+	                			JSONObject jsonObject3 = jsonArray3.getJSONObject(i);
+
+	                			currency = jsonObject3.getString("currency");
+	                			//balance  = jsonObject3.getString("balance");
+
+	                			if(currency.equals("KRW")) {
+	                				OrderVO vo2 = new OrderVO();
+	                				vo2.setCoin("KRW-BTC");
+	                				vo2.setAccessCode(vo.getAccessCode());
+	                				vo2.setSecretCode(vo.getSecretCode());
+	                				vo2.setOrderType("bid");
+	                				vo2.setPrice("10000");
+	                				coinservice2.order7(vo2);
+
+	                				while(b2) {
+
+		                				String d = coinservice2.account7(vo);
+		                				JSONArray jsonArray4 = new JSONArray(d);
+
+		                				for(int idx=0; idx<jsonArray4.length(); idx++) {
+
+
+		                					JSONObject jsonObject4 = jsonArray4.getJSONObject(idx);
+		                					coin2 = jsonObject4.getString("currency");
+
+		                					if(coin2.equals("BTC")) {
+
+		                						LocalTime now = LocalTime.now();
+		                				    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+		                				    	String formatedNow = now.format(formatter);
+
+		                				    	if(formatedNow =="09:00") {
+
+		                				    		balance = jsonObject4.getString("balance");
+				                					System.out.println(balance);
+					                				OrderVO vo3 = new OrderVO();
+					                				vo3.setCoin("KRW-BTC");
+					                				vo3.setAccessCode(vo.getAccessCode());
+					                				vo3.setSecretCode(vo.getSecretCode());
+					                				vo3.setOrderType("ask");
+					                				vo3.setVolume(balance);
+
+					                				coinservice2.sell7(vo3);
+					                				b2 = false;
+
+					                				try {
+			                				    		Thread.sleep(30000);
+			                				    	}catch(InterruptedException e){
+			                				    		e.printStackTrace();
+			                				    	}
+
+		                				    	}
+		                			   }
+
+	                		      }
+
+		                				try {
+                				    		Thread.sleep(1000);
+                				    	}catch(InterruptedException e){
+                				    		e.printStackTrace();
+                				    	}
+
+	                			}
+	                		}
+	                		}
+
+
+	                	}else {
+	                		System.out.println("목표 타겟 미 도달!!");
+
+	                	}
+
+
+	                 }
+	            }
+
+    	}
     }
 
-//    //마켓 정보
-//    @ResponseBody
-//    @GetMapping("/market")
-//    public String market() {
-//
-//
-//        OkHttpClient client4 = new OkHttpClient();
-//
-//
-//        okhttp3.Request request4 = new okhttp3.Request.Builder()
-//                .url("https://api.upbit.com/v1/market/all")
-//                .get()
-//                .addHeader("accept", "application/json")
-//                .build();
-//
-//        String responseBody = null;
-//        try {
-//
-//            okhttp3.Response response4 = client4.newCall(request4).execute();
-//            responseBody = response4.body().string();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        /* System.out.println(responseBody); */
-//        return responseBody;
-//    }
+
 
     //현재가 정보
     @ResponseBody
@@ -315,68 +349,7 @@ public class GetAccounts<ChartData> {
     }
 
 
-//    //현재가 정보
-//    @ResponseBody
-//    @GetMapping("/currentPrice")
-//    public String currentPrice() {
-//
-//
-//        OkHttpClient client4 = new OkHttpClient();
-//
-//
-//        okhttp3.Request request4 = new okhttp3.Request.Builder()
-//                .url("https://api.upbit.com/v1/market/all")
-//                .get()
-//                .addHeader("accept", "application/json")
-//                .build();
-//
-//        String responseBody = null;
-//        try {
-//
-//            okhttp3.Response response4 = client4.newCall(request4).execute();
-//            responseBody = response4.body().string();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        Gson gson = new Gson();
-//        Type marketListType = new TypeToken<ArrayList<MarketVO>>() {
-//        }.getType();
-//        ArrayList<MarketVO> allMarkets = gson.fromJson(responseBody, marketListType);
-//
-//
-//        List<String> krwMarkets = allMarkets.stream()
-//                .filter(market -> market.getMarket().startsWith("KRW-")) // getMarket()으로 수정
-//                .map(market -> market.getMarket()) // getMarket()으로 수정
-//                .collect(Collectors.toList());
-//
-//        /*String marketParam = String.join(",", krwMarkets.subList(0, Math.min(krwMarkets.size(), 10)));*/
-//        String marketParam = String.join(",", krwMarkets);
-//
-//        okhttp3.Request tickerRequest = new okhttp3.Request.Builder()
-//                .url("https://api.upbit.com/v1/ticker?markets=" + marketParam)  //marketParam
-//                .get()
-//                .addHeader("Accept", "application/json")
-//                .build();
-//
-//
-//        OkHttpClient client5 = new OkHttpClient();
-//        String tickerResponseBody = null;
-//        TickerVO tickerResponseBody2 = null;
-//        try {
-//            okhttp3.Response tickerResponse = client5.newCall(tickerRequest).execute();
-//            tickerResponseBody = tickerResponse.body().string();
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//        /* System.out.println(tickerResponseBody); */
-//
-//
-//        return tickerResponseBody;
-//    }
+
 
     // 매수 주문 test
     @ResponseBody
@@ -387,78 +360,7 @@ public class GetAccounts<ChartData> {
         return a;
     }
 
-//    // 매수 주문하기
-//    @ResponseBody
-//    @PostMapping("/order")
-//    public void order(@RequestBody OrderVO vo) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//
-//        String accessKey = vo.getAccessCode();
-//        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
-//        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
-//        String secretKey = vo.getSecretCode();
-//        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
-//        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
-//        String serverUrl = "https://api.upbit.com";
-//
-//        HashMap<String, String> params = new HashMap<>();
-//        //vo.setCoin("KRW-BTC");
-//        params.put("market", vo.getCoin());
-//        //params.put("market", "KRW-BTC");
-//        //params.put("side", "bid");
-//        params.put("side", vo.getOrderType());               //bid : 매수 ,  ask: 매도
-//        //params.put("side", "bid");               //bid : 매수 ,  ask: 매도
-////        if(vo.getOrderType() != "bid") {
-////        	params.put("volume", vo.getVolume());
-////        }
-//        //params.put("price", "10000");
-//
-//        params.put("price", vo.getPrice());
-//        //params.put("price", "10000");
-//        params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
-//
-//        System.out.println(vo.getCoin());
-//        System.out.println(vo.getOrderType());
-//        System.out.println(vo.getPrice());
-//        System.out.println(vo.getAccessCode());
-//        System.out.println(vo.getSecretCode());
-//
-//        ArrayList<String> queryElements = new ArrayList<>();
-//        for (Map.Entry<String, String> entity : params.entrySet()) {
-//            queryElements.add(entity.getKey() + "=" + entity.getValue());
-//        }
-//
-//        String queryString = String.join("&", queryElements.toArray(new String[0]));
-//
-//        MessageDigest md = MessageDigest.getInstance("SHA-512");
-//        md.update(queryString.getBytes("UTF-8"));
-//
-//        String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));
-//
-//        Algorithm algorithm = Algorithm.HMAC256(secretKey);
-//        String jwtToken = JWT.create()
-//                .withClaim("access_key", accessKey)
-//                .withClaim("nonce", UUID.randomUUID().toString())
-//                .withClaim("query_hash", queryHash)
-//                .withClaim("query_hash_alg", "SHA512")
-//                .sign(algorithm);
-//
-//        String authenticationToken = "Bearer " + jwtToken;
-//
-//        try {
-//            HttpClient client = HttpClientBuilder.create().build();
-//            HttpPost request = new HttpPost(serverUrl + "/v1/orders");
-//            request.setHeader("Content-Type", "application/json");
-//            request.addHeader("Authorization", authenticationToken);
-//            request.setEntity(new StringEntity(new Gson().toJson(params)));
-//
-//            HttpResponse response = client.execute(request);
-//            HttpEntity entity = response.getEntity();
-//
-//            System.out.println(EntityUtils.toString(entity, "UTF-8"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 
     //매도 하기 test
     @ResponseBody
@@ -469,73 +371,7 @@ public class GetAccounts<ChartData> {
         return a;
     }
 }
-//매도하기
-//    @ResponseBody
-//    @PostMapping("/sell")
-//    public void sell(@RequestBody OrderVO vo) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//
-//        String accessKey = vo.getAccessCode();
-//        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
-//        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
-//        String secretKey = vo.getSecretCode();
-//        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
-//        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
-//        String serverUrl = "https://api.upbit.com";
-//
-//        HashMap<String, String> params = new HashMap<>();
-//        params.put("market", vo.getCoin());
-//        //params.put("market", "KRW-BTC");
-//        //params.put("market", "KRW-BTC");
-//        params.put("side", vo.getOrderType());  //bid : 매수 ,  ask: 매도
-//        params.put("volume", vo.getVolume());
-//        //params.put("price", vo.getPrice());
-//        params.put("ord_type", "market");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
-//        System.out.println(vo.getCoin());
-//        System.out.println(vo.getOrderType());
-//        System.out.println(vo.getVolume());
-//
-//        System.out.println(vo.getAccessCode());
-//        System.out.println(vo.getSecretCode());
-//
-//        ArrayList<String> queryElements = new ArrayList<>();
-//        for (Map.Entry<String, String> entity : params.entrySet()) {
-//            queryElements.add(entity.getKey() + "=" + entity.getValue());
-//        }
-//
-//        String queryString = String.join("&", queryElements.toArray(new String[0]));
-//
-//        MessageDigest md = MessageDigest.getInstance("SHA-512");
-//        md.update(queryString.getBytes("UTF-8"));
-//
-//        String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));
-//
-//        Algorithm algorithm = Algorithm.HMAC256(secretKey);
-//        String jwtToken = JWT.create()
-//                .withClaim("access_key", accessKey)
-//                .withClaim("nonce", UUID.randomUUID().toString())
-//                .withClaim("query_hash", queryHash)
-//                .withClaim("query_hash_alg", "SHA512")
-//                .sign(algorithm);
-//
-//        String authenticationToken = "Bearer " + jwtToken;
-//
-//        try {
-//            HttpClient client = HttpClientBuilder.create().build();
-//            HttpPost request = new HttpPost(serverUrl + "/v1/orders");
-//            request.setHeader("Content-Type", "application/json");
-//            request.addHeader("Authorization", authenticationToken);
-//            request.setEntity(new StringEntity(new Gson().toJson(params)));
-//
-//            HttpResponse response = client.execute(request);
-//            HttpEntity entity = response.getEntity();
-//
-//            System.out.println(EntityUtils.toString(entity, "UTF-8"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//}
-//
+
 
 
 //	//코인 검색(이름)
@@ -777,4 +613,5 @@ public class GetAccounts<ChartData> {
 
 
     }*/
+
 

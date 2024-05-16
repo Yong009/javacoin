@@ -250,11 +250,11 @@ public class coinserviceimpl implements coinservice {
         //params.put("price", "10000");
         params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
 
-        System.out.println(vo.getCoin());
-        System.out.println(vo.getOrderType());
-        System.out.println(vo.getPrice());
-        System.out.println(vo.getAccessCode());
-        System.out.println(vo.getSecretCode());
+//        System.out.println(vo.getCoin());
+//        System.out.println(vo.getOrderType());
+//        System.out.println(vo.getPrice());
+//        System.out.println(vo.getAccessCode());
+//        System.out.println(vo.getSecretCode());
 
         ArrayList<String> queryElements = new ArrayList<>();
         for (Map.Entry<String, String> entity : params.entrySet()) {
@@ -298,6 +298,7 @@ public class coinserviceimpl implements coinservice {
         return "";
     }
 
+    //매도하기
     @Override
     public String sell7(OrderVO vo) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String accessKey = vo.getAccessCode();
@@ -316,12 +317,12 @@ public class coinserviceimpl implements coinservice {
         params.put("volume", vo.getVolume());
         //params.put("price", vo.getPrice());
         params.put("ord_type", "market");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
-        System.out.println(vo.getCoin());
-        System.out.println(vo.getOrderType());
-        System.out.println(vo.getVolume());
-
-        System.out.println(vo.getAccessCode());
-        System.out.println(vo.getSecretCode());
+//        System.out.println(vo.getCoin());
+//        System.out.println(vo.getOrderType());
+//        System.out.println(vo.getVolume());
+//
+//        System.out.println(vo.getAccessCode());
+//        System.out.println(vo.getSecretCode());
 
         ArrayList<String> queryElements = new ArrayList<>();
         for (Map.Entry<String, String> entity : params.entrySet()) {
