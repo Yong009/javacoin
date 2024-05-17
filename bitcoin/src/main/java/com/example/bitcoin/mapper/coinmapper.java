@@ -22,6 +22,7 @@ public interface coinmapper {
   public List<BoardVO> getList();
   //회원가입
   public boolean join(MemberVO vo);
-
+  //자동매매 끄기
+  public void autoStop(String id);
 
 }

@@ -364,4 +364,12 @@ public class coinserviceimpl implements coinservice {
         return "";
     }
 
+
+    //자동매매 끄기
+    @Override
+	public void autoStop7(String id) {
+		coinmappers.autoStop(id);
+
+	}
+
 }

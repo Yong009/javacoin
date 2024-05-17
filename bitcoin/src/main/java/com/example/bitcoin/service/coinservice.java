@@ -33,6 +33,9 @@ public interface coinservice {
 
 	String sell7(OrderVO vo) throws NoSuchAlgorithmException, UnsupportedEncodingException;
 
+	//자동매매 끄기
+	public void autoStop7(String id);
+
 	/*public void join(MemberVO vo);*/
 
 

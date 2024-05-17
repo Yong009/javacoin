@@ -1,5 +1,7 @@
 package com.example.bitcoin;
 
+
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
@@ -109,7 +111,8 @@ public class GetAccounts<ChartData> {
     }
 
     @GetMapping("/changeAuto")
-    public String chagePage() {
+    public String chagePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    	model.addAttribute("user", userDetails.getUsername());
         return "/changeAuto.html";
     }
 
@@ -191,19 +194,31 @@ public class GetAccounts<ChartData> {
     }
 
     //변동성 돌파 전략
+
     @ResponseBody
-    @GetMapping("/autoTrade")
-    public void auto() throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    @PostMapping("/autoTrade")
+    public void auto(@RequestBody MemberVO member) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+
+    	String ac = member.getAccessCode();
+
+    	/*String ac = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";*/
+    	String sc = member.getSecretCode();
+    	/*String sc = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";*/
+
+    	System.out.println(ac);
+    	System.out.println(sc);
+
+    	MemberVO vo = new MemberVO();
+
 
     	boolean b1 = true;
 
     	while(b1) {
-
+    			
     		boolean b2 = true;
-	    	MemberVO vo = new MemberVO();
-			vo.setAccessCode("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");
-			vo.setSecretCode("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");
-
+    		//System.out.println(vo);
+    		vo.setAccessCode(ac);
+    		vo.setSecretCode(sc);
 	        String a = coinservice2.market7();
 	        String b = coinservice2.currentPrice7();
 	        String c = coinservice2.account7(vo);
@@ -247,12 +262,13 @@ public class GetAccounts<ChartData> {
 	                	minus = highPrice.subtract(lowPrice);
 	                	multi = minus.multiply(dotFive);
 	                	targetPrice = prevClosePrice.add(multi);
+	                	//System.out.println(dotFive);
 
 	                	// add 덧셈 subtract 뺄셈, multiply 곱셈, divide 나눗셈
 
 
 	                	//-1 작은 경우,  0 같은 경우, 1 큰경우
-	                	if(targetPrice.compareTo(nowPrice) <= 0) {
+	                	if(targetPrice.compareTo(nowPrice) > 0) {
 
 	                		System.out.println("목표 타겟 도달!!!");
 
@@ -290,7 +306,7 @@ public class GetAccounts<ChartData> {
 
 		                				    	String formatedNow = now.format(formatter);
 
-		                				    	if(formatedNow =="09:00") {
+		                				    	//if(formatedNow.equals("09:00")) {
 
 		                				    		balance = jsonObject4.getString("balance");
 				                					System.out.println(balance);
@@ -310,7 +326,7 @@ public class GetAccounts<ChartData> {
 			                				    		e.printStackTrace();
 			                				    	}
 
-		                				    	}
+		                				    	//}
 		                			   }
 
 	                		      }
@@ -339,6 +355,13 @@ public class GetAccounts<ChartData> {
     }
 
 
+    //변동성 돌파 전략 자동 끄기
+    @ResponseBody
+    @PostMapping("/autoStop")
+    public void autoStop(@RequestBody MemberVO vo) {
+
+    	coinservice2.autoStop7(vo.getId());
+    }
 
     //현재가 정보
     @ResponseBody

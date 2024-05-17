@@ -46,7 +46,14 @@
 		 from board
 	</select>
 
+	<!-- 자동매매 끄기 -->
+	<update id="autoStop" parameterType="String">
 
+		update member
+		  set auto = 'Y'
+		  where id = #{id}
+
+	</update>
 
 
 </mapper>
