@@ -381,10 +381,12 @@
                     </li>
                     <li class="cell menu-1">
                         <a href="#">마이 페이지</a>
-                        <ul>
+                        <ul id="memberManage">
                             <li><a href="/mainPage">잔고 조회 및 매도</a></li>
+                            <li><a href="/myPage">나의 정보 관리</a></li>
                             <li><a href="/orderPage">매수 하기</a></li>
                             <li><a href="#">구독 결제</a></li>
+
                         </ul>
                         <div class="sub-menu-width sub-menu-width-1"></div>
                     </li>
@@ -399,10 +401,11 @@
 
                     <li class="cell menu-3">
                         <a href="#">자동 매매</a>
-                        <ul>
+                        <ul id="manager">
                             <li><a href="#">rsi</a></li>
                             <li><a href="/changeAuto">변동성 돌파</a></li>
                             <li><a href="#">상승장 타기</a></li>
+
                         </ul>
                         <div class="sub-menu-width sub-menu-width-3"></div>
                     </li>
@@ -443,7 +446,13 @@
 </div>
 <script>
 
+    var username = '[[${user}]]';
+    console.log(username);
 
+    if(username == 'goo'){
+        $('#manager').append('<li><a href="/monitoring">모니터링</a></li>')
+        $('#memberManage').append('<li><a href="/memberManage">회원 관리</a></li>')
+    }
     // 상단 메뉴 관련
     $('.header > .header-inner > .top-menu-bar > ul > li').mouseenter(function () {
         $(this).addClass('active');

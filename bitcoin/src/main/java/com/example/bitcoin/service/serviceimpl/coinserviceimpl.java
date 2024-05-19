@@ -372,4 +372,45 @@ public class coinserviceimpl implements coinservice {
 
 	}
 
+    @Override
+    public void autoOn(String id) {
+        coinmappers.autoOn(id);
+    }
+
+    @Override
+    public List<MemberVO> getMemberAuto(String auto) {
+        return coinmappers.getMemberAuto(auto);
+    }
+
+    @Override
+    public void updateMember(MemberVO vo) {
+        coinmappers.updateMember(vo);
+    }
+
+    @Override
+    public List<MemberVO> getMemberAll() {
+
+        List<MemberVO> vo = coinmappers.getMemberAll();
+        return vo;
+    }
+
+    @Override
+    public void deleteMember(String id) {
+
+        coinmappers.deleteMember(id);
+    }
+    //회원가입
+    @Override
+    public void memberJoin(MemberVO member) {
+        coinmappers.membereJoin(member);
+    }
+
+    @Override
+    public int checkId(MemberVO member) {
+
+        int a = coinmappers.checkId(member);
+
+        return a;
+    }
+
 }

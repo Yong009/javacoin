@@ -5,6 +5,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
 
+
+
+
         :root {
             --primary-color: #4EA685;
             --secondary-color: #57B894;
@@ -360,35 +363,37 @@
         <div class="col align-items-center flex-col sign-up">
             <img src="/Bitcoin_Cash.png" alt="예제 이미지" width="300" height="250">
             <div class="form-wrapper align-items-center">
-                <img src="/bitcoin.jpg" alt="예제 이미지" width="75" height="75">
+
                 <div class="form sign-up">
                     <div class="input-group">
                         <i class='bx bxs-user'></i>
-
+                        <img src="/bitcoin.jpg" alt="예제 이미지" width="75" height="75">
                         <input type="text" id="newId" placeholder="아이디">
+
                     </div>
 
-                    <div class="input-group">
+                  <!--  <div class="input-group">
                         <i class='bx bxs-lock-alt'></i>
                         <input type="password" id="newPw" placeholder="비밀번호">
+                    </div> -->
+                    <div class="input-group">
+                        <i class='bx bxs-lock-alt'></i>
+                        <!--<button type="submit" id="checkId">중복체크</button>-->
+                        </div>
+                        <button type="submit" id="newMemberBtn">회원가입</button>
+                        <p>
+                  <span>
+                    이미 회원이 있으시다구요?
+                  </span>
+                            <b onclick="toggle()" class="pointer">
+                                로그인
+                            </b>
+                        </p>
                     </div>
-
-                    <button type="submit" id="newMemberBtn">
-                        회원가입
-                    </button>
-                    <p>
-              <span>
-                이미 회원이 있으시다구요?
-              </span>
-                        <b onclick="toggle()" class="pointer">
-                            로그인
-                        </b>
-                    </p>
                 </div>
-            </div>
 
-        </div>
-        <!-- END SIGN UP -->
+            </div>
+            <!-- END SIGN UP -->
         <!-- SIGN IN -->
         <div class="col align-items-center flex-col sign-in">
             <img src="bitcoin_cash.png" alt="예제 이미지" width="300" height="250">
@@ -418,9 +423,9 @@
               <span>
                 계정이 없으신가요?
               </span>
-                        <b onclick="toggle()" class="pointer">
+                     <!--   <b onclick="toggle()" class="pointer">
                             회원가입
-                        </b>
+                        </b>-->
                     </p>
                 </div>
             </div>
@@ -469,7 +474,7 @@
 
     localStorage.setItem('id', $('#username').val())
     toggle = () => {
-        /*window.location.href = "/memberJoin";*/
+       //window.location.href = "/memberJoin";
 
         container.classList.toggle('sign-in')
         container.classList.toggle('sign-up')
@@ -482,10 +487,9 @@
     $('#newMemberBtn').on('click', function () {
 
         var id = $('#newId').val();
-        var password = $('#newPw').val();
+        //var password = $('#newPw').val();
 
-        console.log(id);
-        console.log(password);
+
 
         if (id == '') {
             alert('아이디를 입력해주세요');
@@ -499,26 +503,54 @@
 
 
         var member = {
-            id: id,
-            password: password
+            id: id
         }
 
 
         $.ajax({
             url: "/join",
-            type: "post",
-            data: JSON.stringify(member),
+            type: "GET",
+            data: member,
             contentType: "application/json",
             dataType: "json",
             success: function (result) {
-                alert("회원가입: " + result);
+
 
             },
             error: function (xhr, status, error) {
-                alert("회원가입:" + xhr.responseText);
+
             }
 
 
+        })
+
+    })
+
+    $('#checkId').on('click',function(){
+        var id2 = $('#newId').val();
+        var member2 = {
+            id : id2
+        }
+
+        if (id2 == '') {
+            alert('아이디를 입력해주세요');
+            return
+        }
+
+        $.ajax({
+            url:"/check",
+            type:"GET",
+            data:member2,
+            dataType: "json",
+            contentType: "application/json",
+            success:function (result){
+                console.log(result);
+                if(result ==0){
+                    alert('사용 가능한 아이디입니다.')
+                }else{
+                    alert('이미 존재하는 아이디 입니다.')
+                }
+            }
         })
 
     })

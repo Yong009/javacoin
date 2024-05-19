@@ -4,9 +4,20 @@
     <meta charset="UTF-8">
     <title>myPage</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <style>
 
+     /*    //<uniquifier>: Use a unique and descriptive class name
+        // <weight>: Use a value from 100 to 900*/
+
+        .noto-sans-kr-font {
+                           font-family: "Noto Sans KR", sans-serif;
+                           font-optical-sizing: auto;
+                           font-weight: 400;
+                           font-style: normal;
+                       }
         body {
             background-color: #3e94ec;
             font-family: "Roboto", helvetica, arial, sans-serif;
@@ -669,52 +680,52 @@
 <body style="background-color:white;">
 
 
-<div id="header"></div>
+<div id="header" class="noto-sans-kr-font"></div>
 
 
 <table width="100%" style="border:none">
     <tr>
         <td colspan="2" style="background-color:white; ">
 
-            <h4 id="userid" style="margin-top:100px;"><span th:text="${user}"
-                                                            style="font-weight:bold; color:black;"></span>님 환영합니다.</h4>
+            <h4 id="userid" class="noto-sans-kr-font" style="margin-top:100px;"><span th:text="${user}"
+                                                            style="font-weight:bold; color:black;"></span>님 환영합니다.&emsp;<span>&emsp;자동매매 : </span><span id="auto" class="noto-sans-kr-font" ></span></h4>
 
             <form id="logoutForm" action="/logout" method="post">
-                <button type="submit" class="btn-gradient green">로그아웃</button>
+                <button type="submit" class="btn-gradient green"><span class="noto-sans-kr-font">로그아웃</span></button>
             </form>
 
 
         </td>
     </tr>
     <tr>
-        <td style="background-color:white; color:black; width:20%">
-            <h2 style="margin-left:60px; margin-bottom:30px; font-weight:bold;">업비트 api코드</h2>
-            <button type="button" id="accountBtn" class="btn-gradient blue" style="float:right; margin-left:15px;">잔고 조회
+        <td class="noto-sans-kr-font" style="background-color:white; color:black; width:20%">
+            <h2  class="noto-sans-kr-font" style="margin-left:60px; margin-bottom:30px; font-weight:bold;">업비트 api코드</h2>
+            <button type="button" id="accountBtn" class="btn-gradient blue mini" style="float:right; margin-left:15px; height: 30px;"><span calss="noto-sans-kr-font">잔고 조회</span>
             </button>
-            <button type="button" id="accountSaveBtn" class="btn-gradient blue"
-                    style="float:right; margin-bottom:30px;">
-                Key 저장
+            <button type="button" id="accountSaveBtn" class="btn-gradient blue mini"
+                    style="float:right; margin-bottom:30px; height: 30px;">
+              <span class="noto-sans-kr-font">Key 저장</span>
             </button>
             <br/>
 
             <br/>
-            <label for="access" style="margin-top:15px; font-weight: bold;">access키</label><br/><br/>
-            <input id="access" type="text" class="form-control"/><br/><br/>
-            <label for="secret" style="font-weight: bold;">secret키</label><br/><br/>
-            <input id="secret" type="text" style="margin-left:4px;" class="form-control"/>
+            <label for="access"  class="noto-sans-kr-font" style="margin-top:15px; font-weight: bold;">access키</label><br/><br/>
+            <input id="access" type="text" class="noto-sans-kr-font"/><br/><br/>
+            <label for="secret"  class="noto-sans-kr-font" style="font-weight: bold;">secret키</label><br/><br/>
+            <input id="secret" type="text" style="margin-left:4px;" class="noto-sans-kr-font"/>
 
         </td>
-        <td style="height:200px; text-align:left">
-            <h4 style="text-align:center; color:red">매도 예약 주문이 걸려 있으면 수량이 '0'으로 뜹니다!!!</h4>
+        <td class="noto-sans-kr-font" style="height:200px; text-align:left">
+            <h4 class="noto-sans-kr-font" style="text-align:center; color:red">매도 예약 주문이 걸려 있으면 수량이 '0'으로 뜹니다!!!</h4>
             <h2 style="font-weight:bold; color:black; text-align:center; margin-bottom:40px;">my 잔고</h2>
 
 
             <table class="table-fill">
                 <thead>
-                <tr>
-                    <th scope="row">코인</th>
-                    <th scope="row">수량</th>
-                    <th scope="row">매도</th>
+                <tr class="noto-sans-kr-font">
+                    <th scope="row" class="noto-sans-kr-font">코인</th>
+                    <th scope="row" class="noto-sans-kr-font">수량</th>
+                    <th scope="row" class="noto-sans-kr-font">매도</th>
 
                 </tr>
                 </thead>
@@ -724,17 +735,13 @@
             </table>
         </td>
     </tr>
-    <tr>
-        <td colspan="2" style="">
-            <h2>FOOTER 영역</h2>
-        </td>
-    </tr>
-</table>
 
+</table>
+<div id ="footer" class="noto-sans-kr-font"></div>
 <script>
 
     $('#header').load('header.html')
-
+    $('#footer').load('footer.html')
 
     $('a').click(function (event) {
         event.preventDefault();
@@ -748,6 +755,7 @@
     }
 
 
+
     $.ajax({
         url: "/getCode",
         type: "POST",
@@ -759,6 +767,18 @@
             var a = $('#access').val();
             $('#secret').val(result[0].secretCode)
             var b = $('#secret').val();
+
+            if(result[0].auto =='Y'){
+                $('#auto').text('on')
+            }else{
+                $('#auto').text('off')
+            }
+
+            if($('#auto').text()=='on'){
+                $('#auto').css("color","red")
+            }else{
+                $('#auto').css("color","blue")
+            }
 
 
             if ($('#access').val() != '' && $('#secret').val() != '') {
@@ -797,7 +817,7 @@
                     dataType: "json",
                     success: function (result) {
 
-                          console.log(result)
+                          //console.log(result)
 
                         $.ajax({
                             url: "/market7",
@@ -807,7 +827,7 @@
                             success: function (result2) {
 
                                 if (result.error && result.error.name === 'invalid_access_key') {
-                                    alert('실패했습니다. 유효하지 않은 접근 키')
+                                    //alert('실패했습니다. 유효하지 않은 접근 키')
                                     return false;
                                 }
 
@@ -840,8 +860,8 @@
 
                                     })
 
-                                    var row = $('<tr>');
-                                    var td1 = $('<td class="center" style="font-weight: bold;">').text(item.currency);
+                                    var row = $('<tr class="noto-sans-kr-font">');
+                                    var td1 = $('<td class="center" style="font-weight: bold;" >').text(item.currency);
                                     row.append(td1);
                                     var td2 = $('<td class="center">').text(item.balance);
                                     row.append(td2);
@@ -1001,6 +1021,7 @@
                     success: function (result2) {
 
                         if (result.error && result.error.name === 'invalid_access_key') {
+
 
                             alert('실패했습니다. 유효하지 않은 접근 키')
                             return false;

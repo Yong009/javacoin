@@ -12,7 +12,7 @@ public class MemberVO {
 	String accessCode; // 엑세스코드
 	String secretCode; // 시크릿코드
 	String role; // 권한
-
+	String auto; // 자동매매 y/n
 
 	/*  public static MemberVO createUser(String id, String pw, PasswordEncoder  passwordEncoder){
 
@@ -46,6 +46,14 @@ public class MemberVO {
 
 	public void setAccessCode(String accessCode) {
 		this.accessCode = accessCode;
+	}
+
+	public String getAuto() {
+		return auto;
+	}
+
+	public void setAuto(String auto) {
+		this.auto = auto;
 	}
 
 	public String getSecretCode() {
