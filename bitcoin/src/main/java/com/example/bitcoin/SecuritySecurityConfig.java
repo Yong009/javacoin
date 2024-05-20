@@ -27,8 +27,8 @@ public class SecuritySecurityConfig {
 
 		.authorizeHttpRequests(request -> request
 				.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-						.requestMatchers("/board","/static/**","/*.jpg","/*.png","/join","/check","/login","/").permitAll()
-                .anyRequest().authenticated()
+				.requestMatchers("/static/**","/*.jpg","/*.png","/join","/check","/login","/","/header.html","/chart","/boardListAjax","/footer.html","/market7","/currentPrice7").permitAll()
+				.anyRequest().authenticated()
 
 
 				).formLogin(login -> login
@@ -42,6 +42,8 @@ public class SecuritySecurityConfig {
 						).logout(logout -> logout
 								.logoutSuccessUrl("/login")
 								);
+
+
 
 						return http.build();
 

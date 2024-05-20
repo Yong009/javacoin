@@ -46,11 +46,11 @@ public class GetAccounts<ChartData> {
     }
 
 
-    // 시작 시 첫 페이지
+   /* // 시작 시 첫 페이지
     @GetMapping("/")
     public String loginPage2() {
         return "/mainPage.html";
-    }
+    }*/
 
     // 로그인 페이지
     @GetMapping("/login")
@@ -223,8 +223,8 @@ public class GetAccounts<ChartData> {
 
     //헤더 호출
     @GetMapping("/header.html")
-    public String header(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        model.addAttribute("user", userDetails.getUsername());
+    public String header() {
+
         return "header.html";
     }
 
@@ -457,7 +457,7 @@ public class GetAccounts<ChartData> {
         String a = coinservice2.sell7(vo);
         return a;
     }
-    
+
     //모니터링
     @ResponseBody
     @PostMapping("/memberAuto")
