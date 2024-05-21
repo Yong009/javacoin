@@ -46,11 +46,11 @@ public class GetAccounts<ChartData> {
     }
 
 
-   /* // 시작 시 첫 페이지
+    // 시작 시 첫 페이지
     @GetMapping("/")
     public String loginPage2() {
-        return "/mainPage.html";
-    }*/
+        return "/login.html";
+    }
 
     // 로그인 페이지
     @GetMapping("/login")
@@ -70,6 +70,14 @@ public class GetAccounts<ChartData> {
         return "/chart.html";
 
     }
+
+    //차트2
+    @GetMapping("/chart2")
+    public String chart2() {
+        return "/chart2.html";
+
+    }
+
 
     @ResponseBody
     @PostMapping("/memberAll")
@@ -223,10 +231,19 @@ public class GetAccounts<ChartData> {
 
     //헤더 호출
     @GetMapping("/header.html")
-    public String header() {
-
+    public String header(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    	model.addAttribute("user", userDetails.getUsername());
         return "header.html";
     }
+
+    //헤더2 호출
+    @GetMapping("/header2.html")
+    public String header2() {
+
+        return "header2.html";
+    }
+
+
 
     //푸터 호출
     @GetMapping("/footer.html")

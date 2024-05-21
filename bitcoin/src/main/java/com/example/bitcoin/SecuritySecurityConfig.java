@@ -1,5 +1,6 @@
 package com.example.bitcoin;
 
+import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -22,17 +23,25 @@ public class SecuritySecurityConfig {
 	}
 
 	@Bean
+	public ServletContextInitializer initializer() {
+	    return servletContext -> {
+	        servletContext.setSessionTimeout(30); // 세션 타임아웃을 30분으로 설정
+	    };
+	}
+
+	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable().cors().disable()
 
 		.authorizeHttpRequests(request -> request
+				.requestMatchers("/static/**","/login","/**.jpg","/**.png","/","/logout","/header.html","/footer.html","/market7","/currentPrice7","/chart2","/header2.html").permitAll()
 				.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-				.requestMatchers("/static/**","/*.jpg","/*.png","/join","/check","/login","/","/header.html","/chart","/boardListAjax","/footer.html","/market7","/currentPrice7").permitAll()
 				.anyRequest().authenticated()
 
 
 				).formLogin(login -> login
 						.loginPage("/login")
+						.permitAll()
 						.loginProcessingUrl("/login-process")
 						.usernameParameter("userid")
                         .passwordParameter("pw")
@@ -40,9 +49,8 @@ public class SecuritySecurityConfig {
 						.permitAll()
 
 						).logout(logout -> logout
-								.logoutSuccessUrl("/login")
+								.logoutSuccessUrl("/")
 								);
-
 
 
 						return http.build();
