@@ -346,7 +346,7 @@ public class GetAccounts<ChartData> {
 
 
                         //-1 작은 경우,  0 같은 경우, 1 큰경우
-                        if (targetPrice.compareTo(nowPrice) > 0) {
+                        if (targetPrice.compareTo(nowPrice) <= 0) {
 
                             System.out.println("목표 타겟 도달!!!");
 
@@ -364,7 +364,7 @@ public class GetAccounts<ChartData> {
                                     vo2.setAccessCode(vo.getAccessCode());
                                     vo2.setSecretCode(vo.getSecretCode());
                                     vo2.setOrderType("bid");
-                                    vo2.setPrice("10000");
+                                    vo2.setPrice("60000");
                                     coinservice2.order7(vo2);
 
                                     while (b2) {
@@ -384,8 +384,8 @@ public class GetAccounts<ChartData> {
                                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
                                                 String formatedNow = now.format(formatter);
-
-                                                //if(formatedNow.equals("09:00")) {
+                                                System.out.println(formatedNow);
+                                                if(formatedNow.equals("09:00")) {
 
                                                 balance = jsonObject4.getString("balance");
                                                 System.out.println(balance);
@@ -405,7 +405,7 @@ public class GetAccounts<ChartData> {
                                                     e.printStackTrace();
                                                 }
 
-                                                //}
+                                               }
                                             }
 
                                         }
