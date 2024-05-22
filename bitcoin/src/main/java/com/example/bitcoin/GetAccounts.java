@@ -11,6 +11,8 @@ import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,7 +31,7 @@ import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
 
 @Controller
-public class GetAccounts<ChartData> {
+public class GetAccounts {
 
 
     @Autowired
@@ -46,16 +48,28 @@ public class GetAccounts<ChartData> {
     }
 
 
+    private static final Logger LOG = LoggerFactory.getLogger(GetAccounts.class);
+
     // 시작 시 첫 페이지
     @GetMapping("/")
     public String loginPage2() {
         return "/login.html";
     }
 
+
     // 로그인 페이지
-    @GetMapping("/login")
+    @GetMapping("/loginPage")
     public String loginPage() {
+
+
         return "/login.html";
+    }
+
+    @GetMapping("/error")
+    public String error() {
+
+    	return "/error.html";
+
     }
 
     //회원가입 페이지
