@@ -7,15 +7,13 @@ import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.example.bitcoin.dto.*;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import okhttp3.OkHttpClient;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -26,12 +24,21 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-
-
 import org.springframework.stereotype.Service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.example.bitcoin.dto.BoardVO;
+import com.example.bitcoin.dto.MarketVO;
+import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.dto.OrderVO;
+import com.example.bitcoin.dto.TickerVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import okhttp3.OkHttpClient;
 
 
 @Service
@@ -97,11 +104,9 @@ public class coinserviceimpl implements coinservice {
     public String account7(MemberVO vo) {
 
         String accessKey = vo.getAccessCode();
-        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
-        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
+
         String secretKey = vo.getSecretCode();
-        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
-        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
+
         String serverUrl = "https://api.upbit.com";
 
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
@@ -191,7 +196,7 @@ public class coinserviceimpl implements coinservice {
             e.printStackTrace();
         }
 
-        /* System.out.println(tickerResponseBody); */
+
 
 
         return tickerResponseBody;
@@ -218,7 +223,7 @@ public class coinserviceimpl implements coinservice {
             e.printStackTrace();
         }
 
-        /* System.out.println(responseBody); */
+
         return responseBody;
     }
 
@@ -227,11 +232,9 @@ public class coinserviceimpl implements coinservice {
     public String order7(OrderVO vo) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
         String accessKey = vo.getAccessCode();
-        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
-        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
+
         String secretKey = vo.getSecretCode();
-        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
-        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
+
         String serverUrl = "https://api.upbit.com";
 
         HashMap<String, String> params = new HashMap<>();
@@ -250,11 +253,7 @@ public class coinserviceimpl implements coinservice {
         //params.put("price", "10000");
         params.put("ord_type", "price");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
 
-//        System.out.println(vo.getCoin());
-//        System.out.println(vo.getOrderType());
-//        System.out.println(vo.getPrice());
-//        System.out.println(vo.getAccessCode());
-//        System.out.println(vo.getSecretCode());
+
 
         ArrayList<String> queryElements = new ArrayList<>();
         for (Map.Entry<String, String> entity : params.entrySet()) {
@@ -302,11 +301,9 @@ public class coinserviceimpl implements coinservice {
     @Override
     public String sell7(OrderVO vo) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String accessKey = vo.getAccessCode();
-        /* String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"; */
-        /*System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8");  */// access 코드
+
         String secretKey = vo.getSecretCode();
-        /* String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"; */
-        /*System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG");  */// secret 코드
+
         String serverUrl = "https://api.upbit.com";
 
         HashMap<String, String> params = new HashMap<>();
@@ -317,12 +314,7 @@ public class coinserviceimpl implements coinservice {
         params.put("volume", vo.getVolume());
         //params.put("price", vo.getPrice());
         params.put("ord_type", "market");   // limit : 지정가 주문 , price : 시장가 주문(매수),  market: 시장가 주문(매도), best: 최유리 주문(time_in_force 설정 필수 )
-//        System.out.println(vo.getCoin());
-//        System.out.println(vo.getOrderType());
-//        System.out.println(vo.getVolume());
-//
-//        System.out.println(vo.getAccessCode());
-//        System.out.println(vo.getSecretCode());
+
 
         ArrayList<String> queryElements = new ArrayList<>();
         for (Map.Entry<String, String> entity : params.entrySet()) {
@@ -412,5 +404,20 @@ public class coinserviceimpl implements coinservice {
 
         return a;
     }
+
+	@Override
+	public void insertBoard(BoardVO vo) {
+
+		coinmappers.insertBoard(vo);
+
+	}
+
+	@Override
+	public List<BoardVO> getListDetail(Long seq) {
+
+		List<BoardVO> list = coinmappers.getListDetail(seq);
+
+		return list;
+	}
 
 }

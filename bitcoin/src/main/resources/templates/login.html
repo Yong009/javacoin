@@ -1,4 +1,4 @@
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <title>title</title>
@@ -361,13 +361,13 @@
     <div class="row">
         <!-- SIGN UP -->
         <div class="col align-items-center flex-col sign-up">
-            <img src="/Bitcoin_Cash.png" alt="예제 이미지" width="300" height="250">
+            <img src="Bitcoin_Cash.png" alt="예제 이미지" width="300" height="250">
             <div class="form-wrapper align-items-center">
 
                 <div class="form sign-up">
                     <div class="input-group">
                         <i class='bx bxs-user'></i>
-                        <img src="/bitcoin.jpg" alt="예제 이미지" width="75" height="75">
+                        <img src="bitcoin.jpg" alt="예제 이미지" width="75" height="75">
                         <input type="text" id="newId" placeholder="아이디">
 
                     </div>
@@ -396,13 +396,13 @@
             <!-- END SIGN UP -->
         <!-- SIGN IN -->
         <div class="col align-items-center flex-col sign-in">
-            <img src="bitcoin_cash.png" alt="예제 이미지" width="300" height="250">
+            <img src="Bitcoin_Cash.png" alt="예제 이미지" width="300" height="250">
             <div class="form-wrapper align-items-center">
                 <div class="form sign-in">
                     <div class="input-group">
                         <i class='bx bxs-user'></i>
                         <img src="bitcoin.jpg" alt="예제 이미지" width="75" height="75">
-                        <form class="form-signin" method="POST" action="/login">
+                        <form class="form-signin" method="POST" action="/login-process">
                             <input type="text" placeholder="아이디" id="username" name="userid">
                     </div>
                     <div class="input-group">
@@ -544,7 +544,7 @@
             dataType: "json",
             contentType: "application/json",
             success:function (result){
-                console.log(result);
+
                 if(result ==0){
                     alert('사용 가능한 아이디입니다.')
                 }else{

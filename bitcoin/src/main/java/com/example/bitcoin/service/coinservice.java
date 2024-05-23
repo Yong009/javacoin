@@ -48,6 +48,10 @@ public interface coinservice {
 	void memberJoin(MemberVO member);
 	//아디 중복 체크
 	int checkId(MemberVO member);
+	//게시판 글 등록
+	public void insertBoard(BoardVO vo);
+	//게시판 상세 내용
+	public List<BoardVO> getListDetail(Long seq);
 
 	/*public void join(MemberVO vo);*/
 

@@ -1,9 +1,9 @@
 package com.example.bitcoin;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,7 +16,6 @@ import jakarta.servlet.DispatcherType;
 @EnableWebSecurity
 public class SpringSecurityConfig{
 
-	private static final Logger logger = LoggerFactory.getLogger(SpringSecurityConfig.class);
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
@@ -31,26 +30,25 @@ public class SpringSecurityConfig{
 		.authorizeHttpRequests(request -> request
 
 				.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-				.requestMatchers("/logout","/loginPage","/login","/static/**","/**.jpg","/**.png","/","/logout","/header.html","/footer.html","/market7","/currentPrice7","/chart2","/header2.html","/error").permitAll()
-				 .anyRequest().authenticated()
-
+				.requestMatchers("/logout","/login","/static/**","/**.jpg","/**.png","/","/logout","/header.html","/footer.html","/market7","/currentPrice7","/chart2","/header2.html","/error").permitAll()
+				.anyRequest().authenticated()
 
 				).formLogin(login -> login
-						.loginPage("/loginPage")
+						.loginPage("/login")
 						.permitAll()
-						.loginProcessingUrl("/login")
+						.loginProcessingUrl("/login-process")
 						.usernameParameter("userid")
                         .passwordParameter("pw")
 						.defaultSuccessUrl("/mainPage",true)
+
 						.permitAll()
 
 						).logout(logout -> logout
-
-								.logoutSuccessUrl("/loginPage")
+								.logoutUrl("/logout")
+								.logoutSuccessUrl("/login")
 								);
 
 
-		logger.debug("Security configuration loaded successfully.");
 						return http.build();
 
 

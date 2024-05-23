@@ -1,186 +1,39 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html>
 
-    <title>코인토론방</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<head>
+	 <meta charset="UTF-8">
+	<title>글쓰기</title>
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <style>
 
+   	 .noto-sans-kr-font {
+                          font-family: "Noto Sans KR", sans-serif;
+                          font-optical-sizing: auto;
+                          font-weight: 400;
+                          font-style: normal;
+                      }
 
-        .noto-sans-kr-font {
-            font-family: "Noto Sans KR", sans-serif;
-            font-optical-sizing: auto;
-            font-weight: 400;
-            font-style: normal;
+	  input {
+            background-color: #fff;
+
+            padding: 0.9rem 0.9rem;
+            margin: 0.5rem 0;
+            width: 90%;
+            width: 300px;
         }
 
-        h2 {
+        label{
             font-weight: bold;
+            margin-bottom:100px;
         }
 
-        .hr1 {
-            border: 0;
-            height: 2px;
-            background: #d3d3d3;
-        }
-
-        .grey {
-            color: #727272;
-        }
-
-        #strong {
-            font-weight: 900;
-        }
-
-        table {
-            width: 100%;
-            border-top: 1px solid #d3d3d3;
-            border-collapse: collapse;
-        }
-
-        th {
-            background-color: #d3d3d3;
-            border-top: 3px solid #727272;
-        }
-
-        th, td {
-            border-bottom: 1px solid #d3d3d3;
-            padding: 10px;
-        }
-
-        .greylist {
-            width: 50px;
-            height: 30px;
-            font-weight: 900;
-            color: white;
-            text-align: center;
-            background: grey;
-            border: solid 2px white;
-            border-radius: 5px;
-        }
-
-        .gradient {
-            width: 80px;
-            height: 30px;
-            font-weight: 900;
-            color: white;
-            text-align: center;
-            background: linear-gradient(to bottom, grey, black);
-            border: solid 2px white;
-            border-radius: 5px;
-        }
-
-        .left {
-            text-align: left;
-        }
-
-        .right {
-            float: right;
-        }
-
-        .center {
-            text-align: center;
-        }
-
-        a {
-            color: black;
-            text-decoration-line: none;
-        }
-
-        body {
-            padding: 1.5em;
-            background: #f5f5f5
-        }
-
-        table {
-            border: 1px #a39485 solid;
-            font-size: .9em;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, .25);
-            width: 100%;
-            border-collapse: collapse;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-
-        thead {
-            font-weight: bold;
-            color: #fff;
-            background: #73685d;
-        }
-
-        td, th {
-            padding: 1em .5em;
-            vertical-align: middle;
-
-        }
-
-        td {
-
-            background: #fff;
-        }
-
-        a {
-            color: #73685d;
-        }
-
-        @media all and (max-width: 768px) {
-
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-
-            th {
-                text-align: right;
-            }
-
-            table {
-                position: relative;
-                padding-top: 50px;
-                border: none;
-
-                margin-top: 100px;
-            }
-
-            thead {
-                float: left;
-                white-space: nowrap;
-                color: black;
-            }
-
-            tbody {
-                overflow-x: auto;
-                overflow-y: hidden;
-                position: relative;
-                white-space: nowrap;
-            }
-
-            tr {
-                display: inline-block;
-                vertical-align: top;
-            }
-
-            th {
-                border-bottom: 1px solid #a39485;
-                font-weight: bold;
-                color: black;
-            }
-
-            td {
-                border-bottom: 1px solid #e5e5e5;
-            }
-
-
-        }
-
-        thead tr {
-            color: black;
+        .div{
+            position: absolute;
+            top:200px;
+            left:1000px;
 
         }
 
@@ -693,165 +546,88 @@
         .btn-gradient.green:active {
             background: #72B08E;
         }
-
     </style>
 </head>
+
+
+
+
 <body style="background-color:white;" class="noto-sans-kr-font">
-
-<div id="header"></div>
-<h1 style="margin-top:150px; text-align:center;">코인토론방</h1>
-<div style="margin-left:100px; margin-right:100px;">
-	<button id="writeBtn" type="button" class="btn-gradient green" style="float:right;">글쓰기</button>
-    <table style="background-color:white; margin-top:100px;">
-        <thead style="background-color:white;">
-        <tr style="background-color:white;">
-            <th>번호</th>
-            <th>제목</th>
-            <th>글쓴이</th>
-            <th>일시</th>
-            <th>조회수</th>
-        </tr>
-        </thead>
-        <tbody id="Tb" style="background-color:white;">
-
-        </tbody>
-    </table>
-
-</div>
-<div id="footer"></div>
-
-<script>
-
-    $('#header').load('header.html');
-    $('#footer').load('footer.html');
-    // 상단 메뉴 관련
-    $('.header > .header-inner > .top-menu-bar > ul > li').mouseenter(function () {
-        $(this).addClass('active');
-        $(this).find('> a').addClass('active');
-    });
-
-    $('.header > .header-inner > .top-menu-bar > ul > li').mouseleave(function () {
-        $(this).removeClass('active');
-        $(this).find('> a').removeClass('active');
-    });
-
-    // 상단 2차 메뉴 배경
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-1').mouseenter(function () {
-        $('.sub-menu-bg').css('height', '164px');
-    });
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-1').mouseleave(function () {
-        $('.sub-menu-bg').css('height', '');
-    });
-
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-2').mouseenter(function () {
-        $('.sub-menu-bg').css('height', '164px');
-    });
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-2').mouseleave(function () {
-        $('.sub-menu-bg').css('height', '');
-    });
-
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-3').mouseenter(function () {
-        $('.sub-menu-bg').css('height', '164px');
-    });
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-3').mouseleave(function () {
-        $('.sub-menu-bg').css('height', '');
-    });
-
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-4').mouseenter(function () {
-        $('.sub-menu-bg').css('height', '164px');
-    });
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-4').mouseleave(function () {
-        $('.sub-menu-bg').css('height', '');
-    });
-
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-5').mouseenter(function () {
-        $('.sub-menu-bg').css('height', '164px');
-    });
-    $('.header > .header-inner > .top-menu-bar > ul > .menu-5').mouseleave(function () {
-        $('.sub-menu-bg').css('height', '');
-    });
-
-
-    function Board(seq, title, writer, writeDate, viewCount) {
-        this.seq = seq;
-        this.title = title;
-        this.writer = writer;
-        this.writeDate = writeDate;
-        this.viewCount = viewCount;
-
-    }
-
-
-    function refreshTable() {
-
-        var tbody = $('#Tb');
-        tbody.empty();
-
-        $.each(board, function (i, item) {
-
-
-            var row = $('<tr>');
-
-            var td1 = $('<td class="center">').text(item.seq);
-            row.append(td1);
-
-            var td2 = $('<td class="center">');
-            var link = $('<a>').attr('href', '#').text(item.title);
-            td2.append(link);
-            row.append(td2);
-
-            var td3 = $('<td class="center">').text(item.writer);
-            row.append(td3);
-
-            var td4 = $('<td class="center">').text(item.writeDate);
-            row.append(td4);
-
-            var td5 = $('<td class="center">').text(item.viewCount);
-            row.append(td5);
+	<div id="header"></div>
+	  <div style="margin-top:200px; margin-left:1100px;">
+	  <label for="title" class="noto-sans-kr-font" style="font-weight: bold; width:400px;">제목</label><br/><br/>
+      <input id="title" type="text" style=""  class="noto-sans-kr-font"><br/><br/>
+      <label for="id" class="noto-sans-kr-font" style="font-weight: bold; width:400px;">작성자</label><br/><br/>
+      <input id="id" type="text" readonly style="background-color:silver;"  class="noto-sans-kr-font"><br/><br/>
+      <label for="content" class="noto-sans-kr-font" style="font-weight: bold;">내용</label><br/><br/>
+      <input id="content" type="text" class="noto-sans-kr-font" style="width:400px; height:250px;"><br/><br/>
+      <button type="button" id="saveBtn" class="btn-gradient green" style="margin-left:100px; font-weight: bold;">저장</button>
+	</div>
 
 
 
-
-            tbody.append(row);
-
-            link.on('click', function (event) {
-                event.preventDefault();
-                // 여기에서 seq 값을 이용하여 상세 페이지로 이동하도록 구현
-
-                var responseData = {seq: item.seq};
-
-                localStorage.setItem('seq', JSON.stringify(responseData));
-
-
-                window.location.href = "/boardDetail";
-            });
-
-
-        })
-    }
-
-    $.ajax({
-        url: "/boardListAjax",
-        Type: "GET",
-        dataType: "json",
-        contentType: "application/json",
-        success: function (result) {
-
-            board = result;
-
-            refreshTable();
-        }
-    })
-
-
-    $('#writeBtn').on('click',function(){
-
-    	location.href= "/boardwrite";
-
-    })
+	<div id="footer"></div>
 
 
 
-</script>
+	<script>
+
+		 $('#header').load('header.html')
+	     $('#footer').load('footer.html')
+
+	     var username = '[[${user}]]';
+
+		 var seq2 = localStorage.getItem('seq');
+
+	     var seq = JSON.parse(seq2);
+
+		 var board = {
+			seq : seq.seq
+		 }
+
+		 $.ajax({
+			url:"/boardDetailAjax",
+			type:"POST",
+			data:JSON.stringify(board),
+			dataType:"json",
+			contentType:"application/json",
+			success:function(result){
+
+				console.log(result);
+
+				$('#title').val(result[0].title)
+				$('#id').val(result[0].writer)
+				$('#content').val(result[0].textwrite)
+			}
+		 })
+
+		 $('#saveBtn').on('click',function(){
+
+			 var id = $('#id').val();
+			 var title = $('#title').val()
+			 var content = $('#content').val()
+
+			 var board = {
+				 	writer : id,
+					title : title,
+					textWrite : content
+			 	}
+
+			 $.ajax({
+				url:"/insertBoard",
+				type:"POST",
+				data:JSON.stringify(board),
+				dataType:"json",
+				contentType:"application/json",
+				success:function(result){
+
+
+
+					}
+				})
+			 })
+
+    </script>
 </body>
+
 </html>

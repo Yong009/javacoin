@@ -565,7 +565,7 @@
     $('#header').load('header.html')
     $('#footer').load('footer.html')
     var username = '[[${user}]]';
-    console.log(username);
+
 
     var userid = {
         id: username
@@ -603,7 +603,7 @@
                     data: JSON.stringify(account2),
                     contentType: "application/json",
                     success: function (result) {
-                        console.log(result);
+
                         $.each(result, function (i, item) {
                             if (item.currency == 'KRW') {
                                 $('#account3').text("금액 " + "(잔액 : " + Math.floor(item.balance) + "원)")
@@ -668,7 +668,7 @@
 
         //var coin = $('#coin').val();
         var coin = $('#coins').val();
-        //console.log(coin);
+
         var coin2;
         $.ajax({
             url: "/market7",
@@ -682,7 +682,7 @@
                     if (result2[i].korean_name == coin && result2[i].market.includes('KRW-')) {
 
                         coin2 = result2[i].market;
-                        //console.log(coin2);
+
 
                     }
 
@@ -723,7 +723,7 @@
                             //     }
                             // }
                            // alert(coin + "을" + price + "원치" + "매수하였습니다.");
-                           // console(result[0].market);
+
 
                         }
 

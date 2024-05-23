@@ -38,4 +38,8 @@ public interface coinmapper {
   void membereJoin(MemberVO member);
   //아이디 중복 체크
   int checkId(MemberVO member);
+  //게시판 글등록
+  public void insertBoard(BoardVO vo);
+  //게시판 상세 내용
+  public List<BoardVO> getListDetail(Long seq);
 }

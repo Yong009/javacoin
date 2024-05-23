@@ -53,42 +53,41 @@ public class GetAccounts {
     // 시작 시 첫 페이지
     @GetMapping("/")
     public String loginPage2() {
-        return "/login.html";
+        return "login";
     }
 
 
     // 로그인 페이지
-    @GetMapping("/loginPage")
+    @GetMapping("/login")
     public String loginPage() {
 
-
-        return "/login.html";
+        return "login";
     }
 
     @GetMapping("/error")
     public String error() {
 
-    	return "/error.html";
+    	return "error";
 
     }
 
     //회원가입 페이지
     @GetMapping("/memberJoin")
     public String joinPage() {
-        return "/memberJoin.html";
+        return "memberJoin";
     }
 
     //차트
     @GetMapping("/chart")
     public String chart() {
-        return "/chart.html";
+        return "chart";
 
     }
 
     //차트2
     @GetMapping("/chart2")
     public String chart2() {
-        return "/chart2.html";
+        return "chart2";
 
     }
 
@@ -128,7 +127,6 @@ public class GetAccounts {
         return a;
     }
 
-
     //이미지
     @GetMapping("/bit")
     public String image() {
@@ -138,39 +136,39 @@ public class GetAccounts {
     //이미지2
     @GetMapping("/bit2")
     public String image2() {
-        return "bitcoin_cash";
+        return "Bitcoin_Cash.png";
     }
 
     @GetMapping("/home")
     public String logout() {
-        return "/home.html";
+        return "home";
     }
 
     //주문하기 페이지
     @GetMapping("/orderPage")
     public String orderPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("user", userDetails.getUsername());
-        return "/order.html";
+        return "order";
     }
     //자동매매 페이지
     @GetMapping("/changeAuto")
     public String chagePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("user", userDetails.getUsername());
-        return "/changeAuto.html";
+        return "changeAuto";
     }
 
     //자동매매 모니터링 페이지
     @GetMapping("/monitoring")
     public String monitoring(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("user", userDetails.getUsername());
-        return "/monitoring.html";
+        return "monitoring";
     }
 
     //마이 페이지
     @GetMapping("/myPage")
     public String myPage(@AuthenticationPrincipal UserDetails userDetails, Model model){
         model.addAttribute("user", userDetails.getUsername());
-        return "/myContents.html";
+        return "myContents";
     }
 
     // 잔고 조회
@@ -188,7 +186,7 @@ public class GetAccounts {
     @GetMapping("/mainPage")
     public String getUserInfo(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("user", userDetails.getUsername());
-        return "/mainPage.html";
+        return "mainPage";
     }
 
 
@@ -230,7 +228,22 @@ public class GetAccounts {
     @GetMapping("/board")
     public String board() {
 
-        return "/board.html";
+        return "board";
+    }
+
+    //게시판 글쓰기 페이지
+    @GetMapping("/boardwrite")
+    public String write(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    	model.addAttribute("user", userDetails.getUsername());
+    	return "write";
+    }
+
+    @ResponseBody
+    //게시판 글쓰기 등록
+    @PostMapping("/insertBoard")
+    public void insertBoard(@RequestBody BoardVO vo) {
+
+    	coinservice2.insertBoard(vo);
     }
 
     //게시판 전체 리스트
@@ -243,18 +256,35 @@ public class GetAccounts {
         return list;
     }
 
+    //게시판 상세 페이지
+    @GetMapping("/boardDetail")
+    public String boardDetail(@AuthenticationPrincipal UserDetails userDetails, Model model){
+    	model.addAttribute("user", userDetails.getUsername());
+    	return "boardDetail";
+    }
+
+    //게시판 상세 내용
+    @ResponseBody
+    @PostMapping("/boardDetailAjax")
+    public List<BoardVO> boardDetailAjax(@RequestBody BoardVO vo){
+
+    	List<BoardVO> list = coinservice2.getListDetail(vo.getSeq());
+
+    	return list;
+    }
+
     //헤더 호출
     @GetMapping("/header.html")
     public String header(@AuthenticationPrincipal UserDetails userDetails, Model model) {
     	model.addAttribute("user", userDetails.getUsername());
-        return "header.html";
+        return "header";
     }
 
     //헤더2 호출
     @GetMapping("/header2.html")
     public String header2() {
 
-        return "header2.html";
+        return "header2";
     }
 
 
@@ -262,13 +292,14 @@ public class GetAccounts {
     //푸터 호출
     @GetMapping("/footer.html")
     public String footer(){
-        return "footer.html";
+        return "footer";
     }
 
+    //회원 관리
     @GetMapping("/memberManage")
     public String memberManage(@AuthenticationPrincipal UserDetails userDetails, Model model){
         model.addAttribute("user", userDetails.getUsername());
-        return "/memberManage.html";
+        return "memberManage";
     }
 
     //마켓 정보
@@ -300,7 +331,7 @@ public class GetAccounts {
         while (b1) {
 
             List<MemberVO> autoCheck = coinservice2.getCode(userId);
-            System.out.println(autoCheck.get(0).getAuto());
+            //System.out.println(autoCheck.get(0).getAuto());
             String check = autoCheck.get(0).getAuto();
             if(check.equals("N")){
                b1 = false;
@@ -362,7 +393,7 @@ public class GetAccounts {
                         //-1 작은 경우,  0 같은 경우, 1 큰경우
                         if (targetPrice.compareTo(nowPrice) <= 0) {
 
-                            System.out.println("목표 타겟 도달!!!");
+                            //System.out.println("목표 타겟 도달!!!");
 
                             for (int i = 0; i < jsonArray3.length(); i++) {
 
@@ -398,11 +429,11 @@ public class GetAccounts {
                                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
                                                 String formatedNow = now.format(formatter);
-                                                System.out.println(formatedNow);
+                                                //System.out.println(formatedNow);
                                                 if(formatedNow.equals("09:00")) {
 
                                                 balance = jsonObject4.getString("balance");
-                                                System.out.println(balance);
+                                                //System.out.println(balance);
                                                 OrderVO vo3 = new OrderVO();
                                                 vo3.setCoin("KRW-BTC");
                                                 vo3.setAccessCode(vo.getAccessCode());
@@ -437,7 +468,7 @@ public class GetAccounts {
 
                         } else {
 
-                            System.out.println("목표 타겟 미 도달!!");
+                            //System.out.println("목표 타겟 미 도달!!");
 
                         }
 
