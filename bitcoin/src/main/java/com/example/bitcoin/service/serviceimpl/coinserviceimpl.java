@@ -29,9 +29,11 @@ import org.springframework.stereotype.Service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bitcoin.dto.BoardVO;
+import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
+import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.dto.TickerVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
@@ -417,6 +419,56 @@ public class coinserviceimpl implements coinservice {
 
 		List<BoardVO> list = coinmappers.getListDetail(seq);
 
+		return list;
+	}
+
+	@Override
+	public void updateBoard(BoardVO vo) {
+
+		coinmappers.updateBoard(vo);
+
+	}
+
+	@Override
+	public void updateView(BoardVO vo) {
+
+		coinmappers.updateView(vo);
+
+	}
+
+	@Override
+	public void deleteBoard(BoardVO vo) {
+
+		coinmappers.deleteBoard(vo);
+
+	}
+
+	@Override
+	public List<CommentVO> getComment(CommentVO vo) {
+
+		List<CommentVO> list = coinmappers.getComment(vo);
+
+		return list;
+	}
+
+	@Override
+	public void deleteComment(CommentVO vo) {
+
+		coinmappers.deleteComment(vo);
+
+	}
+
+	@Override
+	public void insertComment(CommentVO vo) {
+
+		coinmappers.insertComment(vo);
+
+	}
+
+	@Override
+	public List<QuestionVO> getQuestion() {
+
+		List<QuestionVO> list =  coinmappers.getQuestion();
 		return list;
 	}
 

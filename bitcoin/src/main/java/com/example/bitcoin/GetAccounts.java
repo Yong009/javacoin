@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.bitcoin.dto.BoardVO;
+import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
+import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
@@ -226,10 +228,26 @@ public class GetAccounts {
 
     //게시판 페이지 이동
     @GetMapping("/board")
-    public String board() {
-
+    public String board(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    	model.addAttribute("user", userDetails.getUsername());
         return "board";
     }
+
+    //게시판 페이지 이동(비회원용)
+    @GetMapping("/board2")
+    public String board2() {
+
+        return "board2";
+    }
+
+    //게시판 상세 페이지 이동 ( 비회원용 )
+    @GetMapping("/boardDetail2")
+    public String boardDetail2() {
+
+        return "boardDetail2";
+    }
+
+
 
     //게시판 글쓰기 페이지
     @GetMapping("/boardwrite")
@@ -273,6 +291,73 @@ public class GetAccounts {
     	return list;
     }
 
+    //게시판 수정하기
+    @ResponseBody
+    @PostMapping("/updateBoard")
+    public void updateBoard(@RequestBody BoardVO vo) {
+
+    	coinservice2.updateBoard(vo);
+    }
+
+    //조회수 증가
+    @ResponseBody
+    @PostMapping("/updateView")
+    public void updateView(@RequestBody BoardVO vo) {
+
+    	coinservice2.updateView(vo);
+    }
+
+    //게시판 글 삭제
+    @ResponseBody
+    @PostMapping("/deleteBoard")
+    public void deleteBoard(@RequestBody BoardVO vo) {
+
+    	coinservice2.deleteBoard(vo);
+    }
+
+    //댓글 불러오기
+    @ResponseBody
+    @PostMapping("/comment")
+    public List<CommentVO> comment(@RequestBody CommentVO vo){
+
+    	List<CommentVO> list = coinservice2.getComment(vo);
+
+    	return list;
+    }
+
+    //댓글 등록
+    @ResponseBody
+    @PostMapping("/insertComment")
+    public void insertComment(@RequestBody CommentVO vo) {
+
+    	coinservice2.insertComment(vo);
+    }
+
+    //댓글 삭제
+    @ResponseBody
+    @PostMapping("/deleteComment")
+    public void deleteComment(@RequestBody CommentVO vo){
+
+    	coinservice2.deleteComment(vo);
+    }
+
+    //건의 사항 페에지
+    @GetMapping("/question")
+    public String questionPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    	model.addAttribute("user", userDetails.getUsername());
+    	return "question";
+    }
+
+    //건의 사항 불러오기
+    @ResponseBody
+    @PostMapping("/questionAjax")
+    public List<QuestionVO> getQuestion(){
+
+    	List<QuestionVO> list = coinservice2.getQuestion();
+    	System.out.println(list);
+    	return list;
+    }
+
     //헤더 호출
     @GetMapping("/header.html")
     public String header(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -286,7 +371,6 @@ public class GetAccounts {
 
         return "header2";
     }
-
 
 
     //푸터 호출
@@ -311,7 +395,6 @@ public class GetAccounts {
     }
 
     //변동성 돌파 전략
-
     @ResponseBody
     @PostMapping("/autoTrade")
     public void auto(@RequestBody MemberVO member) throws NoSuchAlgorithmException, UnsupportedEncodingException {
@@ -522,7 +605,7 @@ public class GetAccounts {
 
     //모니터링
     @ResponseBody
-    @PostMapping("/memberAuto")
+    @GetMapping("/memberAuto")
     public List<MemberVO> memberAuto (@RequestBody MemberVO vo){
 
         List<MemberVO> member = coinservice2.getMemberAuto(vo.getAuto());

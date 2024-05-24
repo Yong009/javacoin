@@ -109,10 +109,60 @@
 	</insert>
 
 	<!-- 게시판 상세 내용 -->
-	<select id="getListDetail" resultType="com.example.bitcoin.dto.MemberVO">
+	<select id="getListDetail" resultType="com.example.bitcoin.dto.BoardVO">
 		SELECT *
 		  FROM board
 		  WHERE SEQ = #{seq}
 
 	</select>
+
+	<!-- 게시판 내용 수정 -->
+	<update id="updateBoard" >
+		UPDATE board
+		     set title = #{title},
+		         writeDate = (SELECT SYSDATE()),
+		         textWrite = #{textWrite}
+		  WHERE SEQ = #{seq}
+	</update>
+
+	<!-- 조회수 증가 -->
+	<update id = "updateView">
+		UPDATE board
+		   set viewCount = viewCount+1
+		  where SEQ = #{seq}
+	</update>
+
+	<!-- 게시판 글 삭제 -->
+	<delete id="deleteBoard">
+		DELETE FROM board
+		  WHERE SEQ = #{seq}
+	</delete>
+
+	<!-- 댓글 불러오기 -->
+	<select id="getComment">
+		SELECT *
+		  from comment
+		 WHERE BOARDSEQ = #{boardSeq}
+	</select>
+
+	<!-- 댓글삭제 -->
+	<delete id="deleteComment">
+		DELETE FROM comment
+		  WHERE seq = #{seq}
+
+	</delete>
+
+	<!-- 댓글 등록 -->
+	<insert id="insertComment">
+		INSERT INTO comment (textWrite,writer,boardSeq,writeDate)
+		  values(#{textWrite},#{writer},#{boardSeq},(SELECT SYSDATE()))
+	</insert>
+
+	<!-- 건의 사항 불러오기 -->
+	<select id="getQuestion">
+		SELECT *
+		 FROM question
+
+	</select>
+
 </mapper>

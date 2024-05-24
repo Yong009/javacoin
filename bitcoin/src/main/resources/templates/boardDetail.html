@@ -25,6 +25,18 @@
             width: 300px;
         }
 
+		textarea{
+			background-color: #fff;
+
+            padding: 0.9rem 0.9rem;
+            margin: 0.5rem 0;
+            width: 90%;
+            width: 300px;
+
+
+
+		}
+
         label{
             font-weight: bold;
             margin-bottom:100px;
@@ -554,14 +566,42 @@
 
 <body style="background-color:white;" class="noto-sans-kr-font">
 	<div id="header"></div>
-	  <div style="margin-top:200px; margin-left:1100px;">
+	  <div  style="margin-top:200px; margin-left:1000px;">
+	  <h3 style="margin-left:200px; margin-top:50px;">글쓰기</h3>
+	  <input id="content2" type="text" class="noto-sans-kr-font" style="width:400px; height:250px; margin-top:0px;" hidden><br/><br/>
 	  <label for="title" class="noto-sans-kr-font" style="font-weight: bold; width:400px;">제목</label><br/><br/>
       <input id="title" type="text" style=""  class="noto-sans-kr-font"><br/><br/>
       <label for="id" class="noto-sans-kr-font" style="font-weight: bold; width:400px;">작성자</label><br/><br/>
       <input id="id" type="text" readonly style="background-color:silver;"  class="noto-sans-kr-font"><br/><br/>
-      <label for="content" class="noto-sans-kr-font" style="font-weight: bold;">내용</label><br/><br/>
-      <input id="content" type="text" class="noto-sans-kr-font" style="width:400px; height:250px;"><br/><br/>
-      <button type="button" id="saveBtn" class="btn-gradient green" style="margin-left:100px; font-weight: bold;">저장</button>
+      <label id="content2" class="noto-sans-kr-font" style="font-weight: bold;">내용</label><br/><br/>
+      <textarea id="content"  class="noto-sans-kr-font" cols="60" rows="10" placeholder="여기에다가 글 남겨주세요!!" style="width:400px; height:250px;"></textarea>
+	  <div id="update" style="margin-top:30px;">
+	  	<button id="prev" class="btn-gradient purple" type="button" style="margin-left:15px; font-weight: bold;">이전</button>
+	  </div>
+
+	</div>
+
+	<div>
+		<h3 style="margin-left:500px; margin-top:50px;">댓글</h3>
+		<label for="commentText" class="noto-sans-kr-font" style="font-weight: bold; width:400px; margin-left:800px;">내용</label>
+      	<input id="commentText" type="text" style="width:700px; margin-left:30px;"  class="noto-sans-kr-font">
+      	<button id="insertBtn" type="button" class="btn-gradient green" style="margin-left:30px;">등록</button>
+		<table style="border-bottom:1px solid; width:1500px; height:100px; text-align:center; margin-left:500px;">
+			<thead style="">
+				<th>번호</th>
+				<th>작성자</th>
+				<th>댓글 내용</th>
+				<th>날짜</th>
+				<th>좋아요</th>
+				<th>댓글삭제</th>
+			</thead>
+			<tbody id="Tb" style="border-bottom:1px solid;"></tbody>
+
+
+
+		</table>
+
+
 	</div>
 
 
@@ -597,35 +637,265 @@
 
 				$('#title').val(result[0].title)
 				$('#id').val(result[0].writer)
-				$('#content').val(result[0].textwrite)
+				$('#content').val(result[0].textWrite)
+
+				if(username == result[0].writer){
+
+					console.log(username)
+					console.log(result[0].writer)
+
+					var btn = $('<button type="button" id="updateBtn" class="btn-gradient green" style="margin-left:15px; font-weight: bold;">').text('수정하기')
+ 					var btn2 = $('<button type="button" id="deleteBtn" class="btn-gradient blue" style="margin-left:15px; font-weight: bold;">').text('삭제하기')
+				 	$('#update').append(btn);
+					$('#update').append(btn2);
+
+
+
+					 $('#updateBtn').on('click',function(){
+
+
+						 var title2 = $('#title').val()
+						 var content2 = $('#content').val()
+
+						 var board2 = {
+								 seq : seq.seq,
+							 	 title : title2,
+								 textWrite : content2
+						 	}
+
+						 console.log(board2)
+
+						 $.ajax({
+							url:"/updateBoard",
+							type:"POST",
+							data:JSON.stringify(board2),
+							dataType:"json",
+							contentType:"application/json",
+							success:function(result){
+
+
+
+								}
+							})
+						 })
+
+						  $('#deleteBtn').on('click',function(){
+
+
+
+						 var board3 = {
+								 seq : seq.seq,
+
+						 	}
+
+
+
+						 $.ajax({
+							url:"/deleteBoard",
+							type:"POST",
+							data:JSON.stringify(board3),
+							dataType:"json",
+							contentType:"application/json",
+							success:function(result){
+
+
+
+								}
+							})
+						 })
+
+
+				}
+
 			}
 		 })
 
-		 $('#saveBtn').on('click',function(){
 
-			 var id = $('#id').val();
-			 var title = $('#title').val()
-			 var content = $('#content').val()
+		 var board4 = {
 
-			 var board = {
-				 	writer : id,
-					title : title,
-					textWrite : content
-			 	}
+		 		boardSeq:seq.seq
+		 	}
 
-			 $.ajax({
-				url:"/insertBoard",
+		 $.ajax({
+			url:"/comment",
+			type:"POST",
+			data:JSON.stringify(board4),
+			dataType:"json",
+			contentType:"application/json",
+			success:function(result){
+
+				 var tbody = $('#Tb');
+				 tbody.empty();
+
+				 $.each(result,function(i, item){
+
+				 	var row = $('<tr style="border-bottom:1px solid;">');
+
+				 	var td1 = $('<td class="center" ">').text(item.seq);
+				 	row.append(td1);
+
+				 	var td2 = $('<td class="center"">').text(item.writer);
+				 	row.append(td2);
+
+				 	var td3 = $('<td class="center"">').text(item.textWrite);
+				 	row.append(td3);
+
+
+				 	var td6 = $('<td class="center"">').text(item.writeDate);
+				 	row.append(td6);
+
+				 	var td4 = $('<td class="center" ">').text(item.heart);
+				 	row.append(td4);
+					if(item.writer == username){
+						var td5 = $('<td class="center" ">');
+						var link = $('<a style="color:red">').attr('href','#').text("X");
+						td5.append(link);
+						row.append(td5);
+
+						link.on('click',function(event){
+							event.preventDefault();
+
+							var board5 = {
+									seq : item.seq
+								}
+
+							$.ajax({
+								url:"/deleteComment",
+								type:"POST",
+								data:JSON.stringify(board5),
+								dataType:"json",
+								contentType:"application/json",
+								success:function(result){
+
+								}
+
+
+							})
+
+
+					 	})
+					}
+					else{
+						var td5 = $('<td class="center">').text('');
+						row.append(td5);
+					}
+
+
+				 	tbody.append(row);
+
+
+				 })
+			}
+
+		 })
+
+		$('#insertBtn').on('click',function(){
+
+		    var commentText = $('#commentText').val()
+
+		 	var comment3 = {
+
+		 		textWrite : commentText,
+		 		writer: username,
+		 		boardSeq: seq.seq,
+		 }
+
+			$.ajax({
+				url:"/insertComment",
 				type:"POST",
-				data:JSON.stringify(board),
+				data:JSON.stringify(comment3),
 				dataType:"json",
 				contentType:"application/json",
 				success:function(result){
 
 
+					 var board4 = {
 
-					}
-				})
-			 })
+						 		boardSeq:seq.seq
+						 	}
+
+						 $.ajax({
+							url:"/comment",
+							type:"POST",
+							data:JSON.stringify(board4),
+							dataType:"json",
+							contentType:"application/json",
+							success:function(result){
+
+								 var tbody = $('#Tb');
+
+								 $.each(result,function(i, item){
+
+								 	var row = $('<tr style="border-bottom:1px solid;">');
+
+								 	var td1 = $('<td class="center">').text(item.seq);
+								 	row.append(td1);
+
+								 	var td2 = $('<td class="center">').text(item.writer);
+								 	row.append(td2);
+
+								 	var td3 = $('<td class="center">').text(item.textWrite);
+								 	row.append(td3);
+
+								 	var td6 = $('<td class="center">').text(item.writeDate);
+								 	row.append(td6);
+
+								 	var td4 = $('<td class="center">').text(item.heart);
+								 	row.append(td4);
+									if(item.writer == username){
+										var td5 = $('<td class="center">');
+										var link = $('<a style="color:red">').attr('href','#').text("X");
+										td5.append(link);
+										row.append(td5);
+
+										link.on('click',function(event){
+											event.preventDefault();
+
+											var board5 = {
+													seq : item.seq
+												}
+
+											$.ajax({
+												url:"/deleteComment",
+												type:"POST",
+												data:JSON.stringify(board5),
+												dataType:"json",
+												contentType:"application/json",
+												success:function(result){
+
+												}
+
+
+											})
+
+
+									 	})
+									}
+
+
+								 	tbody.append(row);
+
+
+								 })
+							}
+
+						 })
+
+				}
+
+			})
+
+		})
+
+
+
+
+
+			$('#prev').on('click',function(){
+
+				window.location.href = "/board";
+			})
+
 
     </script>
 </body>

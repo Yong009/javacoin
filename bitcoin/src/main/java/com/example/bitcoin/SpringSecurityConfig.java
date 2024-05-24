@@ -30,7 +30,7 @@ public class SpringSecurityConfig{
 		.authorizeHttpRequests(request -> request
 
 				.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-				.requestMatchers("/logout","/login","/static/**","/**.jpg","/**.png","/","/logout","/header.html","/footer.html","/market7","/currentPrice7","/chart2","/header2.html","/error").permitAll()
+				.requestMatchers("/boardDetail2","/boardDetailAjax","/boardListAjax","/board2","/logout","/login","/static/**","/**.jpg","/**.png","/","/logout","/header.html","/footer.html","/market7","/currentPrice7","/chart2","/header2.html","/error").permitAll()
 				.anyRequest().authenticated()
 
 				).formLogin(login -> login

@@ -418,6 +418,9 @@
                         <b>
                             <a href="/chart2">비회원용 코인 차트 보기</a>
                         </b>
+                        <b>
+                            <a href="/board2">게시판 보러 가기</a>
+                        </b>
                     </p>
                     <p>
               <span>
@@ -467,10 +470,14 @@
     </div>
     <!-- END CONTENT SECTION -->
 </div>
+
+	<div id="footer"></div>
 </body>
 
 <script>
     let container = document.getElementById('container')
+
+     $('#footer').load('footer.html');
 
     localStorage.setItem('id', $('#username').val())
     toggle = () => {

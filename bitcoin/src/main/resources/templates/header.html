@@ -421,8 +421,8 @@
                     </li>
                     <li class="cell menu-5">
                         <a href="#">고객 지원</a>
-                        <ul>
-                            <li><a href="#">건의하기</a></li>
+                        <ul id="question">
+							<li><a href="#">건의하기</a></li>
                             <li><a href="#">이용 약관</a></li>
                         </ul>
                         <div class="sub-menu-width sub-menu-width-5"></div>
@@ -431,11 +431,11 @@
                 <div class="sub-menu-bg"></div>
             </nav>
 
-            <div class="search-box">
+       <!--       <div class="search-box">
                 <a href="#">
                     <span>검색</span><img src="https://www.dacorkorea.com/images/icon-search.png" alt="search">
                 </a>
-            </div>
+            </div>-->
             <!-- 서치박스 온
             <div class="search-box-on">
                 <input type="search" placeholder="">
@@ -452,6 +452,7 @@
     if(username == 'goo'){
         $('#manager').append('<li><a href="/monitoring">모니터링</a></li>')
         $('#memberManage').append('<li><a href="/memberManage">회원 관리</a></li>')
+    	$('#question').append('<li><a href="/question">건의함</a></li>');
     }
 
     // 상단 메뉴 관련
