@@ -55,7 +55,7 @@ public class GetAccounts {
     // 시작 시 첫 페이지
     @GetMapping("/")
     public String loginPage2() {
-        return "login";
+        return "chart2";
     }
 
 
@@ -522,7 +522,7 @@ public class GetAccounts {
                                     vo2.setAccessCode(vo.getAccessCode());
                                     vo2.setSecretCode(vo.getSecretCode());
                                     vo2.setOrderType("bid");
-                                    vo2.setPrice("60000");
+                                    vo2.setPrice("6000");
                                     coinservice2.order7(vo2);
 
                                     while (b2) {
@@ -604,6 +604,53 @@ public class GetAccounts {
 
         coinservice2.autoStop7(vo.getId());
     }
+
+	/* rsi자동매매
+	 * @GetMapping("/rsi") public void rsiAuto() {
+	 *
+	 * final int minutes = 30; final String market = "KRW-BTC"; final int maxCount =
+	 * 200; // 업비트 캔들 API 호출 (Docs:
+	 * https://docs.upbit.com/reference/%EB%B6%84minute-%EC%BA%94%EB%93%A4-1)
+	 * List<MinuteCandleRes> candleResList =
+	 * marketPriceReaderService.getCandleMinutes(minutes, market, maxCount); if
+	 * (CollectionUtils.isEmpty(candleResList)) { return null; }
+	 *
+	 * // 지수 이동 평균은 과거 데이터부터 구해주어야 합니다. candleResList = candleResList.stream()
+	 * .sorted(Comparator.comparing(CandleRes::getTimestamp)) // 오름차순 (과거 순)
+	 * .collect(Collectors.toList()); // Sort
+	 *
+	 * double zero = 0; List<Double> upList = new ArrayList<>(); // 상승 리스트
+	 * List<Double> downList = new ArrayList<>(); // 하락 리스트 for (int i = 0; i <
+	 * candleResList.size() - 1; i++) { // 최근 종가 - 전일 종가 = gap 값이 양수일 경우 상승했다는 뜻 /
+	 * 음수일 경우 하락이라는 뜻 double gapByTradePrice = candleResList.get(i +
+	 * 1).getTradePrice().doubleValue() -
+	 * candleResList.get(i).getTradePrice().doubleValue(); if (gapByTradePrice > 0)
+	 * { // 종가가 전일 종가보다 상승일 경우 upList.add(gapByTradePrice); downList.add(zero); }
+	 * else if (gapByTradePrice < 0) { // 종가가 전일 종가보다 하락일 경우
+	 * downList.add(gapByTradePrice * -1); // 음수를 양수로 변환해준다. upList.add(zero); }
+	 * else { // 상승, 하락이 없을 경우 종가 - 전일 종가 = gap은 0이므로 0값을 넣어줍니다. upList.add(zero);
+	 * downList.add(zero); } }
+	 *
+	 * double day = 14; // 가중치를 위한 기준 일자 (보통 14일 기준) double a = (double) 1 / (1 +
+	 * (day - 1)); // 지수 이동 평균의 정식 공식은 a = 2 / 1 + day 이지만 업비트에서 사용하는 수식은 a = 1 / (1
+	 * + (day - 1))
+	 *
+	 * // AU값 구하기 double upEma = 0; // 상승 값의 지수이동평균 if
+	 * (CollectionUtils.isNotEmpty(upList)) { upEma = upList.get(0).doubleValue();
+	 * if (upList.size() > 1) { for (int i = 1 ; i < upList.size(); i++) { upEma =
+	 * (upList.get(i).doubleValue() * a) + (upEma * (1 - a)); } } }
+	 *
+	 * // AD값 구하기 double downEma = 0; // 하락 값의 지수이동평균 if
+	 * (CollectionUtils.isNotEmpty(downList)) { downEma =
+	 * downList.get(0).doubleValue(); if (downList.size() > 1) { for (int i = 1; i <
+	 * downList.size(); i++) { downEma = (downList.get(i).doubleValue() * a) +
+	 * (downEma * (1 - a)); } } }
+	 *
+	 * // rsi 계산 double au = upEma; double ad = downEma; double rs = au / ad; double
+	 * rsi = 100 - (100 / (1 + rs));
+	 *
+	 * }
+	 */
 
     //현재가 정보
     @ResponseBody
