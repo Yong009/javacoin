@@ -472,4 +472,18 @@ public class coinserviceimpl implements coinservice {
 		return list;
 	}
 
+	@Override
+	public List<QuestionVO> getQuestion2(String writer) {
+
+		List<QuestionVO> list = coinmappers.getQuestion2(writer);
+		return list;
+	}
+
+	@Override
+	public List<QuestionVO> getQuestionDetail(Long seq) {
+
+		List<QuestionVO> list = coinmappers.getQuestionDetail(seq);
+		return list;
+	}
+
 }

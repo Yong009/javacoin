@@ -165,4 +165,18 @@
 
 	</select>
 
+	<!-- 건의 사항 불러오기 개인 -->
+	<select id="getQuestion2">
+		SELECT *
+		  FROM question
+		  where writer = #{writer}
+	</select>
+
+	<!-- 건의 사항 디테일 -->
+	<select id="getQuestionDetail">
+		SELECT *
+		  FROM question
+		  where SEQ = #{seq}
+
+	</select>
 </mapper>

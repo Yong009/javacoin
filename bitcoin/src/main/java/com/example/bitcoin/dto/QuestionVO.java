@@ -12,8 +12,14 @@ public class QuestionVO {
 	String writer;
 	String admin;
 	Date writeDate;
+	String title;
 
-
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
+	}
 	public Long getSeq() {
 		return seq;
 	}
@@ -38,11 +44,11 @@ public class QuestionVO {
 	public void setAdmin(String admin) {
 		this.admin = admin;
 	}
-	public String getWrtieDate() {
+	public String getWriteDate() {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 		return formatter.format(writeDate);
 	}
-	public void setWrtieDate(Date writeDate) {
+	public void setWriteDate(Date writeDate) {
 		this.writeDate = writeDate;
 	}
 

@@ -270,7 +270,6 @@ public class GetAccounts {
     public List<BoardVO> boardListAjax() {
 
         List<BoardVO> list = coinservice2.getList();
-
         return list;
     }
 
@@ -348,15 +347,46 @@ public class GetAccounts {
     	return "question";
     }
 
-    //건의 사항 불러오기
+    //건의 사항 불러오기(전체)
     @ResponseBody
-    @PostMapping("/questionAjax")
+    @GetMapping("/questionAjax")
     public List<QuestionVO> getQuestion(){
 
     	List<QuestionVO> list = coinservice2.getQuestion();
-    	System.out.println(list);
+
     	return list;
     }
+
+    //건의 사항 불러오기 ( 그 사람만 )
+    @ResponseBody
+    @GetMapping("/questionAjax2")
+    public List<QuestionVO> getQuestion2(@RequestBody QuestionVO vo){
+
+    	List<QuestionVO> list = coinservice2.getQuestion2(vo.getWriter());
+
+    	return list;
+    }
+
+    //건의 사항 상세
+    @ResponseBody
+    @PostMapping("/questionDetailAjax")
+    public List<QuestionVO> getQuestionDetail(@RequestBody QuestionVO vo){
+
+    	List<QuestionVO> list = coinservice2.getQuestionDetail(vo.getSeq());
+
+    	return list;
+    }
+
+
+    //건의 사항 상세 페이지
+    @ResponseBody
+    @GetMapping("/questionDetail")
+    public String questionDetailPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+    	model.addAttribute("user", userDetails.getUsername());
+    	return "questionDetail";
+    }
+
+
 
     //헤더 호출
     @GetMapping("/header.html")

@@ -68,6 +68,10 @@ public interface coinservice {
 	public void insertComment(CommentVO vo);
 	// 건의 사항 들고오기
 	public List<QuestionVO> getQuestion();
+	// 건의 사항 개인 꺼 들고오기
+	public List<QuestionVO> getQuestion2(String writer);
+	// 건의 사항 디테일
+	public List<QuestionVO> getQuestionDetail(Long seq);
 
 	/*public void join(MemberVO vo);*/
 

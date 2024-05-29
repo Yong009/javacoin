@@ -58,4 +58,9 @@ public interface coinmapper {
   public void insertComment(CommentVO vo);
   // 건의 사항 불러오기
   public List<QuestionVO> getQuestion();
+  // 건의 사항 개인꺼 불러오기
+  public List<QuestionVO> getQuestion2(String writer);
+  // 건의 사항 디테일
+  public List<QuestionVO> getQuestionDetail(Long seq);
+
 }
