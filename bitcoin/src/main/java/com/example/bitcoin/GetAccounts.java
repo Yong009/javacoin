@@ -1,13 +1,24 @@
 package com.example.bitcoin;
 
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,15 +33,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.CommentVO;
+import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 @Controller
 public class GetAccounts {
@@ -597,7 +619,7 @@ public class GetAccounts {
 
 
 
-    //변동성 돌파 전략 자동 끄기
+    // 변동성 돌파 전략 자동 끄기
     @ResponseBody
     @PostMapping("/autoStop")
     public void autoStop(@RequestBody MemberVO vo) {
@@ -605,52 +627,19 @@ public class GetAccounts {
         coinservice2.autoStop7(vo.getId());
     }
 
-	/* rsi자동매매
-	 * @GetMapping("/rsi") public void rsiAuto() {
-	 *
-	 * final int minutes = 30; final String market = "KRW-BTC"; final int maxCount =
-	 * 200; // 업비트 캔들 API 호출 (Docs:
-	 * https://docs.upbit.com/reference/%EB%B6%84minute-%EC%BA%94%EB%93%A4-1)
-	 * List<MinuteCandleRes> candleResList =
-	 * marketPriceReaderService.getCandleMinutes(minutes, market, maxCount); if
-	 * (CollectionUtils.isEmpty(candleResList)) { return null; }
-	 *
-	 * // 지수 이동 평균은 과거 데이터부터 구해주어야 합니다. candleResList = candleResList.stream()
-	 * .sorted(Comparator.comparing(CandleRes::getTimestamp)) // 오름차순 (과거 순)
-	 * .collect(Collectors.toList()); // Sort
-	 *
-	 * double zero = 0; List<Double> upList = new ArrayList<>(); // 상승 리스트
-	 * List<Double> downList = new ArrayList<>(); // 하락 리스트 for (int i = 0; i <
-	 * candleResList.size() - 1; i++) { // 최근 종가 - 전일 종가 = gap 값이 양수일 경우 상승했다는 뜻 /
-	 * 음수일 경우 하락이라는 뜻 double gapByTradePrice = candleResList.get(i +
-	 * 1).getTradePrice().doubleValue() -
-	 * candleResList.get(i).getTradePrice().doubleValue(); if (gapByTradePrice > 0)
-	 * { // 종가가 전일 종가보다 상승일 경우 upList.add(gapByTradePrice); downList.add(zero); }
-	 * else if (gapByTradePrice < 0) { // 종가가 전일 종가보다 하락일 경우
-	 * downList.add(gapByTradePrice * -1); // 음수를 양수로 변환해준다. upList.add(zero); }
-	 * else { // 상승, 하락이 없을 경우 종가 - 전일 종가 = gap은 0이므로 0값을 넣어줍니다. upList.add(zero);
-	 * downList.add(zero); } }
-	 *
-	 * double day = 14; // 가중치를 위한 기준 일자 (보통 14일 기준) double a = (double) 1 / (1 +
-	 * (day - 1)); // 지수 이동 평균의 정식 공식은 a = 2 / 1 + day 이지만 업비트에서 사용하는 수식은 a = 1 / (1
-	 * + (day - 1))
-	 *
-	 * // AU값 구하기 double upEma = 0; // 상승 값의 지수이동평균 if
-	 * (CollectionUtils.isNotEmpty(upList)) { upEma = upList.get(0).doubleValue();
-	 * if (upList.size() > 1) { for (int i = 1 ; i < upList.size(); i++) { upEma =
-	 * (upList.get(i).doubleValue() * a) + (upEma * (1 - a)); } } }
-	 *
-	 * // AD값 구하기 double downEma = 0; // 하락 값의 지수이동평균 if
-	 * (CollectionUtils.isNotEmpty(downList)) { downEma =
-	 * downList.get(0).doubleValue(); if (downList.size() > 1) { for (int i = 1; i <
-	 * downList.size(); i++) { downEma = (downList.get(i).doubleValue() * a) +
-	 * (downEma * (1 - a)); } } }
-	 *
-	 * // rsi 계산 double au = upEma; double ad = downEma; double rs = au / ad; double
-	 * rsi = 100 - (100 / (1 + rs));
-	 *
-	 * }
-	 */
+    // rsi
+
+
+
+
+    @ResponseBody
+    @GetMapping("/rsi")
+    public void rsi() {
+
+
+    }
+
+
 
     //현재가 정보
     @ResponseBody
@@ -752,67 +741,6 @@ public class GetAccounts {
         String authenticationToken = "Bearer " + jwtToken;
 
 
-
-
-
-
-        // 내 자산 정보
-
-        try {
-            HttpClient client = HttpClientBuilder.create().build();
-            HttpGet request = new HttpGet(serverUrl + "/v1/accounts");
-            request.setHeader("Content-Type", "application/json");
-            request.addHeader("Authorization", authenticationToken);
-
-            HttpResponse response = client.execute(request);
-            HttpEntity entity = response.getEntity();
-
-            System.out.println(EntityUtils.toString(entity, "UTF-8"));
-
-            // 마켓 정보
-
-            OkHttpClient clients = new OkHttpClient();
-
-            okhttp3.Request requests = new okhttp3.Request.Builder()
-                    .url("https://api.upbit.com/v1/market/all?isDetails=true").get()         //true = 상세한 정보, false = 간단한 정보
-                    .addHeader("accept", "application/json").build();
-
-            try {
-                Response responses = clients.newCall(requests).execute();
-                // 응답처리
-                if (responses.body() != null) {
-                    String responseBody = responses.body().string();
-                    System.out.println(responseBody);
-                } else {
-                    // 응답 본문이 null인 경우의 처리
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                //IOException 처리
-            }
-
-            // 현재가 정보
-
-            OkHttpClient client2 = new OkHttpClient();
-
-            okhttp3.Request request2 = new okhttp3.Request.Builder()
-                    .url("https://api.upbit.com/v1/ticker?markets=KRW-BTC").get()               //?markets=KRW-BTC" 비트코인
-                    .addHeader("accept", "application/json").build();
-
-            // Response response2 = client.newCall(request).execute();
-            try {
-                Response response2 = client2.newCall(request2).execute();
-                // 응답 처리
-                if (response2.body() != null) {
-                    String responseBody2 = response2.body().string();
-                    System.out.println(responseBody2);
-                } else {
-                    // 응답 본문이 null인 경우의 처리
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                // IOException 처리
-            }
 
 
             //최근 체결 내역

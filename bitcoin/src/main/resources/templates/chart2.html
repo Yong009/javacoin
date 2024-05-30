@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+    <meta name="naver-site-verification" content="e78a54ad911ee1647f3e47316967ccf0d9bac63c" />
     <style>
 
         .noto-sans-kr-font {
@@ -671,21 +672,11 @@
 
 <div id="header"></div>
 <div style="margin-top:150px; margin-left:1000px; margin-right:100px;">
-    <!--  <h1 style=" text-align: center; margin-bottom:100px;">차트</h1>-->
 
-	  <ins class="kakao_ad_area" style="display:none;"
-		data-ad-unit = "DAN-DpCIEV4MZ1i3z69U"
-		data-ad-width = "728"
-		data-ad-height = "90"></ins>
-		<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-
-		<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2863619342768324"
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2863619342768324"
      crossorigin="anonymous"></script>
 
     <h2 style=" margin-bottom:100px; margin-left:700px;">차트(업비트)</h2>
-
-
-
 
     <label for="coins" style="font-weight: bold; ">코인 검색 <span style="color:red;">(검색시 은색으로 표시됩니다.)</span> </label><br/><br/>
     <select id="coins" style="width:335px; height:50px; font-size:15px;"></select>
@@ -708,6 +699,17 @@
 <script>
 
     $('#header').load('header2.html')
+
+  /*      $.ajax({
+		url:"/rsi14",
+		type:"GET",
+		dataType:"json",
+		contentType:"application/json",
+		success:function(result){
+			console.log(result);
+		}
+    }) */
+
 
 
     $.ajax({
@@ -959,7 +961,9 @@
         })
     })
 
+
 </script>
+
 </body>
 
 </html>
