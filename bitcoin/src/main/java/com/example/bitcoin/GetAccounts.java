@@ -18,6 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.json.JSONArray;
@@ -25,6 +28,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -451,6 +455,15 @@ public class GetAccounts {
     @PostMapping("/autoTrade")
     public void auto(@RequestBody MemberVO member) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
+
+    	 CompletableFuture.runAsync(() -> {
+             autoTrade(member);
+         });
+     }
+
+    	@Async
+    	public void autoTrade(MemberVO member) {
+    	Logger logger = LoggerFactory.getLogger(this.getClass());
         coinservice2.autoOn(member.getId());
 
         String ac = member.getAccessCode();
@@ -458,7 +471,7 @@ public class GetAccounts {
         /*String ac = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";*/
         String sc = member.getSecretCode();
         /*String sc = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";*/
-        String userId = member.getId();
+       String userId = member.getId();
 
         MemberVO vo = new MemberVO();
         boolean b1 = true;
@@ -470,7 +483,8 @@ public class GetAccounts {
             String check = autoCheck.get(0).getAuto();
             if(check.equals("N")){
                b1 = false;
-
+               logger.info("자동 거래 중지: 사용자 ID = {}", userId);
+               break;
             }else{
                 boolean b2 = true;
                 //System.out.println(vo);
@@ -479,6 +493,12 @@ public class GetAccounts {
                 String a = coinservice2.market7();
                 String b = coinservice2.currentPrice7();
                 String c = coinservice2.account7(vo);
+
+             // 예외 처리 추가
+                if (a == null || b == null || c == null) {
+                    throw new RuntimeException("API 호출에 실패했습니다.");
+                }
+
                 String market;
                 String market2;
                 String koreanName;
@@ -527,8 +547,9 @@ public class GetAccounts {
 
                         //-1 작은 경우,  0 같은 경우, 1 큰경우
                         if (targetPrice.compareTo(nowPrice) <= 0) {
+                        	logger.info("사용자 = {} 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}", userId, nowPrice, targetPrice);
 
-                            //System.out.println("목표 타겟 도달!!!");
+                        	//System.out.println("목표 타겟 도달!!!");
 
                             for (int i = 0; i < jsonArray3.length(); i++) {
 
@@ -545,7 +566,16 @@ public class GetAccounts {
                                     vo2.setSecretCode(vo.getSecretCode());
                                     vo2.setOrderType("bid");
                                     vo2.setPrice("6000");
-                                    coinservice2.order7(vo2);
+                                    try {
+										coinservice2.order7(vo2);
+									} catch (NoSuchAlgorithmException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									} catch (UnsupportedEncodingException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+                                    logger.info("매수 주문 실행: 코인 = KRW-BTC, 가격 = 6000");
 
                                     while (b2) {
 
@@ -576,11 +606,23 @@ public class GetAccounts {
                                                 vo3.setOrderType("ask");
                                                 vo3.setVolume(balance);
 
-                                                coinservice2.sell7(vo3);
-                                                b2 = false;
+                                                try {
+													coinservice2.sell7(vo3);
+												} catch (NoSuchAlgorithmException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												} catch (UnsupportedEncodingException e) {
+													// TODO Auto-generated catch block
+													e.printStackTrace();
+												}
+
+                                                logger.info("매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", balance);
+
 
                                                 try {
                                                     Thread.sleep(30000);
+                                                    b2 = false;
+                                                    break;
                                                 } catch (InterruptedException e) {
                                                     e.printStackTrace();
                                                 }
@@ -593,7 +635,8 @@ public class GetAccounts {
                                         try {
                                             Thread.sleep(1000);
                                         } catch (InterruptedException e) {
-                                            e.printStackTrace();
+                                        	logger.error("거래 중 오류 발생", e);
+                                        	e.printStackTrace();
                                         }
 
                                     }
@@ -602,7 +645,13 @@ public class GetAccounts {
 
 
                         } else {
-
+                        	logger.info("사용자"+userId+"목표 타겟 미 도달!!");
+                        	try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
                             //System.out.println("목표 타겟 미 도달!!");
 
                         }
@@ -615,7 +664,9 @@ public class GetAccounts {
 
 
         }
+
     }
+
 
 
 
