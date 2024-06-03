@@ -33,6 +33,7 @@ import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
+import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.dto.TickerVO;
 import com.example.bitcoin.mapper.coinmapper;
@@ -49,7 +50,6 @@ public class coinserviceimpl implements coinservice {
 
     @Autowired
     coinmapper coinmappers;
-
 
     //PasswordEncoder passwordEncoder;
 
@@ -492,5 +492,27 @@ public class coinserviceimpl implements coinservice {
         List<MemberVO> list = coinmappers.autoCheck();
         return list;
     }
+
+	@Override
+	public void manageAuto(String id) {
+
+		coinmappers.manageAuto(id);
+
+	}
+
+	@Override
+	public List<BoardVO> getLists(int page) {
+		int offSet = page - 1;
+		return coinmappers.getLists(offSet);
+	}
+
+	@Override
+	public int getMax() {
+
+		int a = coinmappers.getMax();
+
+
+		return a;
+	}
 
 }

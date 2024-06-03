@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>코인토론방</title>
+    <title>토론방(자유게시판)</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -699,7 +699,7 @@
 <body style="background-color:white;" class="noto-sans-kr-font">
 
 <div id="header"></div>
-<h1 style="margin-top:150px; text-align:center;">코인토론방</h1>
+<h1 style="margin-top:150px; text-align:center;">토론방(자유게시판)</h1>
 <div id="write" style="margin-left:100px; margin-right:100px;">
 	 <button id="writeBtn" type="button" class="btn-gradient green" style="float:right;">글쓰기</button>
     <table style="background-color:white; margin-top:100px;">
@@ -716,7 +716,7 @@
 
         </tbody>
     </table>
-
+	<div id="pagination" style="margin-left:360px; margin-top:30px;"></div>
 </div>
 <div id="footer"></div>
 
@@ -845,6 +845,9 @@
         })
     }
 
+
+    var page = 1;
+
     $.ajax({
         url: "/boardListAjax",
         Type: "GET",
@@ -871,6 +874,63 @@
     	location.href= "/boardwrite";
 
     })
+
+    var max;
+
+	  $.ajax({
+			 url:"/boardMax",
+			 Type:"POST",
+			 dataType: "json",
+			 contentType: "application/json",
+			 success: function (result) {
+
+				 if(result <= 10 || result != 0){
+					 max = 1;
+				 }else{
+					max = Math.floor((result/10)+1);
+				 }
+
+				 $('#pagination').empty();
+
+				    for(var i = 1; i<= max; i++){
+						console.log(max);
+						var pageButton = $('<button class="btn-gradient purple mini" id='+i+'>').text(i);
+
+						pageButton.click(function(){
+
+							var selectedPage = $(this).text();
+
+							var vo = {
+								page : selectedPage
+							}
+							console.log(vo);
+							pageButton.css('font-weight','bold');
+
+							$.ajax({
+							        url:"/boardListAjax2",
+							        Type:"POST",
+							        dataType: "json",
+							         data:JSON.stringify(vo),
+							        contentType: "application/json",
+							        success: function (result) {
+
+							            board = result;
+
+							            refreshTable();
+							        }
+							    })
+
+						})
+						$('#pagination').append(pageButton);
+				    }
+			}
+	  })
+
+
+
+
+
+
 
 
 

@@ -44,6 +44,8 @@
   	<select id="getList" resultType="com.example.bitcoin.dto.BoardVO">
 		SELECT *
 		 from board
+		 order by SEQ
+		 limit 10 offset 0
 	</select>
 
 	<!--자동매매 켜기-->
@@ -188,4 +190,28 @@
 		    and SECRETCODE is not null
 			and auto = 'Y'
 	</select>
+
+	<!-- 관리자가 자동매매 끄기 -->
+	<update id="manageAuto">
+		UPDATE member
+		  SET AUTO = 'N'
+		 WHERE id = #{id}
+	</update>
+
+	<!-- 페이징 -->
+	<select id="getLists" resultType="com.example.bitcoin.dto.BoardVO">
+	 	SELECT *
+	 	  FROM board
+	 	  order by SEQ
+	 	  limit 10 offset #{offSet}
+
+	</select>
+
+	<!-- 게시판 글 수 -->
+	<select id="getMax" resultType="java.lang.Integer">
+		SELECT MAX(SEQ)
+		  FROM board
+
+	</select>
+
 </mapper>

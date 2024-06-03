@@ -538,11 +538,16 @@
 </head>
 <body style="background-color:white;" class="noto-sans-kr-font">
 <div id="header"></div>
-<div style="margin-top:350px; margin-left:800px;">
-	 <label for="access2" style="font-weight: bold; ">access키</label><br/><br/>
-    <input id="access2" type="text" class="form-control" style="width:300px;"/><br/><br/>
-    <label for="secret2" style="font-weight: bold; ">secret키</label><br/><br/>
-    <input id="secret2" type="text" style="margin-left:4px; width:300px;" class="form-control"/><br/>
+<div style="margin-top:350px; margin-left:1000px;">
+<p style="color:red; text-weight:bold;">access키와 secret키를 잔고 조회 페이지에서 저장 시 자동매매 기능을 사용하실 수 있습니다.</p>
+	<h4 style=font-weight:bold;>변동성 돌파 전략 이란?</h4>
+	<p>전날 종가, 최고가, 저가를 이용해서 변동성을 확인 후 그 적정 가격에 구매를 한뒤, 변동이 큰 아침 9시에 파는 전략입니다. </p>
+	<p>리스트를 최소화한 대신 리턴도 적은 전략입니다.</p>
+
+	<label for="access2" style="font-weight: bold;" hidden>access키</label><br/><br/>
+    <input id="access2" type="text" class="form-control" style="width:300px;" hidden/><br/><br/>
+    <label for="secret2" style="font-weight: bold;" hidden>secret키</label><br/><br/>
+    <input id="secret2" type="text" style="margin-left:4px; width:300px;" class="form-control" hidden/><br/>
     <button id="startTrading" class="btn-gradient red">자동 매매 시작</button>
     <button id="stopTrading" class="btn-gradient blue">자동 매매 중지</button>
 </div>
@@ -606,12 +611,12 @@
     $('#stopTrading').on('click',function(){
 
 
-        var acc = $('#access2').val();
-        var sec = $('#secret2').val();
+        //var acc = $('#access2').val();
+        //var sec = $('#secret2').val();
         var username = '[[${user}]]';
         var member = {
-            accessCode: acc,
-            secretCode: sec,
+            //accessCode: acc,
+            //secretCode: sec,
             id : username
         }
 

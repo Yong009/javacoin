@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.QuestionVO;
 
 
@@ -64,4 +64,10 @@ public interface coinmapper {
   public List<QuestionVO> getQuestionDetail(Long seq);
   // 변동성 스케줄러
   public List<MemberVO> autoCheck();
+  // 관리자 자동매매 끄기
+  public void manageAuto(String id);
+  // 페이징
+  public List<BoardVO> getLists(int offSet);
+  // 게시판 글 수
+  public int getMax();
 }

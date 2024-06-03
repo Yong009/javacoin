@@ -702,6 +702,7 @@
               <tr style="background-color:white;">
                   <th>id</th>
                   <th>자동매매</th>
+                  <th>off</th>
                   <th>회원탈퇴</th>
               </tr>
               </thead>
@@ -733,19 +734,45 @@
                     var td2 = $('<td class="center" style="color:blue">').text("미사용")
                 }
                 row.append(td2);
-                var deleteBtn = $('<buttonn type="button" id="deleteBtn" class="btn-gradient blue mini" style="width:30px; height: 15px;">').text('탈퇴')
-                var td3 = $('<td class="center">').append(deleteBtn);
+
+                var stopBtn = $('<buttonn type="button" id="stopBtn" class="btn-gradient blue mini" style="width:30px; height: 15px;">').text('끄기')
+                var td3 = $('<td class="center">').append(stopBtn);
                 row.append(td3);
 
+				stopBtn.on('click',function(){
+					var id2 = result[i].id
+                    var member2 = {
+                        id : id2
+                    }
+
+					   $.ajax({
+	                        url:"/manageAuto",
+	                        type:"POST",
+	                        data:JSON.stringify(member2),
+	                        dataType: "json",
+	                        contentType:"application/json",
+	                        success: function(result){
+
+	                            alert('자동매매 끄기 성공!!!')
+
+	                        }
+	                    })
+				})
+
+
+                var deleteBtn = $('<buttonn type="button" id="deleteBtn" class="btn-gradient blue mini" style="width:30px; height: 15px;">').text('탈퇴')
+                var td4 = $('<td class="center">').append(deleteBtn);
+                row.append(td4);
+
                 deleteBtn.on('click',function(){
-                    console.log(result[i].id)
+
                     var id2 = result[i].id
                     var member2 = {
                         id : id2
                     }
 
                     $.ajax({
-                        url:"deleteMember",
+                        url:"/deleteMember",
                         type:"POST",
                         data:JSON.stringify(member2),
                         dataType: "json",

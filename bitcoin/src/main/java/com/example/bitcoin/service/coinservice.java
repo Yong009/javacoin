@@ -4,17 +4,15 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-
-
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
+import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.QuestionVO;
 
 
 public interface coinservice {
-
 
 	// 시큐리티 로그인
 	public  boolean findOne(String userId, String pw);
@@ -24,6 +22,8 @@ public interface coinservice {
 	public boolean saveCode(MemberVO vo);
 	// 게시판 전체 리스트
 	public List<BoardVO> getList();
+	// 페이징
+	public List<BoardVO> getLists(int page);
 	// 잔고 조회
     String account7(MemberVO vo);
 	// 현재가격 조회
@@ -75,6 +75,10 @@ public interface coinservice {
 	// 변동성 스케줄러
 	public List<MemberVO> autoCheck();
 	/*public void join(MemberVO vo);*/
+	// 관리자가 자동매매 강제 종료
+	public void manageAuto(String id);
+	// 게시판 글 수
+	public int getMax();
 
 
 

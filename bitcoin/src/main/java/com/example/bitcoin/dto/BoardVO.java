@@ -20,9 +20,15 @@ public class BoardVO {
 	public Date writeDate;		//작성일자
 	public Long viewCount;		//조회수
 	public String textWrite;	//글
+	public int count;  		    //글 수
 
 
-
+	public int getCount() {
+		return count;
+	}
+	public void setCount(int count) {
+		this.count = count;
+	}
 	public Long getSeq() {
 		return seq;
 	}
