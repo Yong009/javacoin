@@ -486,4 +486,11 @@ public class coinserviceimpl implements coinservice {
 		return list;
 	}
 
+    @Override
+    public List<MemberVO> autoCheck() {
+
+        List<MemberVO> list = coinmappers.autoCheck();
+        return list;
+    }
+
 }

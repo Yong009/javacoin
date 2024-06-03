@@ -62,5 +62,6 @@ public interface coinmapper {
   public List<QuestionVO> getQuestion2(String writer);
   // 건의 사항 디테일
   public List<QuestionVO> getQuestionDetail(Long seq);
-
+  // 변동성 스케줄러
+  public List<MemberVO> autoCheck();
 }

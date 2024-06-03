@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -95,7 +96,7 @@ public class GetAccounts {
     @GetMapping("/error")
     public String error() {
 
-    	return "error";
+        return "error";
 
     }
 
@@ -122,7 +123,7 @@ public class GetAccounts {
 
     @ResponseBody
     @PostMapping("/memberAll")
-    public List<MemberVO> memberAll(){
+    public List<MemberVO> memberAll() {
 
         List<MemberVO> vo = coinservice2.getMemberAll();
         return vo;
@@ -131,18 +132,17 @@ public class GetAccounts {
     //회원탈퇴
     @ResponseBody
     @PostMapping("/deleteMember")
-    public void deleteMember(@RequestBody MemberVO vo){
+    public void deleteMember(@RequestBody MemberVO vo) {
 
         coinservice2.deleteMember(vo.getId());
 
     }
 
 
-
     //회원가입
 
     @GetMapping("/join")
-    public void registerMember(MemberVO member){
+    public void registerMember(MemberVO member) {
 
         coinservice2.memberJoin(member);
 
@@ -150,8 +150,8 @@ public class GetAccounts {
 
     //아이디 중복확인
     @GetMapping("/check")
-    public int checkId(MemberVO member){
-        int a =coinservice2.checkId(member);
+    public int checkId(MemberVO member) {
+        int a = coinservice2.checkId(member);
         return a;
     }
 
@@ -178,6 +178,7 @@ public class GetAccounts {
         model.addAttribute("user", userDetails.getUsername());
         return "order";
     }
+
     //자동매매 페이지
     @GetMapping("/changeAuto")
     public String chagePage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
@@ -194,7 +195,7 @@ public class GetAccounts {
 
     //마이 페이지
     @GetMapping("/myPage")
-    public String myPage(@AuthenticationPrincipal UserDetails userDetails, Model model){
+    public String myPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("user", userDetails.getUsername());
         return "myContents";
     }
@@ -247,7 +248,7 @@ public class GetAccounts {
     //회원 정보 수정
     @ResponseBody
     @PostMapping("/updateMember")
-    public void updateMember(@RequestBody MemberVO vo){
+    public void updateMember(@RequestBody MemberVO vo) {
 
         coinservice2.updateMember(vo);
     }
@@ -255,7 +256,7 @@ public class GetAccounts {
     //게시판 페이지 이동
     @GetMapping("/board")
     public String board(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-    	model.addAttribute("user", userDetails.getUsername());
+        model.addAttribute("user", userDetails.getUsername());
         return "board";
     }
 
@@ -274,12 +275,11 @@ public class GetAccounts {
     }
 
 
-
     //게시판 글쓰기 페이지
     @GetMapping("/boardwrite")
     public String write(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-    	model.addAttribute("user", userDetails.getUsername());
-    	return "write";
+        model.addAttribute("user", userDetails.getUsername());
+        return "write";
     }
 
     @ResponseBody
@@ -287,7 +287,7 @@ public class GetAccounts {
     @PostMapping("/insertBoard")
     public void insertBoard(@RequestBody BoardVO vo) {
 
-    	coinservice2.insertBoard(vo);
+        coinservice2.insertBoard(vo);
     }
 
     //게시판 전체 리스트
@@ -301,19 +301,19 @@ public class GetAccounts {
 
     //게시판 상세 페이지
     @GetMapping("/boardDetail")
-    public String boardDetail(@AuthenticationPrincipal UserDetails userDetails, Model model){
-    	model.addAttribute("user", userDetails.getUsername());
-    	return "boardDetail";
+    public String boardDetail(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        model.addAttribute("user", userDetails.getUsername());
+        return "boardDetail";
     }
 
     //게시판 상세 내용
     @ResponseBody
     @PostMapping("/boardDetailAjax")
-    public List<BoardVO> boardDetailAjax(@RequestBody BoardVO vo){
+    public List<BoardVO> boardDetailAjax(@RequestBody BoardVO vo) {
 
-    	List<BoardVO> list = coinservice2.getListDetail(vo.getSeq());
+        List<BoardVO> list = coinservice2.getListDetail(vo.getSeq());
 
-    	return list;
+        return list;
     }
 
     //게시판 수정하기
@@ -321,7 +321,7 @@ public class GetAccounts {
     @PostMapping("/updateBoard")
     public void updateBoard(@RequestBody BoardVO vo) {
 
-    	coinservice2.updateBoard(vo);
+        coinservice2.updateBoard(vo);
     }
 
     //조회수 증가
@@ -329,7 +329,7 @@ public class GetAccounts {
     @PostMapping("/updateView")
     public void updateView(@RequestBody BoardVO vo) {
 
-    	coinservice2.updateView(vo);
+        coinservice2.updateView(vo);
     }
 
     //게시판 글 삭제
@@ -337,17 +337,17 @@ public class GetAccounts {
     @PostMapping("/deleteBoard")
     public void deleteBoard(@RequestBody BoardVO vo) {
 
-    	coinservice2.deleteBoard(vo);
+        coinservice2.deleteBoard(vo);
     }
 
     //댓글 불러오기
     @ResponseBody
     @PostMapping("/comment")
-    public List<CommentVO> comment(@RequestBody CommentVO vo){
+    public List<CommentVO> comment(@RequestBody CommentVO vo) {
 
-    	List<CommentVO> list = coinservice2.getComment(vo);
+        List<CommentVO> list = coinservice2.getComment(vo);
 
-    	return list;
+        return list;
     }
 
     //댓글 등록
@@ -355,52 +355,52 @@ public class GetAccounts {
     @PostMapping("/insertComment")
     public void insertComment(@RequestBody CommentVO vo) {
 
-    	coinservice2.insertComment(vo);
+        coinservice2.insertComment(vo);
     }
 
     //댓글 삭제
     @ResponseBody
     @PostMapping("/deleteComment")
-    public void deleteComment(@RequestBody CommentVO vo){
+    public void deleteComment(@RequestBody CommentVO vo) {
 
-    	coinservice2.deleteComment(vo);
+        coinservice2.deleteComment(vo);
     }
 
     //건의 사항 페에지
     @GetMapping("/question")
     public String questionPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-    	model.addAttribute("user", userDetails.getUsername());
-    	return "question";
+        model.addAttribute("user", userDetails.getUsername());
+        return "question";
     }
 
     //건의 사항 불러오기(전체)
     @ResponseBody
     @GetMapping("/questionAjax")
-    public List<QuestionVO> getQuestion(){
+    public List<QuestionVO> getQuestion() {
 
-    	List<QuestionVO> list = coinservice2.getQuestion();
+        List<QuestionVO> list = coinservice2.getQuestion();
 
-    	return list;
+        return list;
     }
 
     //건의 사항 불러오기 ( 그 사람만 )
     @ResponseBody
     @GetMapping("/questionAjax2")
-    public List<QuestionVO> getQuestion2(@RequestBody QuestionVO vo){
+    public List<QuestionVO> getQuestion2(@RequestBody QuestionVO vo) {
 
-    	List<QuestionVO> list = coinservice2.getQuestion2(vo.getWriter());
+        List<QuestionVO> list = coinservice2.getQuestion2(vo.getWriter());
 
-    	return list;
+        return list;
     }
 
     //건의 사항 상세
     @ResponseBody
     @PostMapping("/questionDetailAjax")
-    public List<QuestionVO> getQuestionDetail(@RequestBody QuestionVO vo){
+    public List<QuestionVO> getQuestionDetail(@RequestBody QuestionVO vo) {
 
-    	List<QuestionVO> list = coinservice2.getQuestionDetail(vo.getSeq());
+        List<QuestionVO> list = coinservice2.getQuestionDetail(vo.getSeq());
 
-    	return list;
+        return list;
     }
 
 
@@ -408,16 +408,15 @@ public class GetAccounts {
     @ResponseBody
     @GetMapping("/questionDetail")
     public String questionDetailPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-    	model.addAttribute("user", userDetails.getUsername());
-    	return "questionDetail";
+        model.addAttribute("user", userDetails.getUsername());
+        return "questionDetail";
     }
-
 
 
     //헤더 호출
     @GetMapping("/header.html")
     public String header(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-    	model.addAttribute("user", userDetails.getUsername());
+        model.addAttribute("user", userDetails.getUsername());
         return "header";
     }
 
@@ -431,13 +430,13 @@ public class GetAccounts {
 
     //푸터 호출
     @GetMapping("/footer.html")
-    public String footer(){
+    public String footer() {
         return "footer";
     }
 
     //회원 관리
     @GetMapping("/memberManage")
-    public String memberManage(@AuthenticationPrincipal UserDetails userDetails, Model model){
+    public String memberManage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
         model.addAttribute("user", userDetails.getUsername());
         return "memberManage";
     }
@@ -456,14 +455,22 @@ public class GetAccounts {
     public void auto(@RequestBody MemberVO member) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 
 
-    	 CompletableFuture.runAsync(() -> {
-             autoTrade(member);
-         });
-     }
+        CompletableFuture.runAsync(() -> {
+            autoTrade(member);
+        });
+    }
 
-    	@Async
-    	public void autoTrade(MemberVO member) {
-    	Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    //자동매매 on
+    @ResponseBody
+    @PostMapping("/autoTrade2")
+    public void auto2(@RequestBody MemberVO member) {
+        coinservice2.autoOn(member.getId());
+    }
+
+    @Async
+    public void autoTrade(MemberVO member) {
+        Logger logger = LoggerFactory.getLogger(this.getClass());
         coinservice2.autoOn(member.getId());
 
         String ac = member.getAccessCode();
@@ -471,7 +478,7 @@ public class GetAccounts {
         /*String ac = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";*/
         String sc = member.getSecretCode();
         /*String sc = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";*/
-       String userId = member.getId();
+        String userId = member.getId();
 
         MemberVO vo = new MemberVO();
         boolean b1 = true;
@@ -481,11 +488,11 @@ public class GetAccounts {
             List<MemberVO> autoCheck = coinservice2.getCode(userId);
             //System.out.println(autoCheck.get(0).getAuto());
             String check = autoCheck.get(0).getAuto();
-            if(check.equals("N")){
-               b1 = false;
-               logger.info("자동 거래 중지: 사용자 ID = {}", userId);
-               break;
-            }else{
+            if (check.equals("N")) {
+                b1 = false;
+                logger.info("자동 거래 중지: 사용자 ID = {}", userId);
+                break;
+            } else {
                 boolean b2 = true;
                 //System.out.println(vo);
                 vo.setAccessCode(ac);
@@ -494,7 +501,7 @@ public class GetAccounts {
                 String b = coinservice2.currentPrice7();
                 String c = coinservice2.account7(vo);
 
-             // 예외 처리 추가
+                // 예외 처리 추가
                 if (a == null || b == null || c == null) {
                     throw new RuntimeException("API 호출에 실패했습니다.");
                 }
@@ -547,9 +554,9 @@ public class GetAccounts {
 
                         //-1 작은 경우,  0 같은 경우, 1 큰경우
                         if (targetPrice.compareTo(nowPrice) <= 0) {
-                        	logger.info("사용자 = {} 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}", userId, nowPrice, targetPrice);
+                            logger.info("사용자 = {} 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}", userId, nowPrice, targetPrice);
 
-                        	//System.out.println("목표 타겟 도달!!!");
+                            //System.out.println("목표 타겟 도달!!!");
 
                             for (int i = 0; i < jsonArray3.length(); i++) {
 
@@ -567,14 +574,14 @@ public class GetAccounts {
                                     vo2.setOrderType("bid");
                                     vo2.setPrice("6000");
                                     try {
-										coinservice2.order7(vo2);
-									} catch (NoSuchAlgorithmException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									} catch (UnsupportedEncodingException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
+                                        coinservice2.order7(vo2);
+                                    } catch (NoSuchAlgorithmException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    } catch (UnsupportedEncodingException e) {
+                                        // TODO Auto-generated catch block
+                                        e.printStackTrace();
+                                    }
                                     logger.info("매수 주문 실행: 코인 = KRW-BTC, 가격 = 6000");
 
                                     while (b2) {
@@ -588,46 +595,46 @@ public class GetAccounts {
                                             JSONObject jsonObject4 = jsonArray4.getJSONObject(idx);
                                             coin2 = jsonObject4.getString("currency");
 
-                                            if (coin2.equals("BTC") ) {
+                                            if (coin2.equals("BTC")) {
 
                                                 LocalTime now = LocalTime.now();
                                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
 
                                                 String formatedNow = now.format(formatter);
                                                 //System.out.println(formatedNow);
-                                                if(formatedNow.equals("09:00")) {
+                                                if (formatedNow.equals("09:00")) {
 
-                                                balance = jsonObject4.getString("balance");
-                                                //System.out.println(balance);
-                                                OrderVO vo3 = new OrderVO();
-                                                vo3.setCoin("KRW-BTC");
-                                                vo3.setAccessCode(vo.getAccessCode());
-                                                vo3.setSecretCode(vo.getSecretCode());
-                                                vo3.setOrderType("ask");
-                                                vo3.setVolume(balance);
+                                                    balance = jsonObject4.getString("balance");
+                                                    //System.out.println(balance);
+                                                    OrderVO vo3 = new OrderVO();
+                                                    vo3.setCoin("KRW-BTC");
+                                                    vo3.setAccessCode(vo.getAccessCode());
+                                                    vo3.setSecretCode(vo.getSecretCode());
+                                                    vo3.setOrderType("ask");
+                                                    vo3.setVolume(balance);
 
-                                                try {
-													coinservice2.sell7(vo3);
-												} catch (NoSuchAlgorithmException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												} catch (UnsupportedEncodingException e) {
-													// TODO Auto-generated catch block
-													e.printStackTrace();
-												}
+                                                    try {
+                                                        coinservice2.sell7(vo3);
+                                                    } catch (NoSuchAlgorithmException e) {
+                                                        // TODO Auto-generated catch block
+                                                        e.printStackTrace();
+                                                    } catch (UnsupportedEncodingException e) {
+                                                        // TODO Auto-generated catch block
+                                                        e.printStackTrace();
+                                                    }
 
-                                                logger.info("매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", balance);
+                                                    logger.info("매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", balance);
 
 
-                                                try {
-                                                    Thread.sleep(30000);
-                                                    b2 = false;
-                                                    break;
-                                                } catch (InterruptedException e) {
-                                                    e.printStackTrace();
+                                                    try {
+                                                        Thread.sleep(30000);
+                                                        b2 = false;
+                                                        break;
+                                                    } catch (InterruptedException e) {
+                                                        e.printStackTrace();
+                                                    }
+
                                                 }
-
-                                               }
                                             }
 
                                         }
@@ -635,8 +642,8 @@ public class GetAccounts {
                                         try {
                                             Thread.sleep(1000);
                                         } catch (InterruptedException e) {
-                                        	logger.error("거래 중 오류 발생", e);
-                                        	e.printStackTrace();
+                                            logger.error("거래 중 오류 발생", e);
+                                            e.printStackTrace();
                                         }
 
                                     }
@@ -645,13 +652,13 @@ public class GetAccounts {
 
 
                         } else {
-                        	logger.info("사용자"+userId+"목표 타겟 미 도달!!");
-                        	try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
+                            logger.info("사용자" + userId + "목표 타겟 미 도달!!");
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
                             //System.out.println("목표 타겟 미 도달!!");
 
                         }
@@ -662,12 +669,9 @@ public class GetAccounts {
             }
 
 
-
         }
 
     }
-
-
 
 
     // 변동성 돌파 전략 자동 끄기
@@ -678,7 +682,146 @@ public class GetAccounts {
         coinservice2.autoStop7(vo.getId());
     }
 
-    // rsi
+    //변동성 돌파 전략 스케줄러 ( 3초마다 계속 )
+    @Scheduled(fixedRate = 3000) // 3초마다 실행
+    public void autoScuedule() {
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+        List<MemberVO> list = coinservice2.autoCheck();
+        int i;
+        int j;
+        int k;
+        String balance;
+        String currency;
+        Long balances;
+        String market;
+        String market2;
+        BigDecimal lowPrice;
+        BigDecimal highPrice;
+        BigDecimal prevClosePrice;
+        BigDecimal targetPrice;
+        BigDecimal minus;
+        BigDecimal multi;
+        BigDecimal dotFive = new BigDecimal(0.5);
+        BigDecimal nowPrice;
+
+        for (i = 0; i < list.size(); i++) {
+
+            String accc = list.get(i).getAccessCode();
+            String Sece = list.get(i).getSecretCode();
+            String userId = list.get(i).getId();
+            MemberVO member = new MemberVO();
+            member.setAccessCode(accc);
+            member.setSecretCode(Sece);
+
+            String mk = null;
+            String cp = null;
+            String account = null;
+
+            try {
+                mk = coinservice2.market7();              //마켓
+                cp = coinservice2.currentPrice7();       //현재가
+                account = coinservice2.account7(member); //잔고
+            } catch(Exception e){
+                logger.error("API 호출에 실패했습니다: {}", e.getMessage());
+                continue;
+            }
+
+            JSONArray jsonArray = new JSONArray(mk);
+            JSONArray jsonArray2 = new JSONArray(cp);
+            JSONArray jsonArray3 = new JSONArray(account);
+
+            boolean hasKrwBtc = false;
+
+            for (j = 0; j < jsonArray3.length(); j++) {
+                JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
+                currency = jsonObject3.getString("currency");
+
+                if (currency.equals("KRW-BTC")) {
+                    hasKrwBtc = true;
+                    LocalTime now = LocalTime.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                    String formatedNow = now.format(formatter);
+
+                    if (formatedNow.equals("09:00")) {
+                        balance = jsonObject3.getString("balance");
+                        OrderVO vo3 = new OrderVO();
+                        vo3.setCoin("KRW-BTC");
+                        vo3.setAccessCode(member.getAccessCode());
+                        vo3.setSecretCode(member.getSecretCode());
+                        vo3.setOrderType("ask");
+                        vo3.setVolume(balance);
+
+                        try {
+                            coinservice2.sell7(vo3);
+                        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+                            logger.error("매도 주문 실행 중 오류 발생: {}", e.getMessage());
+                        }
+                        logger.info("매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", balance);
+                    }
+                    break; // 더 이상 순회할 필요가 없으므로 루프 종료
+                }
+
+
+                if (!hasKrwBtc) {
+
+                    for (j = 0; j < jsonArray3.length(); j++) {
+                        JSONObject jsonObject5 = jsonArray3.getJSONObject(j);
+                        currency = jsonObject5.getString("currency");
+
+                        if (currency.equals("KRW")) {
+                            balance = jsonObject5.getString("balance");
+                            BigDecimal big = new BigDecimal(balance);
+                            BigDecimal Dec = big.setScale(0, BigDecimal.ROUND_DOWN); //숫자를 정수화
+                            balances = Dec.longValue();
+
+                            if (balances <= 5000) {
+                                break;
+                            }
+
+                            for (k = 0; k < jsonArray3.length(); k++) {
+                                JSONObject jsonObject2 = jsonArray2.getJSONObject(k);
+                                market = jsonObject2.getString("market");
+
+                                if (market.contains("KRW-BTC")) {
+                                    highPrice = jsonObject2.getBigDecimal("high_price");
+                                    lowPrice = jsonObject2.getBigDecimal("low_price");
+                                    prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
+                                    nowPrice = jsonObject2.getBigDecimal("trade_price");
+                                    minus = highPrice.subtract(lowPrice);
+                                    multi = minus.multiply(dotFive);
+                                    targetPrice = prevClosePrice.add(multi);
+
+                                    if (targetPrice.compareTo(nowPrice) <= 0) {
+                                        logger.info("사용자 = {} 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}", userId, nowPrice, targetPrice);
+                                        OrderVO vo2 = new OrderVO();
+                                        vo2.setCoin("KRW-BTC");
+                                        vo2.setAccessCode(member.getAccessCode());
+                                        vo2.setSecretCode(member.getSecretCode());
+                                        vo2.setOrderType("bid");
+                                        vo2.setPrice("6000");
+
+                                        try {
+                                            coinservice2.order7(vo2);
+                                        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+                                            // TODO Auto-generated catch block
+                                            logger.error("매수 주문 실행 중 오류 발생: {}", e.getMessage());
+                                        }
+                                        logger.info("매수 주문 실행: 코인 = KRW-BTC, 가격 = 6000");
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                }
+            }
+                }
+
+
+
+        }
+
+
 
 
 
@@ -686,10 +829,7 @@ public class GetAccounts {
     @ResponseBody
     @GetMapping("/rsi")
     public void rsi() {
-
-
     }
-
 
 
     //현재가 정보
@@ -723,7 +863,7 @@ public class GetAccounts {
     //모니터링
     @ResponseBody
     @GetMapping("/memberAuto")
-    public List<MemberVO> memberAuto (@RequestBody MemberVO vo){
+    public List<MemberVO> memberAuto(@RequestBody MemberVO vo) {
 
         List<MemberVO> member = coinservice2.getMemberAuto(vo.getAuto());
         return member;

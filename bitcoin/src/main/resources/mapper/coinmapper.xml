@@ -159,24 +159,33 @@
 	</insert>
 
 	<!-- 건의 사항 불러오기 -->
-	<select id="getQuestion">
+	<select id="getQuestion" resultType="com.example.bitcoin.dto.QuestionVO">
 		SELECT *
 		 FROM question
 
 	</select>
 
 	<!-- 건의 사항 불러오기 개인 -->
-	<select id="getQuestion2">
+	<select id="getQuestion2" resultType="com.example.bitcoin.dto.QuestionVO">
 		SELECT *
 		  FROM question
 		  where writer = #{writer}
 	</select>
 
 	<!-- 건의 사항 디테일 -->
-	<select id="getQuestionDetail">
+	<select id="getQuestionDetail" resultType="com.example.bitcoin.dto.QuestionVO">
 		SELECT *
 		  FROM question
 		  where SEQ = #{seq}
 
+	</select>
+
+	<!-- 변동성 돌파 전략 스케줄러 체크 -->
+	<select id="autoCheck" resultType="com.example.bitcoin.dto.MemberVO">
+		SELECT *
+		  FROM member
+		  WHERE ACCESSCODE is not null
+		    and SECRETCODE is not null
+			and auto = 'Y'
 	</select>
 </mapper>
