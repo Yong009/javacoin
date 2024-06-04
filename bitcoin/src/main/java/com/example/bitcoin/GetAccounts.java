@@ -280,10 +280,6 @@ public class GetAccounts {
     @GetMapping("/boardMax")
     public int boardMax() {
 
-		/*
-		 * List<BoardVO> list = new ArrayList<>(); BoardVO vo = new BoardVO();
-		 * vo.setCount(); list.add(vo);
-		 */
     	return coinservice2.getMax();
     }
 
@@ -461,6 +457,9 @@ public class GetAccounts {
         coinservice2.autoStop7(vo.getId());
     }
 
+
+    // 변동성 돌파 전략 스케줄러
+
     //변동성 돌파 전략 스케줄러 ( 3초마다 계속 )
     @Scheduled(fixedRate = 5000) // 5초마다 실행
     public void autoScuedule() {
@@ -540,6 +539,8 @@ public class GetAccounts {
                             logger.error("사용자 {}의 매도 주문 실행 중 오류 발생: {}", userId,e.getMessage());
                         }
                         logger.info("사용자 {}의 매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", userId, balance);
+                        account = coinservice2.account7(member);
+                        jsonArray3 = new JSONArray(account);
                     } else {
                     	logger.info("사용자 {}의 9시가 되지 않아 매도 주문이 체결되지 않았습니다.",userId);
                     }
@@ -547,7 +548,12 @@ public class GetAccounts {
                 }
             }
 
-                if (hasKrwBtc == false) {
+            	LocalTime now = LocalTime.now();
+            	DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+            	String formatedNow2 = now.format(formatter2);
+
+
+                if (hasKrwBtc == false && formatedNow2.equals("09:00")) {
 
                     for (j = 0; j < jsonArray3.length(); j++) {
                         JSONObject jsonObject5 = jsonArray3.getJSONObject(j);
@@ -583,7 +589,8 @@ public class GetAccounts {
                                         vo2.setAccessCode(member.getAccessCode());
                                         vo2.setSecretCode(member.getSecretCode());
                                         vo2.setOrderType("bid");
-                                        vo2.setPrice("6000");
+                                        //vo2.setPrice("6000");
+                                        vo2.setPrice(balance);
 
                                         try {
                                             coinservice2.order7(vo2);
@@ -591,9 +598,11 @@ public class GetAccounts {
 
                                             logger.error("사용자 {}의 매수 주문 실행 중 오류 발생: {}",userId, e.getMessage());
                                         }
-                                        logger.info("사용자 {}의  매수 주문 실행: 코인 = KRW-BTC, 가격 = 6000",userId);
+                                        logger.info("사용자 {}의  매수 주문 실행: 코인 = KRW-BTC, 가격 = {}",userId,balances);
+                                        account = coinservice2.account7(member);
+                                        jsonArray3 = new JSONArray(account);
                                     }else {
-                                    	logger.info("사용자 {}의  목표가에 오지 않아 매수 주문 실행 안함: 코인 = KRW-BTC, 가격 = 6000",userId);
+                                    	logger.info("사용자 {}의  목표가에 오지 않아 매수 주문 실행 안함: 코인 = KRW-BTC, 가격 = {}",userId,balances);
                                     }
                                 }
                             }
@@ -604,6 +613,9 @@ public class GetAccounts {
 
             }
         }
+
+
+
 
     @ResponseBody
     @GetMapping("/rsi")
