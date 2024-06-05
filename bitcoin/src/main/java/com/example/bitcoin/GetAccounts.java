@@ -564,7 +564,8 @@ public class GetAccounts {
                             BigDecimal big = new BigDecimal(balance);
                             BigDecimal Dec = big.setScale(0, BigDecimal.ROUND_DOWN); //숫자를 정수화
                             balances = Dec.longValue();
-
+                            String balances2 = balances.toString();
+                            System.out.println(balances2);
                             if (balances <= 5000) {
                                 break;
                             }
@@ -589,8 +590,8 @@ public class GetAccounts {
                                         vo2.setAccessCode(member.getAccessCode());
                                         vo2.setSecretCode(member.getSecretCode());
                                         vo2.setOrderType("bid");
-                                        //vo2.setPrice("6000");
-                                        vo2.setPrice(balance);
+                                        vo2.setPrice("6000");
+                                        //vo2.setPrice(balances2);
 
                                         try {
                                             coinservice2.order7(vo2);
