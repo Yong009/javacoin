@@ -754,7 +754,16 @@
         id: username
     }
 
-
+    $.ajax({
+        url:"/orderList",
+        type:"POST",
+        data: JSON.stringify(userid),
+        dataType:"json",
+        contentType:"application/json",
+        success:function(result){
+            console.log(result);
+        }
+    })
 
     $.ajax({
         url: "/getCode",
@@ -817,7 +826,7 @@
                     dataType: "json",
                     success: function (result) {
 
-                          //console.log(result)
+                         // console.log(result)
 
                         $.ajax({
                             url: "/market7",
@@ -1011,7 +1020,7 @@
             dataType: "json",
             success: function (result) {
 
-                /*  console.log(result) */
+                  /*console.log(result)*/
 
                 $.ajax({
                     url: "/market7",

@@ -1,14 +1,26 @@
 package com.example.bitcoin;
 
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.lang.reflect.Member;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -280,17 +292,17 @@ public class GetAccounts {
     @GetMapping("/boardMax")
     public int boardMax() {
 
-    	return coinservice2.getMax();
+        return coinservice2.getMax();
     }
 
     //게시판 페이징 적용
     @ResponseBody
     @PostMapping("/boardListAjax2")
-    public List<BoardVO> boardListAjax2(@RequestBody PagingVO vo){
+    public List<BoardVO> boardListAjax2(@RequestBody PagingVO vo) {
 
-    	List<BoardVO> list = coinservice2.getLists(vo.getPage());
+        List<BoardVO> list = coinservice2.getLists(vo.getPage());
 
-    	return list;
+        return list;
     }
 
     //게시판 상세 페이지
@@ -442,6 +454,76 @@ public class GetAccounts {
         return coinservice2.market7();
     }
 
+    //주문 리스트
+    @ResponseBody
+    @PostMapping("/orderList")
+    public void orderList(@RequestBody MemberVO vo) {
+
+        List<MemberVO> list = coinservice2.getCode(vo.getId());
+
+        System.out.println(list);
+        System.out.println(list.get(0).getSecretCode());
+        String accessKey = list.get(0).getAccessCode();
+        String secretKey = list.get(0).getSecretCode();
+        String serverUrl = "https://api.upbit.com";
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("state", "done");
+
+        String[] uuids = {
+                /*"9ca023a5-851b-4fec-9f0a-48cd83c2eaae"*/
+        };
+
+        ArrayList<String> queryElements = new ArrayList<>();
+        for (Map.Entry<String, String> entity : params.entrySet()) {
+            queryElements.add(entity.getKey() + "=" + entity.getValue());
+        }
+        for (String uuid : uuids) {
+            queryElements.add("uuids[]=" + uuid);
+        }
+
+        String queryString = String.join("&", queryElements.toArray(new String[0]));
+
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-512");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+        try {
+            md.update(queryString.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+        String queryHash = String.format("%0128x", new BigInteger(1, md.digest()));
+
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+        String jwtToken = JWT.create()
+                .withClaim("access_key", accessKey)
+                .withClaim("nonce", UUID.randomUUID().toString())
+                .withClaim("query_hash", queryHash)
+                .withClaim("query_hash_alg", "SHA512")
+                .sign(algorithm);
+
+        String authenticationToken = "Bearer " + jwtToken;
+
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+            HttpGet request = new HttpGet(serverUrl + "/v1/orders?" + queryString);
+            request.setHeader("Content-Type", "application/json");
+            request.addHeader("Authorization", authenticationToken);
+
+            HttpResponse response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+            System.out.println(EntityUtils.toString(entity, "UTF-8"));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
     //자동매매 on
     @ResponseBody
     @PostMapping("/autoTrade2")
@@ -457,7 +539,6 @@ public class GetAccounts {
         coinservice2.autoStop7(vo.getId());
     }
 
-
     // 변동성 돌파 전략 스케줄러
 
     //변동성 돌파 전략 스케줄러 ( 3초마다 계속 )
@@ -466,57 +547,55 @@ public class GetAccounts {
         Logger logger = LoggerFactory.getLogger(this.getClass());
         List<MemberVO> list = coinservice2.autoCheck();
 
-        if(list == null || list.isEmpty()) {
-        	logger.info("자동매매 실행한 유저가 존재하지 않습니다.");
-        	return;
+        if (list == null || list.isEmpty()) {
+            logger.info("자동매매 실행한 유저가 존재하지 않습니다.");
+            return;
         }
 
         int i, j, k;
 
-        String balance, currency, market, market2;
+        String balance, currency, market, market2, nowPrice2;
         Long balances;
         BigDecimal lowPrice, highPrice, prevClosePrice, targetPrice, minus, multi, nowPrice;
         BigDecimal dotFive = new BigDecimal(0.5);
-
 
         for (i = 0; i < list.size(); i++) {
 
             String accc = list.get(i).getAccessCode();
             String sece = list.get(i).getSecretCode();
             String userId = list.get(i).getId();
-            if((accc == null || accc.equals(' ')) || (sece == null || sece.equals(' ') ) ) {
+            if ((accc == null || accc.equals(' ')) || (sece == null || sece.equals(' '))) {
 
-            	logger.info("사용자 {}의 secret코드 또는 access코드가 저장되지 않았습니다. 저장 되어야 자동매매 프로그램을 작동시킬 수 있습니다.!!",userId);
-            	continue;
+                logger.info("사용자 {}의 secret코드 또는 access코드가 저장되지 않았습니다. 저장 되어야 자동매매 프로그램을 작동시킬 수 있습니다.!!", userId);
+                continue;
             }
 
             MemberVO member = new MemberVO();
             member.setAccessCode(accc);
             member.setSecretCode(sece);
 
-           //String mk = null;
+            //String mk = null;
             String cp = null;
             String account = null;
 
             try {
-               // mk = coinservice2.market7();              //마켓
+                // mk = coinservice2.market7();              //마켓
                 cp = coinservice2.currentPrice7();       //현재가
                 account = coinservice2.account7(member); //잔고
-            } catch(Exception e){
-                logger.error("사용자 {}의 API 호출에 실패했습니다: {}", userId,e.getMessage());
+            } catch (Exception e) {
+                logger.error("사용자 {}의 API 호출에 실패했습니다: {}", userId, e.getMessage());
                 continue;
             }
 
             //JSONArray jsonArray = new JSONArray(mk);
-            JSONArray jsonArray2 = new JSONArray(cp);     	//현재가
-            JSONArray jsonArray3 = new JSONArray(account);	//잔고
+            JSONArray jsonArray2 = new JSONArray(cp);         //현재가
+            JSONArray jsonArray3 = new JSONArray(account);    //잔고
 
             boolean hasKrwBtc = false;
 
             for (j = 0; j < jsonArray3.length(); j++) {
                 JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
                 currency = jsonObject3.getString("currency");
-
 
                 if (currency.equals("BTC")) {
                     hasKrwBtc = true;
@@ -536,87 +615,105 @@ public class GetAccounts {
                         try {
                             coinservice2.sell7(vo3);
                         } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-                            logger.error("사용자 {}의 매도 주문 실행 중 오류 발생: {}", userId,e.getMessage());
+                            logger.error("사용자 {}의 매도 주문 실행 중 오류 발생: {}", userId, e.getMessage());
                         }
                         logger.info("사용자 {}의 매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", userId, balance);
                         account = coinservice2.account7(member);
                         jsonArray3 = new JSONArray(account);
                     } else {
-                    	logger.info("사용자 {}의 9시가 되지 않아 매도 주문이 체결되지 않았습니다.",userId);
+                        logger.info("사용자 {}의 9시가 되지 않아 매도 주문이 체결되지 않았습니다.", userId);
                     }
                     break; // 더 이상 순회할 필요가 없으므로 루프 종료
                 }
             }
 
-            	LocalTime now = LocalTime.now();
-            	DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
-            	String formatedNow2 = now.format(formatter2);
+            LocalTime now = LocalTime.now();
+            DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+            String formatedNow2 = now.format(formatter2);
 
+            if (hasKrwBtc == false && formatedNow2 != "09:00") {
 
-                if (hasKrwBtc == false && formatedNow2.equals("09:00")) {
+                for (j = 0; j < jsonArray3.length(); j++) {
+                    JSONObject jsonObject5 = jsonArray3.getJSONObject(j);
+                    currency = jsonObject5.getString("currency");
 
-                    for (j = 0; j < jsonArray3.length(); j++) {
-                        JSONObject jsonObject5 = jsonArray3.getJSONObject(j);
-                        currency = jsonObject5.getString("currency");
+                    if (currency.equals("KRW")) {
+                        balance = jsonObject5.getString("balance");
+                        BigDecimal big = new BigDecimal(balance);
+                        BigDecimal Dec = big.setScale(0, BigDecimal.ROUND_DOWN); //숫자를 정수화
+                        balances = Dec.longValue();
+                        String balances2 = balances.toString();
 
-                        if (currency.equals("KRW")) {
-                            balance = jsonObject5.getString("balance");
-                            BigDecimal big = new BigDecimal(balance);
-                            BigDecimal Dec = big.setScale(0, BigDecimal.ROUND_DOWN); //숫자를 정수화
-                            balances = Dec.longValue();
-                            String balances2 = balances.toString();
-                            System.out.println(balances2);
-                            if (balances <= 5000) {
-                                break;
-                            }
+                        if (balances <= 5000) {
+                            break;
+                        }
 
-                            for (k = 0; k < jsonArray3.length(); k++) {
-                                JSONObject jsonObject2 = jsonArray2.getJSONObject(k);
-                                market = jsonObject2.getString("market");
+                        for (k = 0; k < jsonArray3.length(); k++) {
+                            JSONObject jsonObject2 = jsonArray2.getJSONObject(k);
+                            market = jsonObject2.getString("market");
 
-                                if (market.contains("KRW-BTC")) {
-                                    highPrice = jsonObject2.getBigDecimal("high_price");
-                                    lowPrice = jsonObject2.getBigDecimal("low_price");
-                                    prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
-                                    nowPrice = jsonObject2.getBigDecimal("trade_price");
-                                    minus = highPrice.subtract(lowPrice);
-                                    multi = minus.multiply(dotFive);
-                                    targetPrice = prevClosePrice.add(multi);
+                            if (market.contains("KRW-BTC")) {
+                                highPrice = jsonObject2.getBigDecimal("high_price");
+                                lowPrice = jsonObject2.getBigDecimal("low_price");
+                                prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
+                                nowPrice = jsonObject2.getBigDecimal("trade_price");
+                                minus = highPrice.subtract(lowPrice);
+                                multi = minus.multiply(dotFive);
+                                targetPrice = prevClosePrice.add(multi);
+                                nowPrice2 = nowPrice.toString();
+                                System.out.println(nowPrice2);
+                                if (targetPrice.compareTo(nowPrice) <= 0) {
+                                    logger.info("사용자 {}의 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}", userId, nowPrice, targetPrice);
+                                    OrderVO vo2 = new OrderVO();
+                                    vo2.setCoin("KRW-BTC");
+                                    vo2.setAccessCode(member.getAccessCode());
+                                    vo2.setSecretCode(member.getSecretCode());
+                                    vo2.setOrderType("bid");
+                                    vo2.setPrice("balances2");
+                                    //vo2.setPrice(balances2);
 
-                                    if (targetPrice.compareTo(nowPrice) <= 0) {
-                                        logger.info("사용자 {}의 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}", userId, nowPrice, targetPrice);
-                                        OrderVO vo2 = new OrderVO();
-                                        vo2.setCoin("KRW-BTC");
-                                        vo2.setAccessCode(member.getAccessCode());
-                                        vo2.setSecretCode(member.getSecretCode());
-                                        vo2.setOrderType("bid");
-                                        vo2.setPrice("6000");
-                                        //vo2.setPrice(balances2);
+                                    try {
+                                        coinservice2.order7(vo2);
+                                        MemberVO price2 = new MemberVO();
+                                        price2.setId(userId);
+                                        price2.setOrderPrice(nowPrice2);
+                                        coinservice2.saveOrderPrice(price2);
+                                    } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 
-                                        try {
-                                            coinservice2.order7(vo2);
-                                        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-
-                                            logger.error("사용자 {}의 매수 주문 실행 중 오류 발생: {}",userId, e.getMessage());
-                                        }
-                                        logger.info("사용자 {}의  매수 주문 실행: 코인 = KRW-BTC, 가격 = {}",userId,balances);
-                                        account = coinservice2.account7(member);
-                                        jsonArray3 = new JSONArray(account);
-                                    }else {
-                                    	logger.info("사용자 {}의  목표가에 오지 않아 매수 주문 실행 안함: 코인 = KRW-BTC, 가격 = {}",userId,balances);
+                                        logger.error("사용자 {}의 매수 주문 실행 중 오류 발생: {}", userId, e.getMessage());
                                     }
+                                    logger.info("사용자 {}의  매수 주문 실행: 코인 = KRW-BTC, 가격 = {}", userId, balances);
+                                    account = coinservice2.account7(member);
+                                    jsonArray3 = new JSONArray(account);
+                                } else {
+                                    logger.info("사용자 {}의  목표가에 오지 않아 매수 주문 실행 안함: 코인 = KRW-BTC, 가격 = {}", userId, balances);
                                 }
                             }
                         }
-
                     }
+
                 }
-
             }
+
         }
+    }
 
 
+    //자동 매매 금액 저장
+    @ResponseBody
+    @PostMapping("/saveAutoPrice")
+    public void saveAutoPrice(@RequestBody MemberVO vo) {
 
+        coinservice2.saveAutoPrice(vo);
+    }
+
+    //자동매매 시 매수 금액 저장
+    @ResponseBody
+    @PostMapping("/saveOrderPrice")
+    public void saveOrderPrice(@RequestBody MemberVO vo) {
+
+        coinservice2.saveOrderPrice(vo);
+    }
 
     @ResponseBody
     @GetMapping("/rsi")
@@ -627,7 +724,7 @@ public class GetAccounts {
     @ResponseBody
     @PostMapping("/manageAuto")
     public void manageAuto(@RequestBody MemberVO vo) {
-    	coinservice2.manageAuto(vo.getId());
+        coinservice2.manageAuto(vo.getId());
     }
 
     //현재가 정보
@@ -666,7 +763,256 @@ public class GetAccounts {
         List<MemberVO> member = coinservice2.getMemberAuto(vo.getAuto());
         return member;
     }
+
+    // 한국투자증권 test 국내 주식 주문
+    @GetMapping("/koreaStock")
+    public void koreaStock() throws UnsupportedEncodingException {
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/trading/order-cash";
+        String tr_id = "TTTC0802U";
+        String data = "{\n" +
+                "    \"CANO\": \"종합계좌번호\",\n" +
+                "    \"ACNT_PRDT_CD\": \"계좌상품코드\",\n" +
+                "    \"ACNT_PWD\": \"계좌비밀번호\",\n" +
+                "    \"PDNO\": \"상품번호\",\n" +
+                "    \"ORD_DVSN\": \"주문구분\",\n" +
+                "    \"ORD_QTY\": \"주문수량\",\n" +
+                "    \"ORD_UNPR\": \"주문단가\",\n" +
+                "    \"CTAC_TLNO\": \"연락전화번호\"\n" +
+                "}";
+        //httpPostBodyConnection(url,data,tr_id);
+
+        //public static void httpPostBodyConnection(String UrlData, String ParamData,String TrId) throws IOException {
+        String totalUrl = "";
+        totalUrl = url.trim().toString();
+
+        URL url2 = null;
+        HttpURLConnection conn = null;
+
+        String responseData = "";
+        BufferedReader br = null;
+
+        StringBuffer sb = new StringBuffer();
+        String returnData = "";
+
+        try {
+            url2 = new URL(totalUrl);
+            conn = (HttpURLConnection) url2.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("authorization", "Bearer {TOKEN}");
+            conn.setRequestProperty("appKey", "{Client_ID}");
+            conn.setRequestProperty("appSecret", "{Client_Secret}");
+            conn.setRequestProperty("personalSeckey", "{personalSeckey}");
+            conn.setRequestProperty("tr_id", tr_id);
+            conn.setRequestProperty("tr_cont", " ");
+            conn.setRequestProperty("custtype", "법인(B), 개인(P)");
+            conn.setRequestProperty("seq_no", "법인(01), 개인( )");
+            conn.setRequestProperty("mac_address", "{Mac_address}");
+            conn.setRequestProperty("phone_num", "P01011112222");
+            conn.setRequestProperty("ip_addr", "{IP_addr}");
+            conn.setRequestProperty("hashkey", "{Hash값}");
+            conn.setRequestProperty("gt_uid", "{Global UID}");
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte request_data[] = data.getBytes("utf-8");
+                os.write(request_data);
+                os.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            conn.connect();
+            System.out.println("http 요청 방식" + "POST BODY JSON");
+            System.out.println("http 요청 타입" + "application/json");
+            System.out.println("http 요청 주소" + url);
+            System.out.println("");
+
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        } catch (IOException e) {
+
+                br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "UTF-8"));
+        } finally {
+            try {
+                sb = new StringBuffer();
+                while ((responseData = br.readLine()) != null) {
+                    sb.append(responseData);
+                }
+                returnData = sb.toString();
+                String responseCode = String.valueOf(conn.getResponseCode());
+                System.out.println("http 응답 코드 : " + responseCode);
+                System.out.println("http 응답 데이터 : " + returnData);
+                if (br != null) {
+                    br.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("API 응답을 읽는데 실패했습니다.", e);
+            }
+        }
+    }
+
+    // 한국투자증권 test 매수 가능 조회
+    @GetMapping("/koreaOrder")
+    public void koreaOrder() throws UnsupportedEncodingException {
+
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/trading/inquire-psbl-order";
+        String tr_id = "TTTC8908R";
+        String data = "{\n" +
+                "    \"CANO\": \"종합계좌번호\",\n" +
+                "    \"ACNT_PRDT_CD\": \"계좌상품코드\",\n" +
+                "    \"ACNT_PWD\": \"계좌비밀번호\",\n" +
+                "    \"PDNO\": \"상품번호\",\n" +
+                "    \"ORD_UNPR\": \"주문단가\",\n" +
+                "    \"ORD_DVSN\": \"주문구분\",\n" +
+                "    \"CMA_EVLU_AMT_ICLD_YN\": \"CMA평가금액포함여부\",\n" +
+                "    \"OVRS_ICLD_YN\": \"해외포함여부\"\n" +
+                "}";
+
+
+        String totalUrl = "";
+        totalUrl = url.trim().toString();
+
+        URL url2 = null;
+        HttpURLConnection conn = null;
+
+        String responseData = "";
+        BufferedReader br = null;
+
+        StringBuffer sb = new StringBuffer();
+        String returnData = "";
+
+        try{
+            url2 = new URL(totalUrl);
+            conn = (HttpURLConnection) url2.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("authorization", "Bearer {TOKEN}");
+            conn.setRequestProperty("appKey", "{Client_ID}");
+            conn.setRequestProperty("appSecret", "{Client_Secret}");
+            conn.setRequestProperty("personalSeckey", "{personalSeckey}");
+            conn.setRequestProperty("tr_id", tr_id);
+            conn.setRequestProperty("tr_cont", " ");
+            conn.setRequestProperty("custtype", "법인(B), 개인(P)");
+            conn.setRequestProperty("seq_no", "법인(01), 개인( )");
+            conn.setRequestProperty("mac_address", "{Mac_address}");
+            conn.setRequestProperty("phone_num", "P01011112222");
+            conn.setRequestProperty("ip_addr", "{IP_addr}");
+            conn.setRequestProperty("hashkey", "{Hash값}");
+            conn.setRequestProperty("gt_uid", "{Global UID}");
+            conn.setDoOutput(true);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                byte request_data[] = data.getBytes("utf-8");
+                os.write(request_data);
+                os.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            conn.connect();
+            System.out.println("http 요청 방식" + "POST BODY JSON");
+            System.out.println("http 요청 타입" + "application/json");
+            System.out.println("http 요청 주소" + url);
+            System.out.println("");
+
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        } catch (IOException e){
+            br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "UTF-8"));
+        } finally {
+            try {
+                sb = new StringBuffer();
+                while ((responseData = br.readLine()) != null) {
+                    sb.append(responseData);
+                }
+                returnData = sb.toString();
+                String responseCode = String.valueOf(conn.getResponseCode());
+                System.out.println("http 응답 코드 : " + responseCode);
+                System.out.println("http 응답 데이터 : " + returnData);
+                if (br != null){
+                    br.close();
+                }
+            } catch (IOException e){
+                throw new RuntimeException("API 응답을 읽는데 실패했습니다.", e);
+            }
+        }
+    }
+
+    // 한국투자증권 test 국내 주식 시세
+    @GetMapping("/koreaPrice")
+    public void koreaPrice() throws UnsupportedEncodingException {
+        // 국내 주식 시세 조회
+        String url = "https://openapi.koreainvestment.com:9443/uapi/domestic-stock/v1/quotations/inquire-price";
+        String tr_id = "FHKST01010100";
+        String data = "?fid_cond_mrkt_div_code=J" + //FID 조건 시장 분류 코드
+                "&fid_input_iscd=000660"; //FID 입력 종목코드
+
+        String totalUrl = "";
+        totalUrl = url.trim().toString();
+
+        URL url2 = null;
+        HttpURLConnection conn = null;
+
+        String responseData = "";
+        BufferedReader br = null;
+
+        StringBuffer sb = new StringBuffer();
+        String returnData = "";
+
+
+        try{
+            url2 = new URL(totalUrl+data);
+            conn = (HttpURLConnection) url2.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("authorization", "Bearer {TOKEN}");
+            conn.setRequestProperty("appKey", "{Client_ID}");
+            conn.setRequestProperty("appSecret", "{Client_Secret}");
+            conn.setRequestProperty("personalSeckey", "{personalSeckey}");
+            conn.setRequestProperty("tr_id", tr_id);
+            conn.setRequestProperty("tr_cont", " ");
+            conn.setRequestProperty("custtype", "법인(B), 개인(P)");
+            conn.setRequestProperty("seq_no", "법인(01), 개인( )");
+            conn.setRequestProperty("mac_address", "{Mac_address}");
+            conn.setRequestProperty("phone_num", "P01011112222");
+            conn.setRequestProperty("ip_addr", "{IP_addr}");
+            conn.setRequestProperty("hashkey", "{Hash값}");
+            conn.setRequestProperty("gt_uid", "{Global UID}");
+            conn.setDoOutput(true);
+
+            conn.connect();
+
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+        } catch (IOException e){
+            br = new BufferedReader(new InputStreamReader(conn.getErrorStream(), "UTF-8"));
+        } finally {
+            try {
+                sb = new StringBuffer();
+                while ((responseData = br.readLine()) != null) {
+                    sb.append(responseData);
+                }
+                returnData = sb.toString();
+                String responseCode = String.valueOf(conn.getResponseCode());
+                System.out.println("http 응답 코드 : " + responseCode);
+                System.out.println("http 응답 데이터 : " + returnData);
+                if (br != null){
+                    br.close();
+                }
+            } catch (IOException e){
+                throw new RuntimeException("API 응답을 읽는데 실패했습니다.", e);
+            }
+        }
+    }
+
+
+
 }
+
+
+//}
+
+
+
+
 //	//바이낸스
 //	@ResponseBody
 //	@GetMapping("/binance")

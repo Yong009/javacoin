@@ -515,4 +515,17 @@ public class coinserviceimpl implements coinservice {
 		return a;
 	}
 
+    //자동매매 금액 저장
+    @Override
+    public void saveAutoPrice(MemberVO vo) {
+
+        coinmappers.saveAutoPrice(vo);
+    }
+
+    //자동매매중 매수 금액
+    @Override
+    public void saveOrderPrice(MemberVO vo) {
+        coinmappers.saveOrderPrice(vo);
+    }
+
 }

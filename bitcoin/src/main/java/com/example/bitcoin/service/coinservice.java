@@ -79,7 +79,8 @@ public interface coinservice {
 	public void manageAuto(String id);
 	// 게시판 글 수
 	public int getMax();
-
-
-
+	// 자동 매매할 금액 저장
+	public void saveAutoPrice(MemberVO vo);
+	// 자동 매매중 매수 금액
+	public void saveOrderPrice(MemberVO vo);
 }

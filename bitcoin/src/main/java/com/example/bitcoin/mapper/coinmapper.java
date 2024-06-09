@@ -70,4 +70,9 @@ public interface coinmapper {
   public List<BoardVO> getLists(int offSet);
   // 게시판 글 수
   public int getMax();
+
+  // 자동매매 금액 저장
+  public void saveAutoPrice(MemberVO vo);
+  // 자동매매중 매수 금액
+  public void saveOrderPrice(MemberVO vo);
 }
