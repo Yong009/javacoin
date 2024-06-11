@@ -25,6 +25,22 @@ public class MemberVO {
 	  }*/
 
 
+	public String getOrderPrice() {
+		return orderPrice;
+	}
+
+	public void setOrderPrice(String orderPrice) {
+		this.orderPrice = orderPrice;
+	}
+
+	public String getAutoPrice() {
+		return autoPrice;
+	}
+
+	public void setAutoPrice(String autoPrice) {
+		this.autoPrice = autoPrice;
+	}
+
 	public String getId() {
 		return id;
 	}

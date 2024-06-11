@@ -217,14 +217,14 @@
 	<!-- 자동매매 금액 저장 -->
 	<update id="saveAutoPrice">
 		UPDATE member
-		   SET autoPrice = {autoPrice}
-		 WHERE id = {id}
+		   SET autoPrice = #{autoPrice}
+		 WHERE id = #{id}
 	</update>
 
 	<!-- 자동매매중 매수 금액 저장 -->
 	<update id="saveOrderPrice">
 		UPDATE member
-		   SET orderPrice = {orderPrice}
-		 WHERE id = {id}
+		   SET orderPrice = #{orderPrice}
+		 WHERE id = #{id}
 	</update>
 </mapper>

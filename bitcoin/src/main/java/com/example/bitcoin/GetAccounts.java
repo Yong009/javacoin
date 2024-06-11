@@ -541,7 +541,7 @@ public class GetAccounts {
 
     // 변동성 돌파 전략 스케줄러
 
-    //변동성 돌파 전략 스케줄러 ( 3초마다 계속 )
+    //변동성 돌파 전략 스케줄러 ( 5초마다 계속 )
     @Scheduled(fixedRate = 5000) // 5초마다 실행
     public void autoScuedule() {
         Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -564,15 +564,18 @@ public class GetAccounts {
             String accc = list.get(i).getAccessCode();
             String sece = list.get(i).getSecretCode();
             String userId = list.get(i).getId();
-            if ((accc == null || accc.equals(' ')) || (sece == null || sece.equals(' '))) {
+            String autoPrice = list.get(i).getAutoPrice();
 
-                logger.info("사용자 {}의 secret코드 또는 access코드가 저장되지 않았습니다. 저장 되어야 자동매매 프로그램을 작동시킬 수 있습니다.!!", userId);
+            if ((accc == null || accc.equals(' ')) || (sece == null || sece.equals(' ')) || (autoPrice == null || autoPrice.equals(' '))) {
+
+                logger.info("사용자 {}의 secret코드 또는 access코드 저장하지 않거나 가격을 입력하지 않았습니다. 저장 및 입력 되어야 자동매매 프로그램을 작동시킬 수 있습니다.!!", userId);
                 continue;
             }
 
             MemberVO member = new MemberVO();
             member.setAccessCode(accc);
             member.setSecretCode(sece);
+            member.setAutoPrice(autoPrice);
 
             //String mk = null;
             String cp = null;
@@ -661,15 +664,17 @@ public class GetAccounts {
                                 multi = minus.multiply(dotFive);
                                 targetPrice = prevClosePrice.add(multi);
                                 nowPrice2 = nowPrice.toString();
-                                System.out.println(nowPrice2);
+
+
+
                                 if (targetPrice.compareTo(nowPrice) <= 0) {
-                                    logger.info("사용자 {}의 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}", userId, nowPrice, targetPrice);
+                                    logger.info("사용자 {}의 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}, 매수 금액 = {}", userId, nowPrice, targetPrice,autoPrice);
                                     OrderVO vo2 = new OrderVO();
                                     vo2.setCoin("KRW-BTC");
                                     vo2.setAccessCode(member.getAccessCode());
                                     vo2.setSecretCode(member.getSecretCode());
                                     vo2.setOrderType("bid");
-                                    vo2.setPrice("balances2");
+                                    vo2.setPrice(member.getAutoPrice());
                                     //vo2.setPrice(balances2);
 
                                     try {
@@ -686,7 +691,7 @@ public class GetAccounts {
                                     account = coinservice2.account7(member);
                                     jsonArray3 = new JSONArray(account);
                                 } else {
-                                    logger.info("사용자 {}의  목표가에 오지 않아 매수 주문 실행 안함: 코인 = KRW-BTC, 가격 = {}", userId, balances);
+                                    logger.info("사용자 {}의  목표가에 오지 않아 매수 주문 실행 안함: 코인 = KRW-BTC, 매수 금액 = {}, 목표 가격 = {}", userId, autoPrice,targetPrice);
                                 }
                             }
                         }
@@ -713,6 +718,20 @@ public class GetAccounts {
     public void saveOrderPrice(@RequestBody MemberVO vo) {
 
         coinservice2.saveOrderPrice(vo);
+    }
+
+    //수익률 계산
+    @ResponseBody
+    @PostMapping("/profit")
+    public List<MemberVO> myAutoProfit(@RequestBody MemberVO vo) {
+
+    	List<MemberVO> list = coinservice2.getCode(vo.getId());
+    	list.get(0).getAutoPrice();
+    	list.get(0).getOrderPrice();
+
+
+    	return list;
+
     }
 
     @ResponseBody

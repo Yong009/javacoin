@@ -550,6 +550,7 @@
     <input id="access2" type="text" class="form-control" style="width:300px;" hidden/><br/><br/>
     <label for="secret2" style="font-weight: bold;" hidden>secret키</label><br/><br/>
     <input id="secret2" type="text" style="margin-left:4px; width:300px;" class="form-control" hidden/><br/>-->
+    <p style="color:red; font-weight:bold;">※만원 단위로 기입하셔야 하며 0도 다 적어주셔야합니다.!!!!! 아닐 시 자동매매가 안될 수도 있습니다.※</p><br/>
     <label for="price" id="account3" style="font-weight: bold; margin-top:30px;" class="noto-sans-kr-font">금액(원)</label><br/><br/>
     <input id="price" type="text" class="noto-sans-kr-font" style="width:300px; font-weight: bold;"/><br/>
     <button id="startTrading" class="btn-gradient red">자동 매매 시작</button>
@@ -777,8 +778,9 @@
 
                     $.each(result2, function (i, item) {
                         if (item.currency == 'KRW') {
+                        	let balance = Math.floor(item.balance / 10000) * 10000;
                             $('#account3').text("금액 " + "(잔액 : " + Math.floor(item.balance) + "원)");
-                            $('#price').val(Math.floor(item.balance))
+                            $('#price').val(Math.floor(balance));
                         }
 
                     })
