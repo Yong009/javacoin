@@ -34,6 +34,7 @@ import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
+import com.example.bitcoin.dto.PriceVO;
 import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.dto.TickerVO;
 import com.example.bitcoin.mapper.coinmapper;
@@ -527,5 +528,17 @@ public class coinserviceimpl implements coinservice {
     public void saveOrderPrice(MemberVO vo) {
         coinmappers.saveOrderPrice(vo);
     }
+
+	@Override
+	public void updatePrice(PriceVO vo) {
+		coinmappers.savePrice(vo);
+
+	}
+
+	@Override
+	public List<PriceVO> getPriceList(PriceVO vo) {
+
+		return coinmappers.getPriceList(vo);
+	}
 
 }

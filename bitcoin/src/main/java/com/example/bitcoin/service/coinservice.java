@@ -9,6 +9,7 @@ import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
+import com.example.bitcoin.dto.PriceVO;
 import com.example.bitcoin.dto.QuestionVO;
 
 
@@ -83,4 +84,10 @@ public interface coinservice {
 	public void saveAutoPrice(MemberVO vo);
 	// 자동 매매중 매수 금액
 	public void saveOrderPrice(MemberVO vo);
+
+	// 자동 매매 전일 고가 , 저가 저장
+	public void updatePrice(PriceVO vo);
+
+	// 자동 매매 전일 고가, 저가 가져오기
+	public List<PriceVO> getPriceList(PriceVO vo);
 }

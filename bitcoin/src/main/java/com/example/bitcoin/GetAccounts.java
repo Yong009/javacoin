@@ -1,8 +1,11 @@
 package com.example.bitcoin;
 
 
-import java.io.*;
-import java.lang.reflect.Member;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -11,10 +14,12 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -36,11 +41,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
+import com.example.bitcoin.dto.PriceVO;
 import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
@@ -556,8 +564,40 @@ public class GetAccounts {
 
         String balance, currency, market, market2, nowPrice2;
         Long balances;
-        BigDecimal lowPrice, highPrice, prevClosePrice, targetPrice, minus, multi, nowPrice;
+        BigDecimal lowPrice, highPrice, prevClosePrice, targetPrice, minus, multi, nowPrice, lowPrice5, highPrice5,lowPrice2, highPrice2;
         BigDecimal dotFive = new BigDecimal(0.5);
+
+        LocalTime now3 = LocalTime.now();
+        DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("HH:mm");
+        String formatedNow3 = now3.format(formatter3);
+
+        if(formatedNow3.equals("08:59")) {
+        	String mk = null;
+
+        	try {
+        		mk = coinservice2.currentPrice7();
+        	} catch (Exception e) {
+        		 logger.error("전일 고가, 저가의 API 호출에 실패했습니다: {}",e.getMessage());
+
+        	}
+
+        	JSONArray jsonArray5 = new JSONArray(mk);
+
+        	for (int p = 0; p < jsonArray5.length(); p++) {
+                JSONObject jsonObject5 = jsonArray5.getJSONObject(p);
+                currency = jsonObject5.getString("currency");
+                highPrice5 = jsonObject5.getBigDecimal("high_price");
+                lowPrice5 = jsonObject5.getBigDecimal("low_price");
+
+                PriceVO po = new PriceVO();
+                po.setHighPrice(highPrice5);
+                po.setLowPrice(lowPrice5);
+                coinservice2.updatePrice(po);
+                break;
+        	}
+
+
+        }
 
         for (i = 0; i < list.size(); i++) {
 
@@ -656,6 +696,14 @@ public class GetAccounts {
                             market = jsonObject2.getString("market");
 
                             if (market.contains("KRW-BTC")) {
+
+                            	PriceVO pv2 = new PriceVO();
+                            	pv2.setSeq(1);
+                            	List<PriceVO> pv =coinservice2.getPriceList(pv2);
+
+                            	highPrice2 = pv.get(0).getHighPrice();
+                            	lowPrice2  = pv.get(0).getHighPrice();
+
                                 highPrice = jsonObject2.getBigDecimal("high_price");
                                 lowPrice = jsonObject2.getBigDecimal("low_price");
                                 prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
@@ -701,6 +749,25 @@ public class GetAccounts {
             }
 
         }
+    }
+
+
+    //자동 매매 전일 저가, 고가 저장
+    @ResponseBody
+    @PostMapping("/highLowPrice")
+    public void highLowPrice(@RequestBody PriceVO vo) {
+
+    	coinservice2.updatePrice(vo);
+
+    }
+
+    @ResponseBody
+    @GetMapping("/yesterdayPrice")
+    public List<PriceVO> yesterdayPrice(@RequestBody PriceVO vo){
+
+    	List<PriceVO> list = coinservice2.getPriceList(vo);
+
+    	return list;
     }
 
 

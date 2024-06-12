@@ -8,6 +8,7 @@ import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.PagingVO;
+import com.example.bitcoin.dto.PriceVO;
 import com.example.bitcoin.dto.QuestionVO;
 
 
@@ -75,4 +76,8 @@ public interface coinmapper {
   public void saveAutoPrice(MemberVO vo);
   // 자동매매중 매수 금액
   public void saveOrderPrice(MemberVO vo);
+  // 자동 매매 전일 저가 , 고가 저장
+  public void savePrice(PriceVO vo);
+  // 자동 매매 전일 저가, 고가 들고오기
+  public List<PriceVO> getPriceList(PriceVO vo);
 }

@@ -227,4 +227,20 @@
 		   SET orderPrice = #{orderPrice}
 		 WHERE id = #{id}
 	</update>
+
+	<!-- 자동매매 전일 저가, 고가 저장 -->
+	<update id="savePrice">
+		UPDATE price
+		   SET highPrice = #{highPrice},
+		       lowPrice = #{lowPrice}
+		   WHERE seq = 1
+
+	</update>
+
+	<!-- 전일 고가, 저가 가져오기 -->
+	<select id="getPriceList" resultType="com.example.bitcoin.dto.PriceVO">
+		SELECT *
+		  FROM price
+
+	</select>
 </mapper>
