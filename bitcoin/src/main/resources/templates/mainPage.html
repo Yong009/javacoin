@@ -688,7 +688,7 @@
         <td colspan="2" style="background-color:white; ">
 
             <h4 id="userid" class="noto-sans-kr-font" style="margin-top:100px;"><span th:text="${user}"
-                                                            style="font-weight:bold; color:black;"></span>님 환영합니다.&emsp;<span>&emsp;자동매매 : </span><span id="auto" class="noto-sans-kr-font" ></span><span id="profit2"></span></span><span id="profit"></span></span></h4>
+                                                            style="font-weight:bold; color:black;"></span>님 환영합니다.&emsp;<span>&emsp;자동매매 : </span><span id="auto" class="noto-sans-kr-font" ></span><span id="profit2" style="margin-left:10px;"></span></span><span id="profit"></span></span></h4>
 
             <form id="logoutForm" action="/logout" method="post">
                 <button type="submit" class="btn-gradient green"><span class="noto-sans-kr-font">로그아웃</span></button>
@@ -789,47 +789,89 @@
                 $('#auto').css("color","blue")
             }
 
-            var profit
-            var nowPrice
-			var orderPrice   = result[0].orderPrice;
-			var autoPrice    = result[0].autoPrice;
+            $.ajax({
+                url: "/account7",
+                type: "POST",
+                data: JSON.stringify(account),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (result0) {
 
-             $.ajax({
-             	url:"/currentPrice7",
-             	type:"Get",
-             	dataType:"json",
-             	contentType:"application/json",
-             	success: function(result5){
+                    $.ajax({
+                        url: "/market7",
+                        type: "Get",
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (result1) {
 
-             		$.each(result5,function(p,item5){
+                            if (result.error && result.error.name === 'invalid_access_key') {
+                                //alert('실패했습니다. 유효하지 않은 접근 키')
+                                return false;
+                            }
 
-             			if(result5[p].market == 'KRW-BTC'){
-
-             				nowPrice = result5[p].trade_price;
-             				$('#profit2').text('   수익률 : ')
-             			}
-             		})
-
-             		console.log(nowPrice)
-					console.log(orderPrice)
-
-             		if(orderPrice <= nowPrice){
-        				$('#profit').text((((nowPrice - orderPrice) / orderPrice) * 100).toFixed(2)+"%");
-        				$('#profit').css("color","red");
-        			}else{
-        				$('#profit').text((((orderPrice - nowPrice) / orderPrice) * 100).toFixed(2)+"%");
-        				$('#profit').css("color","blue");
-        			}
+                            $.each(result0, function (i, item) {
 
 
-             	}
-             })
+                                $.each(result1, function (j, item) {
+
+                                    if (result1[j].market.includes('KRW')) {
+
+                                        if (('KRW-' + result0[i].currency) == 'KRW-BTC') {
+
+                                        	console.log('KRW-' + result0[i].currency);
+                                        	var profit
+                                            var nowPrice
+                                			var orderPrice   = result[0].orderPrice;
+                                			var autoPrice    = result[0].autoPrice;
+											console.log(orderPrice)
+											console.log(autoPrice)
+                                             $.ajax({
+                                             	url:"/currentPrice7",
+                                             	type:"Get",
+                                             	dataType:"json",
+                                             	contentType:"application/json",
+                                             	success: function(result5){
+
+                                             		$.each(result5,function(p,item5){
+
+                                             			if(result5[p].market == 'KRW-BTC'){
+
+                                             				nowPrice = result5[p].trade_price;
+                                             				$('#profit2').text('수익률 : ')
+                                             			}
+                                             		})
 
 
 
+                                             		if(orderPrice <= nowPrice){
+                                        				$('#profit').text((((nowPrice - orderPrice) / orderPrice) * 100).toFixed(2)+"%");
+                                        				$('#profit').css("color","red");
+                                        			}else{
+                                        				$('#profit').text((((orderPrice - nowPrice) / orderPrice) * 100).toFixed(2)+"%");
+                                        				$('#profit').css("color","blue");
+                                        			}
 
 
+                                             	}
+                                             })
 
+
+                                        } else {
+
+
+                                        }
+
+
+                                    }
+
+                                })
+
+                            })
+                        }
+                    })
+
+                }
+            })
             if ($('#access').val() != '' && $('#secret').val() != '') {
 
                 var tbody = $('#Tb');
