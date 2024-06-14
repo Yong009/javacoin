@@ -761,9 +761,11 @@
         dataType:"json",
         contentType:"application/json",
         success:function(result){
-            console.log(result);
+            //console.log(result);
         }
     })
+
+
 
     $.ajax({
         url: "/getCode",
@@ -787,6 +789,13 @@
                 $('#auto').css("color","red")
             }else{
                 $('#auto').css("color","blue")
+            }
+
+            var accessCode = $('#access').val();
+            var secretCode = $('#secret').val();
+            var account = {
+                accessCode: accessCode,
+                secretCode: secretCode
             }
 
             $.ajax({
@@ -819,12 +828,14 @@
                                         if (('KRW-' + result0[i].currency) == 'KRW-BTC') {
 
                                         	console.log('KRW-' + result0[i].currency);
+
                                         	var profit
                                             var nowPrice
                                 			var orderPrice   = result[0].orderPrice;
                                 			var autoPrice    = result[0].autoPrice;
 											console.log(orderPrice)
 											console.log(autoPrice)
+
                                              $.ajax({
                                              	url:"/currentPrice7",
                                              	type:"Get",
@@ -832,7 +843,7 @@
                                              	contentType:"application/json",
                                              	success: function(result5){
 
-                                             		$.each(result5,function(p,item5){
+                                             		$.each(result5,function(p,item){
 
                                              			if(result5[p].market == 'KRW-BTC'){
 
@@ -1062,6 +1073,137 @@
         }
 
     })
+
+
+    $(document).ready(function () {
+
+   setInterval(function () {
+
+    $.ajax({
+        url: "/getCode",
+        type: "POST",
+        data: JSON.stringify(userid),
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+            $('#access').val(result[0].accessCode);
+            var a = $('#access').val();
+            $('#secret').val(result[0].secretCode)
+            var b = $('#secret').val();
+
+            if(result[0].auto =='Y'){
+                $('#auto').text('on    ')
+            }else{
+                $('#auto').text('off    ')
+            }
+
+            if($('#auto').text()=='on    '){
+                $('#auto').css("color","red")
+            }else{
+                $('#auto').css("color","blue")
+            }
+
+            var accessCode = $('#access').val();
+            var secretCode = $('#secret').val();
+            var account = {
+                accessCode: accessCode,
+                secretCode: secretCode
+            }
+
+            $.ajax({
+                url: "/account7",
+                type: "POST",
+                data: JSON.stringify(account),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (result0) {
+
+                    $.ajax({
+                        url: "/market7",
+                        type: "Get",
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (result1) {
+
+                            if (result.error && result.error.name === 'invalid_access_key') {
+                                //alert('실패했습니다. 유효하지 않은 접근 키')
+                                return false;
+                            }
+
+                            $.each(result0, function (i, item) {
+
+
+                                $.each(result1, function (j, item) {
+
+                                    if (result1[j].market.includes('KRW')) {
+
+                                        if (('KRW-' + result0[i].currency) == 'KRW-BTC') {
+
+                                        	console.log('KRW-' + result0[i].currency);
+
+                                        	var profit
+                                            var nowPrice
+                                			var orderPrice   = result[0].orderPrice;
+                                			var autoPrice    = result[0].autoPrice;
+											console.log(orderPrice)
+											console.log(autoPrice)
+
+                                             $.ajax({
+                                             	url:"/currentPrice7",
+                                             	type:"Get",
+                                             	dataType:"json",
+                                             	contentType:"application/json",
+                                             	success: function(result5){
+
+                                             		$.each(result5,function(p,item){
+
+                                             			if(result5[p].market == 'KRW-BTC'){
+
+                                             				nowPrice = result5[p].trade_price;
+                                             				$('#profit2').text('수익률 : ')
+                                             			}
+                                             		})
+
+
+
+                                             		if(orderPrice <= nowPrice){
+                                        				$('#profit').text((((nowPrice - orderPrice) / orderPrice) * 100).toFixed(2)+"%");
+                                        				$('#profit').css("color","red");
+                                        			}else{
+                                        				$('#profit').text((((orderPrice - nowPrice) / orderPrice) * 100).toFixed(2)+"%");
+                                        				$('#profit').css("color","blue");
+                                        			}
+
+
+                                             	}
+                                             })
+
+
+                                        } else {
+
+
+                                        }
+
+
+                                    }
+
+                                })
+
+                            })
+                        }
+                    })
+
+                }
+            })
+
+
+
+        }
+
+    })
+
+   }, 5000);
+  })
 
 
     var tbody = $('#Tb');
