@@ -440,7 +440,6 @@ public class GetAccounts {
         return "header2";
     }
 
-
     //푸터 호출
     @GetMapping("/footer.html")
     public String footer() {
@@ -462,14 +461,21 @@ public class GetAccounts {
         return coinservice2.market7();
     }
 
+    //거래 내역 페이지
+    @GetMapping("/buySellPage")
+    public String buySellPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        model.addAttribute("user", userDetails.getUsername());
+        return "buySell";
+    }
+
     //주문 리스트
     @ResponseBody
     @PostMapping("/orderList")
-    public void orderList(@RequestBody MemberVO vo) {
+    public String orderList(@RequestBody MemberVO vo) {
 
         List<MemberVO> list = coinservice2.getCode(vo.getId());
 
-        System.out.println(list);
+
         System.out.println(list.get(0).getSecretCode());
         String accessKey = list.get(0).getAccessCode();
         String secretKey = list.get(0).getSecretCode();
@@ -515,7 +521,7 @@ public class GetAccounts {
                 .sign(algorithm);
 
         String authenticationToken = "Bearer " + jwtToken;
-
+        String result = null;
         try {
             HttpClient client = HttpClientBuilder.create().build();
             HttpGet request = new HttpGet(serverUrl + "/v1/orders?" + queryString);
@@ -524,12 +530,13 @@ public class GetAccounts {
 
             HttpResponse response = client.execute(request);
             HttpEntity entity = response.getEntity();
-            System.out.println(EntityUtils.toString(entity, "UTF-8"));
+           // System.out.println(EntityUtils.toString(entity, "UTF-8"));
+            result = EntityUtils.toString(entity, "UTF-8");
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
+		        }
+        return result;
     }
 
     //자동매매 on
@@ -699,20 +706,22 @@ public class GetAccounts {
 
                             	PriceVO pv2 = new PriceVO();
                             	pv2.setSeq(1);
-                            	List<PriceVO> pv =coinservice2.getPriceList(pv2);
+                            	List<PriceVO> pv =coinservice2.getPriceList();
 
-                            	highPrice2 = pv.get(0).getHighPrice();
-                            	lowPrice2  = pv.get(0).getHighPrice();
-
-                                highPrice = jsonObject2.getBigDecimal("high_price");
-                                lowPrice = jsonObject2.getBigDecimal("low_price");
+								/*
+								 * highPrice2 = pv.get(0).getHighPrice(); lowPrice2 = pv.get(0).getLowPrice();
+								 */
+                            	//if(highPrice2 == null && highPrice2.equals(' ') && lowPrice2 == null && lowPrice2.equals(' ')) {
+                            	highPrice2 = jsonObject2.getBigDecimal("high_price");
+                                   lowPrice2 = jsonObject2.getBigDecimal("low_price");
+                            	//}
                                 prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
                                 nowPrice = jsonObject2.getBigDecimal("trade_price");
-                                minus = highPrice.subtract(lowPrice);
+                                minus = highPrice2.subtract(lowPrice2);
+                                //minus = highPrice.subtract(lowPrice);
                                 multi = minus.multiply(dotFive);
                                 targetPrice = prevClosePrice.add(multi);
                                 nowPrice2 = nowPrice.toString();
-
 
 
                                 if (targetPrice.compareTo(nowPrice) <= 0) {
@@ -761,11 +770,12 @@ public class GetAccounts {
 
     }
 
+    //저가 , 고가 불러오기
     @ResponseBody
     @GetMapping("/yesterdayPrice")
-    public List<PriceVO> yesterdayPrice(@RequestBody PriceVO vo){
+    public List<PriceVO> yesterdayPrice(){
 
-    	List<PriceVO> list = coinservice2.getPriceList(vo);
+    	List<PriceVO> list = coinservice2.getPriceList();
 
     	return list;
     }

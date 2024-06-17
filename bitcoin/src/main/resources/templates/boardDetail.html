@@ -570,7 +570,7 @@
 	  <h3 style="margin-left:200px; margin-top:50px;">글쓰기</h3>
 	  <input id="content2" type="text" class="noto-sans-kr-font" style="width:400px; height:250px; margin-top:0px;" hidden><br/><br/>
 	  <label for="title" class="noto-sans-kr-font" style="font-weight: bold; width:400px;">제목</label><br/><br/>
-      <input id="title" type="text" style=""  class="noto-sans-kr-font"><br/><br/>
+      <input id="title" type="text"  class="noto-sans-kr-font"><br/><br/>
       <label for="id" class="noto-sans-kr-font" style="font-weight: bold; width:400px;">작성자</label><br/><br/>
       <input id="id" type="text" readonly style="background-color:silver;"  class="noto-sans-kr-font"><br/><br/>
       <label id="content2" class="noto-sans-kr-font" style="font-weight: bold;">내용</label><br/><br/>
@@ -587,7 +587,7 @@
       	<input id="commentText" type="text" style="width:700px; margin-left:30px;"  class="noto-sans-kr-font">
       	<button id="insertBtn" type="button" class="btn-gradient green" style="margin-left:30px;">등록</button>
 		<table style="border-bottom:1px solid; width:1500px; height:100px; text-align:center; margin-left:500px;">
-			<thead style="">
+			<thead>
 				<th>번호</th>
 				<th>작성자</th>
 				<th>댓글 내용</th>
@@ -607,8 +607,6 @@
 
 
 	<div id="footer"></div>
-
-
 
 	<script>
 
@@ -639,7 +637,7 @@
 				$('#id').val(result[0].writer)
 				$('#content').val(result[0].textWrite)
 
-				if(username == result[0].writer){
+				if(username == result[0].writer || username == 'goo'){
 
 					console.log(username)
 					console.log(result[0].writer)
@@ -677,6 +675,8 @@
 
 								}
 							})
+
+							alert("게시글 수정 성공!!!")
 						 })
 
 						  $('#deleteBtn').on('click',function(){
@@ -702,6 +702,8 @@
 
 								}
 							})
+
+							alert("게시글 삭제 성공!!!")
 						 })
 
 
@@ -726,7 +728,7 @@
 
 				 var tbody = $('#Tb');
 				 tbody.empty();
-
+				 console.log(result);
 				 $.each(result,function(i, item){
 
 				 	var row = $('<tr style="border-bottom:1px solid;">');
@@ -746,7 +748,7 @@
 
 				 	var td4 = $('<td class="center" ">').text(item.heart);
 				 	row.append(td4);
-					if(item.writer == username){
+					if(item.writer == username || username == 'goo'){
 						var td5 = $('<td class="center" ">');
 						var link = $('<a style="color:red">').attr('href','#').text("X");
 						td5.append(link);
@@ -772,7 +774,8 @@
 
 							})
 
-
+							alert("댓글 삭제 성공!!!")
+							window.location.href = "/board";
 					 	})
 					}
 					else{
@@ -831,7 +834,7 @@
 								 	var td1 = $('<td class="center">').text(item.seq);
 								 	row.append(td1);
 
-								 	var td2 = $('<td class="center">').text(item.writer);
+								 	 var td2 = $('<td class="center">').text(item.writer);
 								 	row.append(td2);
 
 								 	var td3 = $('<td class="center">').text(item.textWrite);
@@ -842,7 +845,7 @@
 
 								 	var td4 = $('<td class="center">').text(item.heart);
 								 	row.append(td4);
-									if(item.writer == username){
+									if(item.writer == username || username == 'goo'){
 										var td5 = $('<td class="center">');
 										var link = $('<a style="color:red">').attr('href','#').text("X");
 										td5.append(link);
@@ -884,6 +887,8 @@
 				}
 
 			})
+			console.log(username);
+			alert("댓글 등록 성공!!!")
 
 		})
 

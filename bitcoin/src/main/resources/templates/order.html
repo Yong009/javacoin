@@ -543,7 +543,7 @@
 <div style="margin-top:300px; margin-left:700px; width:400px;" class="noto-sans-kr-font">
     <h2 class="noto-sans-kr-font" style="text-align: center; ">주문하기</h2>
 
-    <button type="button" id="accountSaveBtn" class="btn-gradient blue" style="float:right; margin-bottom:30px;"><span class="noto-sans-kr-font">저장</span>
+    <!--  <button type="button" id="accountSaveBtn" class="btn-gradient blue" style="float:right; margin-bottom:30px;"><span class="noto-sans-kr-font">저장</span>-->
     </button>
     <br/><br/>
     <label class="noto-sans-kr-font" for="access" style="font-weight: bold; ">access키</label><br/><br/>
@@ -705,7 +705,6 @@
                     secretCode: secretCode
                 }
 
-                $('#orderBtn').on('click', function () {
 
                     $.ajax({
 
@@ -731,12 +730,12 @@
                     })
 
 
-                })
+
 
             }
         })
 
-
+		alert("매수하였습니다.")
     })
 
 </script>

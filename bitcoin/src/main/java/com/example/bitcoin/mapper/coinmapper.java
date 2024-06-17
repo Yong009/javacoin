@@ -79,5 +79,5 @@ public interface coinmapper {
   // 자동 매매 전일 저가 , 고가 저장
   public void savePrice(PriceVO vo);
   // 자동 매매 전일 저가, 고가 들고오기
-  public List<PriceVO> getPriceList(PriceVO vo);
+  public List<PriceVO> getPriceList();
 }

@@ -89,5 +89,5 @@ public interface coinservice {
 	public void updatePrice(PriceVO vo);
 
 	// 자동 매매 전일 고가, 저가 가져오기
-	public List<PriceVO> getPriceList(PriceVO vo);
+	public List<PriceVO> getPriceList();
 }

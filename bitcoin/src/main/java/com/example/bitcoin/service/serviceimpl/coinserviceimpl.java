@@ -535,10 +535,11 @@ public class coinserviceimpl implements coinservice {
 
 	}
 
+	//저가, 고가 가져오기
 	@Override
-	public List<PriceVO> getPriceList(PriceVO vo) {
+	public List<PriceVO> getPriceList() {
 
-		return coinmappers.getPriceList(vo);
+		return coinmappers.getPriceList();
 	}
 
 }

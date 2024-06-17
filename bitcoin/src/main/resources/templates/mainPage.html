@@ -754,7 +754,7 @@
         id: username
     }
 
-    $.ajax({
+  /*   $.ajax({
         url:"/orderList",
         type:"POST",
         data: JSON.stringify(userid),
@@ -763,7 +763,7 @@
         success:function(result){
             //console.log(result);
         }
-    })
+    }) */
 
 
 
@@ -1023,7 +1023,7 @@
                                                     })
                                                 }
                                             })
-
+										alert('매도 성공!!!')
 
                                             // sell ajax 구현 ( 밑에 버튼에도 매도 버튼이랑 sell ajax 구현 )
                                         })
@@ -1313,7 +1313,7 @@
 
 
         })
-
+		alert("잔고를 조회하였습니다.")
     })
 
     function refreshTable(account2) {
@@ -1350,14 +1350,15 @@
             contentType: "application/json",
             success: function (result) {
 
-                if (result) {
+                /* if (result) {
                     alert('저장 성공!!')
                 } else {
                     alert('저장 실패!!')
-                }
+                } */
             }
 
         })
+        alert("코드를 저장하였습니다.")
     })
 
 
