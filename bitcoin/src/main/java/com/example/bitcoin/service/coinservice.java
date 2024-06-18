@@ -90,4 +90,9 @@ public interface coinservice {
 
 	// 자동 매매 전일 고가, 저가 가져오기
 	public List<PriceVO> getPriceList();
+	// 총 회원 수
+	public int getMemberMax();
+
+	// 회원 관리 페이징
+	public List<MemberVO> getMemberLists(PagingVO vo);
 }

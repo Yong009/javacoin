@@ -80,4 +80,8 @@ public interface coinmapper {
   public void savePrice(PriceVO vo);
   // 자동 매매 전일 저가, 고가 들고오기
   public List<PriceVO> getPriceList();
+  // 총 회원 수
+  public int getMemberMax();
+  // 회원 관리 페이징
+   public List<MemberVO> getMemberLists(PagingVO vo);
 }

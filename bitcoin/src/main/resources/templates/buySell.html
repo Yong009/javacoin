@@ -239,10 +239,10 @@
 				var td2 = $('<td class="center">').text(result[i].volume);
 				row.append(td2);
 				var td3 = $('<td class="center">').text(result[i].side);
-				if(result[i].side =='bid'){
+				 if(result[i].side =='bid'){
 					var td3 = $('<td class="center">').text('매수');
 					td3.css("color","red");
-				}else{
+				}else if(result[i].side =='ask'){
 					var td3 = $('<td class="center">').text('매도');
 					td3.css("color","blue");
 				}

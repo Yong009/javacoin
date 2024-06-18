@@ -115,7 +115,6 @@ public class GetAccounts {
 
     }
 
-
     @ResponseBody
     @PostMapping("/memberAll")
     public List<MemberVO> memberAll() {
@@ -132,7 +131,6 @@ public class GetAccounts {
         coinservice2.deleteMember(vo.getId());
 
     }
-
 
     //회원가입
 
@@ -303,9 +301,29 @@ public class GetAccounts {
         return coinservice2.getMax();
     }
 
+    // 회원 총 수
+
+    @ResponseBody
+    @GetMapping("/memberMax")
+    public int memberMax() {
+    	return coinservice2.getMemberMax();
+    }
+
+    // 회원 페이징
+    @ResponseBody
+    @PostMapping("/memberListAjax2")
+    public List<MemberVO> memberListAjax2(@RequestBody PagingVO vo){
+
+    	List<MemberVO> list = coinservice2.getMemberLists(vo);
+
+    	return list;
+    }
+
+
+
     //게시판 페이징 적용
     @ResponseBody
-    @PostMapping("/boardListAjax2")
+    @GetMapping("/boardListAjax2")
     public List<BoardVO> boardListAjax2(@RequestBody PagingVO vo) {
 
         List<BoardVO> list = coinservice2.getLists(vo.getPage());
@@ -592,7 +610,7 @@ public class GetAccounts {
 
         	for (int p = 0; p < jsonArray5.length(); p++) {
                 JSONObject jsonObject5 = jsonArray5.getJSONObject(p);
-                currency = jsonObject5.getString("currency");
+                currency = jsonObject5.getString("market");
                 highPrice5 = jsonObject5.getBigDecimal("high_price");
                 lowPrice5 = jsonObject5.getBigDecimal("low_price");
 

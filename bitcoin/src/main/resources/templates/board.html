@@ -879,7 +879,7 @@
 
 	  $.ajax({
 			 url:"/boardMax",
-			 Type:"POST",
+			 Type:"Get",
 			 dataType: "json",
 			 contentType: "application/json",
 			 success: function (result) {
@@ -908,13 +908,13 @@
 
 							$.ajax({
 							        url:"/boardListAjax2",
-							        Type:"POST",
+							        Type:"Get",
 							        dataType: "json",
-							         data:JSON.stringify(vo),
+							        data:JSON.stringify(vo),
 							        contentType: "application/json",
-							        success: function (result) {
+							        success: function (result3) {
 
-							            board = result;
+							            board = result3;
 
 							            refreshTable();
 							        }

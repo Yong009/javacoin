@@ -203,7 +203,7 @@
 	 	SELECT *
 	 	  FROM board
 	 	  order by SEQ
-	 	  limit 10 offset #{offSet}
+	 	  limit 10 offset #{page}
 
 	</select>
 
@@ -213,6 +213,23 @@
 		  FROM board
 
 	</select>
+
+	<!-- 회원 총 수 -->
+	<select id="getMemberMax" resultType="java.lang.Integer">
+		SELECT MAX(ID)
+		  FROM member
+
+	</select>
+
+	<!-- 회원 관리 페이징 -->
+	<select id="getMemberMax" resultType="com.example.bitcoin.dto.MemberVO">
+		SELECT *
+		  FROM member
+		  order by SEQ
+		  limit 10 offset #{page}
+
+	</select>
+
 
 	<!-- 자동매매 금액 저장 -->
 	<update id="saveAutoPrice">
