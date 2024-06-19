@@ -207,19 +207,18 @@
 
 	</select>
 
-	<!-- 게시판 글 수 -->
+	<!-- 게시판 글 수-->
 	<select id="getMax" resultType="java.lang.Integer">
 		SELECT MAX(SEQ)
 		  FROM board
 
 	</select>
 
-	<!-- 회원 총 수 -->
+	<!-- 회원 총 수
 	<select id="getMemberMax" resultType="java.lang.Integer">
-		SELECT MAX(ID)
+		SELECT MAX(*)
 		  FROM member
-
-	</select>
+	</select>-->
 
 	<!-- 회원 관리 페이징 -->
 	<select id="getMemberMax" resultType="com.example.bitcoin.dto.MemberVO">

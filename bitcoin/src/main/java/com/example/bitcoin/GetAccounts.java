@@ -301,13 +301,14 @@ public class GetAccounts {
         return coinservice2.getMax();
     }
 
-    // 회원 총 수
-
-    @ResponseBody
-    @GetMapping("/memberMax")
-    public int memberMax() {
-    	return coinservice2.getMemberMax();
-    }
+	/*
+	 * // 회원 총 수
+	 *
+	 * @ResponseBody
+	 *
+	 * @GetMapping("/memberMax") public int memberMax() { return
+	 * coinservice2.getMemberMax(); }
+	 */
 
     // 회원 페이징
     @ResponseBody

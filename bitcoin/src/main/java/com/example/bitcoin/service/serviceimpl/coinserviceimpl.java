@@ -542,11 +542,14 @@ public class coinserviceimpl implements coinservice {
 		return coinmappers.getPriceList();
 	}
 
-	@Override
-	public int getMemberMax() {
 
-		return coinmappers.getMemberMax();
-	}
+	 @Override
+	 public int getMemberMax() {
+
+	 int a = coinmappers.getMemberMax();
+	 	return a;
+	 }
+
 
 	@Override
 	public List<MemberVO> getMemberLists(PagingVO vo){
