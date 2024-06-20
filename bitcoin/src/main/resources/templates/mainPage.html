@@ -818,6 +818,14 @@
                                 return false;
                             }
 
+
+                            $.ajax({
+                             	url:"/currentPrice7",
+                             	type:"Get",
+                             	dataType:"json",
+                             	contentType:"application/json",
+                             	success: function(result5){
+
                             $.each(result0, function (i, item) {
 
 
@@ -827,44 +835,30 @@
 
                                         if (('KRW-' + result0[i].currency) == 'KRW-BTC') {
 
-                                        	console.log('KRW-' + result0[i].currency);
 
                                         	var profit
                                             var nowPrice
                                 			var orderPrice   = result[0].orderPrice;
                                 			var autoPrice    = result[0].autoPrice;
-											console.log(orderPrice)
-											console.log(autoPrice)
-
-                                             $.ajax({
-                                             	url:"/currentPrice7",
-                                             	type:"Get",
-                                             	dataType:"json",
-                                             	contentType:"application/json",
-                                             	success: function(result5){
-
-                                             		$.each(result5,function(p,item){
-
-                                             			if(result5[p].market == 'KRW-BTC'){
-
-                                             				nowPrice = result5[p].trade_price;
-                                             				$('#profit2').text('수익률 : ')
-                                             			}
-                                             		})
 
 
+                                			$.each(result5,function(p,item){
 
-                                             		if(orderPrice <= nowPrice){
-                                        				$('#profit').text((((nowPrice - orderPrice) / orderPrice) * 100).toFixed(2)+"%");
-                                        				$('#profit').css("color","red");
-                                        			}else{
-                                        				$('#profit').text((((orderPrice - nowPrice) / orderPrice) * 100).toFixed(2)+"%");
-                                        				$('#profit').css("color","blue");
-                                        			}
+                                     			if(result5[p].market == 'KRW-BTC'){
+
+                                     				nowPrice = result5[p].trade_price;
+                                     				$('#profit2').text('수익률 : ')
+                                     			}
+                                     		})
 
 
-                                             	}
-                                             })
+                                     		if(orderPrice <= nowPrice){
+                                				$('#profit').text((((nowPrice - orderPrice) / orderPrice) * 100).toFixed(2)+"%");
+                                				$('#profit').css("color","red");
+                                			}else{
+                                				$('#profit').text((((orderPrice - nowPrice) / orderPrice) * 100).toFixed(2)+"%");
+                                				$('#profit').css("color","blue");
+                                			}
 
 
                                         } else {
@@ -877,6 +871,8 @@
 
                                 })
 
+                            })
+                             	}
                             })
                         }
                     })
@@ -947,8 +943,7 @@
 
                                             if (('KRW-' + result[i].currency) == result2[j].market) {
 
-                                                //console.log('KRW-' + result[i].currency);
-                                                //console.log(result2[j].market);
+
                                                 result[i].currency = result2[j].korean_name;
                                                 check.push(result2[j].korean_name);
                                             } else {
@@ -1130,56 +1125,51 @@
                                 return false;
                             }
 
-                            $.each(result0, function (i, item) {
+
+                            $.ajax({
+                             	url:"/currentPrice7",
+                             	type:"Get",
+                             	dataType:"json",
+                             	contentType:"application/json",
+                             	success: function(result5){
+
+	                            $.each(result0, function (i, item) {
 
 
-                                $.each(result1, function (j, item) {
+	                                $.each(result1, function (j, item) {
 
-                                    if (result1[j].market.includes('KRW')) {
+	                                    if (result1[j].market.includes('KRW')) {
 
-                                        if (('KRW-' + result0[i].currency) == 'KRW-BTC') {
-
-                                        	console.log('KRW-' + result0[i].currency);
-
-                                        	var profit
-                                            var nowPrice
-                                			var orderPrice   = result[0].orderPrice;
-                                			var autoPrice    = result[0].autoPrice;
-											console.log(orderPrice)
-											console.log(autoPrice)
-
-                                             $.ajax({
-                                             	url:"/currentPrice7",
-                                             	type:"Get",
-                                             	dataType:"json",
-                                             	contentType:"application/json",
-                                             	success: function(result5){
-
-                                             		$.each(result5,function(p,item){
-
-                                             			if(result5[p].market == 'KRW-BTC'){
-
-                                             				nowPrice = result5[p].trade_price;
-                                             				$('#profit2').text('수익률 : ')
-                                             			}
-                                             		})
+	                                        if (('KRW-' + result0[i].currency) == 'KRW-BTC') {
 
 
 
-                                             		if(orderPrice <= nowPrice){
-                                        				$('#profit').text((((nowPrice - orderPrice) / orderPrice) * 100).toFixed(2)+"%");
-                                        				$('#profit').css("color","red");
-                                        			}else{
-                                        				$('#profit').text((((orderPrice - nowPrice) / orderPrice) * 100).toFixed(2)+"%");
-                                        				$('#profit').css("color","blue");
-                                        			}
+	                                        	var profit
+	                                            var nowPrice
+	                                			var orderPrice   = result[0].orderPrice;
+	                                			var autoPrice    = result[0].autoPrice;
+
+	                                			$.each(result5,function(p,item){
+
+                                         			if(result5[p].market == 'KRW-BTC'){
+
+                                         				nowPrice = result5[p].trade_price;
+                                         				$('#profit2').text('수익률 : ')
+                                         			}
+                                         		})
 
 
-                                             	}
-                                             })
+                                         		if(orderPrice <= nowPrice){
+                                    				$('#profit').text((((nowPrice - orderPrice) / orderPrice) * 100).toFixed(2)+"%");
+                                    				$('#profit').css("color","red");
+                                    			}else{
+                                    				$('#profit').text((((orderPrice - nowPrice) / orderPrice) * 100).toFixed(2)+"%");
+                                    				$('#profit').css("color","blue");
+                                    			}
 
 
-                                        } else {
+
+	                                        } else {
 
 
                                         }
@@ -1189,6 +1179,9 @@
 
                                 })
 
+                            })
+
+                             	}
                             })
                         }
                     })
@@ -1202,7 +1195,7 @@
 
     })
 
-   }, 5000);
+    }, 5000);
   })
 
 
@@ -1361,6 +1354,17 @@
         alert("코드를 저장하였습니다.")
     })
 
+ /*    $.ajax({
+		url:"/koreaPrice",
+		type:"GET",
+		dataType:"json",
+		contentType:"application/json",
+		success:function(result){
+
+			console.log(JSON.parse(result));
+			console.log(JSON.Stringify(result));
+		}
+    }) */
 
     // $('#orderBtn').on('click', function () {
     //
@@ -1394,8 +1398,8 @@
      	}
      }) */
 
-/*
-       $.ajax({
+
+     /*     $.ajax({
      	url:"/currentPrice7",
      	type:"Get",
      	dataType:"json",
