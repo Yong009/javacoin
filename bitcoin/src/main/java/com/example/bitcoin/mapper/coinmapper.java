@@ -67,8 +67,8 @@ public interface coinmapper {
   public List<MemberVO> autoCheck();
   // 관리자 자동매매 끄기
   public void manageAuto(String id);
-  // 페이징
-  public List<BoardVO> getLists(int offSet);
+  // 게시판 페이징
+  public List<BoardVO> getLists(PagingVO vo);
   // 게시판 글 수
   public int getMax();
 

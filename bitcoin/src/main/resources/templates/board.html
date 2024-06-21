@@ -850,7 +850,7 @@
 
     $.ajax({
         url: "/boardListAjax",
-        Type: "GET",
+        type: "GET",
         dataType: "json",
         contentType: "application/json",
         success: function (result) {
@@ -879,7 +879,7 @@
 
 	  $.ajax({
 			 url:"/boardMax",
-			 Type:"Get",
+			 type:"get",
 			 dataType: "json",
 			 contentType: "application/json",
 			 success: function (result) {
@@ -899,16 +899,16 @@
 						pageButton.click(function(){
 
 							var selectedPage = $(this).text();
-
+							
 							var vo = {
 								page : selectedPage
 							}
-							console.log(vo);
+
 							pageButton.css('font-weight','bold');
 
 							$.ajax({
 							        url:"/boardListAjax2",
-							        Type:"Get",
+							        type:"post",
 							        dataType: "json",
 							        data:JSON.stringify(vo),
 							        contentType: "application/json",

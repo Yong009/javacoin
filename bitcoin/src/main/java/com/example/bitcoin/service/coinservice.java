@@ -24,7 +24,7 @@ public interface coinservice {
 	// 게시판 전체 리스트
 	public List<BoardVO> getList();
 	// 페이징
-	public List<BoardVO> getLists(int page);
+	public List<BoardVO> getLists(PagingVO vo);
 	// 잔고 조회
     String account7(MemberVO vo);
 	// 현재가격 조회

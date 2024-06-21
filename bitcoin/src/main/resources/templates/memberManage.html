@@ -693,7 +693,7 @@
 </head>
 <body style="background-color: white;" class="noto-sans-kr-font">
   <div id="header"></div>
-  <div id="footer"></div>
+
   <div style="margin-top:200px;">
       <h4 style="text-align: center; font-weight: bold; font-size:30px;">회원 관리</h4>
       <div style="margin-left:100px; margin-right:100px;">
@@ -710,10 +710,12 @@
 
               </tbody>
           </table>
+          <div id="pagination" style="margin-left:360px; margin-top:30px;"></div>
       </div>
+       <div id="footer"></div>
   <script>
     $('#header').load('header.html');
-    $('#footer').load('footer.html');
+   //$('#footer').load('footer.html');
 
     $.ajax({
         url:"/memberAll",
@@ -721,7 +723,7 @@
         contentType:"application/json",
         dataType:"json",
         success:function(result){
-            console.log(result);
+           // console.log(result);
             var tbody = $('#Tb');
             $.each(result,function(i,item){
                 var row= $('<tr>');
@@ -794,6 +796,126 @@
                 tbody.append(row);
             })
         }
+    })
+
+
+	var max;
+
+    $.ajax({
+		url:"/memberMax",
+		type:"GET",
+		dataType:"json",
+		contentType:"application/json",
+		success:function(result){
+
+			if(result <= 10 || result != 0){
+				max = 1;
+			}else{
+				max = Math.floor((result/10)+1);
+			}
+
+			$('#pagination').empty();
+
+				for(var i = 1; i<= max; i++){
+					var pageButton = $('<button class="btn-gradient purple mini" id='+i+'>').text(i);
+
+					pageButton.click(function(){
+
+						var selectedPage = $(this).text();
+
+						var vo = {
+							page : selectedPage
+						}
+
+						pageButton.css('font-weight','bold');
+
+						$.ajax({
+							url:"/memberListAjax2",
+							type:"POST",
+							dataType:"json",
+							data:JSON.stringify(vo),
+							contentType:"application/json",
+							success:function(result2){
+
+								   var tbody = $('#Tb');
+								   tbody.empty();
+						            $.each(result2,function(i,item){
+						                var row= $('<tr>');
+						                var td1 = $('<td class="center">').text(result2[i].id);
+						                row.append(td1);
+						                if(result2[i].auto=='Y'){
+						                    var td2 = $('<td class="center" style="color:red">').text("사용")
+
+						                }else{
+						                    var td2 = $('<td class="center" style="color:blue">').text("미사용")
+						                }
+						                row.append(td2);
+
+						                var stopBtn = $('<buttonn type="button" id="stopBtn" class="btn-gradient blue mini" style="width:30px; height: 15px;">').text('끄기')
+						                var td3 = $('<td class="center">').append(stopBtn);
+						                row.append(td3);
+
+										stopBtn.on('click',function(){
+											var id2 = result2[i].id
+						                    var member2 = {
+						                        id : id2
+						                    }
+
+											   $.ajax({
+							                        url:"/manageAuto",
+							                        type:"POST",
+							                        data:JSON.stringify(member2),
+							                        dataType: "json",
+							                        contentType:"application/json",
+							                        success: function(result3){
+
+
+
+							                        }
+							                    })
+
+							                     alert('자동매매 끄기 성공!!!')
+										})
+
+
+						                var deleteBtn = $('<buttonn type="button" id="deleteBtn" class="btn-gradient blue mini" style="width:30px; height: 15px;">').text('탈퇴')
+						                var td4 = $('<td class="center">').append(deleteBtn);
+						                row.append(td4);
+
+						                deleteBtn.on('click',function(){
+
+						                    var id2 = result2[i].id
+						                    var member2 = {
+						                        id : id2
+						                    }
+
+						                    $.ajax({
+						                        url:"/deleteMember",
+						                        type:"POST",
+						                        data:JSON.stringify(member2),
+						                        dataType: "json",
+						                        contentType:"application/json",
+						                        success: function(result4){
+
+
+						                        }
+						                    })
+
+						                    alert('탈퇴 성공!!!')
+
+						                })
+						                tbody.append(row);
+						            })
+
+							}
+						})
+
+					})
+					$('#pagination').append(pageButton);
+				}
+		}
+
+
     })
   </script>
 </body>

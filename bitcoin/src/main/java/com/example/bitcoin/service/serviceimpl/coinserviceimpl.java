@@ -502,9 +502,10 @@ public class coinserviceimpl implements coinservice {
 	}
 
 	@Override
-	public List<BoardVO> getLists(int page) {
-		int offSet = (page - 1) * 10;
-		return coinmappers.getLists(offSet);
+	public List<BoardVO> getLists(PagingVO vo) {
+		int page = (vo.getPage() - 1) * 10;
+		vo.setPage(page);
+		return coinmappers.getLists(vo);
 	}
 
 	@Override
@@ -552,8 +553,9 @@ public class coinserviceimpl implements coinservice {
 
 
 	@Override
-	public List<MemberVO> getMemberLists(PagingVO vo){
-
+	public List<MemberVO> getMemberLists(PagingVO  vo){
+		int page = (vo.getPage() - 1) * 10;
+		vo.setPage(page);
 		return coinmappers.getMemberLists(vo);
 	}
 

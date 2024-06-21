@@ -311,14 +311,16 @@ public class GetAccounts {
 		return coinservice2.getMax();
 	}
 
-	/*
-	 * // 회원 총 수
-	 *
-	 * @ResponseBody
-	 *
-	 * @GetMapping("/memberMax") public int memberMax() { return
-	 * coinservice2.getMemberMax(); }
-	 */
+
+	  // 회원 총 수
+
+	  @ResponseBody
+	  @GetMapping("/memberMax")
+	  public int memberMax() {
+
+		  return  coinservice2.getMemberMax();
+	  }
+
 
 	// 회원 페이징
 	@ResponseBody
@@ -332,10 +334,10 @@ public class GetAccounts {
 
 	// 게시판 페이징 적용
 	@ResponseBody
-	@GetMapping("/boardListAjax2")
+	@PostMapping("/boardListAjax2")
 	public List<BoardVO> boardListAjax2(@RequestBody PagingVO vo) {
 
-		List<BoardVO> list = coinservice2.getLists(vo.getPage());
+		List<BoardVO> list = coinservice2.getLists(vo);
 
 		return list;
 	}
@@ -575,6 +577,8 @@ public class GetAccounts {
 
 		coinservice2.autoStop7(vo.getId());
 	}
+
+
 
 	// 변동성 돌파 전략 스케줄러
 
