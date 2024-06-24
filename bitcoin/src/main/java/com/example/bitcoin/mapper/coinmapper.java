@@ -9,6 +9,7 @@ import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.PriceVO;
+import com.example.bitcoin.dto.ProfitVO;
 import com.example.bitcoin.dto.QuestionVO;
 
 
@@ -84,4 +85,10 @@ public interface coinmapper {
   public int getMemberMax();
   // 회원 관리 페이징
    public List<MemberVO> getMemberLists(PagingVO vo);
+   // 팔때 가격 저장
+   public Object updateSellPrice(MemberVO vo);
+   // 수익률 계산
+   public void saveProfit(ProfitVO vo);
+   // 수익률 불러오기
+   public List<ProfitVO> getProfitList(ProfitVO vo);
 }

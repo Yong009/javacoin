@@ -55,17 +55,15 @@ import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.PriceVO;
+import com.example.bitcoin.dto.ProfitVO;
+import com.example.bitcoin.dto.ProfitVO;
 import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.mapper.coinmapper;
 import com.example.bitcoin.service.coinservice;
 import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -583,210 +581,291 @@ public class GetAccounts {
 	// 변동성 돌파 전략 스케줄러
 
 	// 변동성 돌파 전략 스케줄러 ( 5초마다 계속 )
-//	@Scheduled(fixedRate = 5000) // 5초마다 실행
-//	public void autoScuedule() {
-//		Logger logger = LoggerFactory.getLogger(this.getClass());
-//		List<MemberVO> list = coinservice2.autoCheck();
-//
-//		if (list == null || list.isEmpty()) {
-//			logger.info("자동매매 실행한 유저가 존재하지 않습니다.");
-//			return;
-//		}
-//
-//		int i, j, k;
-//
-//		String balance, currency, market, market2, nowPrice2;
-//		Long balances;
-//		BigDecimal lowPrice, highPrice, prevClosePrice, targetPrice, minus, multi, nowPrice, lowPrice5, highPrice5,
-//				lowPrice2, highPrice2;
-//		BigDecimal dotFive = new BigDecimal(0.5);
-//
-//		LocalTime now3 = LocalTime.now();
-//		DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("HH:mm");
-//		String formatedNow3 = now3.format(formatter3);
-//
-//		if (formatedNow3.equals("08:59")) {
-//			String mk = null;
-//
-//			try {
-//				mk = coinservice2.currentPrice7();
-//			} catch (Exception e) {
-//				logger.error("전일 고가, 저가의 API 호출에 실패했습니다: {}", e.getMessage());
-//
-//			}
-//
-//			JSONArray jsonArray5 = new JSONArray(mk);
-//
-//			for (int p = 0; p < jsonArray5.length(); p++) {
-//				JSONObject jsonObject5 = jsonArray5.getJSONObject(p);
-//				currency = jsonObject5.getString("market");
-//				highPrice5 = jsonObject5.getBigDecimal("high_price");
-//				lowPrice5 = jsonObject5.getBigDecimal("low_price");
-//
-//				PriceVO po = new PriceVO();
-//				po.setHighPrice(highPrice5);
-//				po.setLowPrice(lowPrice5);
-//				coinservice2.updatePrice(po);
-//				break;
-//			}
-//
-//		}
-//
-//		for (i = 0; i < list.size(); i++) {
-//
-//			String accc = list.get(i).getAccessCode();
-//			String sece = list.get(i).getSecretCode();
-//			String userId = list.get(i).getId();
-//			String autoPrice = list.get(i).getAutoPrice();
-//
-//			if ((accc == null || accc.equals(' ')) || (sece == null || sece.equals(' '))
-//					|| (autoPrice == null || autoPrice.equals(' '))) {
-//
-//				logger.info(
-//						"사용자 {}의 secret코드 또는 access코드 저장하지 않거나 가격을 입력하지 않았습니다. 저장 및 입력 되어야 자동매매 프로그램을 작동시킬 수 있습니다.!!",
-//						userId);
-//				continue;
-//			}
-//
-//			MemberVO member = new MemberVO();
-//			member.setAccessCode(accc);
-//			member.setSecretCode(sece);
-//			member.setAutoPrice(autoPrice);
-//
-//			// String mk = null;
-//			String cp = null;
-//			String account = null;
-//
-//			try {
-//				// mk = coinservice2.market7(); //마켓
-//				cp = coinservice2.currentPrice7(); // 현재가
-//				account = coinservice2.account7(member); // 잔고
-//			} catch (Exception e) {
-//				logger.error("사용자 {}의 API 호출에 실패했습니다: {}", userId, e.getMessage());
-//				continue;
-//			}
-//
-//			// JSONArray jsonArray = new JSONArray(mk);
-//			JSONArray jsonArray2 = new JSONArray(cp); // 현재가
-//			JSONArray jsonArray3 = new JSONArray(account); // 잔고
-//
-//			boolean hasKrwBtc = false;
-//
-//			for (j = 0; j < jsonArray3.length(); j++) {
-//				JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
-//				currency = jsonObject3.getString("currency");
-//
-//				if (currency.equals("BTC")) {
-//					hasKrwBtc = true;
-//					LocalTime now = LocalTime.now();
-//					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-//					String formatedNow = now.format(formatter);
-//
-//					if (formatedNow.equals("09:00")) {
-//						balance = jsonObject3.getString("balance");
-//						OrderVO vo3 = new OrderVO();
-//						vo3.setCoin("KRW-BTC");
-//						vo3.setAccessCode(member.getAccessCode());
-//						vo3.setSecretCode(member.getSecretCode());
-//						vo3.setOrderType("ask");
-//						vo3.setVolume(balance);
-//
-//						try {
-//							coinservice2.sell7(vo3);
-//						} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-//							logger.error("사용자 {}의 매도 주문 실행 중 오류 발생: {}", userId, e.getMessage());
-//						}
-//						logger.info("사용자 {}의 매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", userId, balance);
-//						account = coinservice2.account7(member);
-//						jsonArray3 = new JSONArray(account);
-//					} else {
-//						logger.info("사용자 {}의 9시가 되지 않아 매도 주문이 체결되지 않았습니다.", userId);
-//					}
-//					break; // 더 이상 순회할 필요가 없으므로 루프 종료
-//				}
-//			}
-//
-//			LocalTime now = LocalTime.now();
-//			DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
-//			String formatedNow2 = now.format(formatter2);
-//
-//			if (hasKrwBtc == false && !formatedNow2.equals("09:00")) {
-//
-//				for (j = 0; j < jsonArray3.length(); j++) {
-//					JSONObject jsonObject5 = jsonArray3.getJSONObject(j);
-//					currency = jsonObject5.getString("currency");
-//
-//					if (currency.equals("KRW")) {
-//						balance = jsonObject5.getString("balance");
-//						BigDecimal big = new BigDecimal(balance);
-//						BigDecimal Dec = big.setScale(0, BigDecimal.ROUND_DOWN); // 숫자를 정수화
-//						balances = Dec.longValue();
-//						String balances2 = balances.toString();
-//
-//						if (balances <= 5000) {
-//							break;
-//						}
-//
-//						for (k = 0; k < jsonArray3.length(); k++) {
-//							JSONObject jsonObject2 = jsonArray2.getJSONObject(k);
-//							market = jsonObject2.getString("market");
-//
-//							if (market.contains("KRW-BTC")) {
-//
-//								PriceVO pv2 = new PriceVO();
-//								pv2.setSeq(1);
-//
-//								List<PriceVO> pv =coinservice2.getPriceList();
-//
-//								highPrice2 = pv.get(0).getHighPrice();
-//								lowPrice2 = pv.get(0).getLowPrice();
-//
-//
-//								prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
-//								nowPrice = jsonObject2.getBigDecimal("trade_price");
-//								minus = highPrice2.subtract(lowPrice2);
-//								// minus = highPrice.subtract(lowPrice);
-//								multi = minus.multiply(dotFive);
-//								targetPrice = prevClosePrice.add(multi);
-//								nowPrice2 = nowPrice.toString();
-//
-//								if (targetPrice.compareTo(nowPrice) <= 0) {
-//									logger.info("사용자 {}의 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}, 매수 금액 = {}", userId,
-//											nowPrice, targetPrice, autoPrice);
-//									OrderVO vo2 = new OrderVO();
-//									vo2.setCoin("KRW-BTC");
-//									vo2.setAccessCode(member.getAccessCode());
-//									vo2.setSecretCode(member.getSecretCode());
-//									vo2.setOrderType("bid");
-//									vo2.setPrice(member.getAutoPrice());
-//									// vo2.setPrice(balances2);
-//
-//									try {
-//										coinservice2.order7(vo2);
-//										MemberVO price2 = new MemberVO();
-//										price2.setId(userId);
-//										price2.setOrderPrice(nowPrice2);
-//										coinservice2.saveOrderPrice(price2);
-//									} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-//
-//										logger.error("사용자 {}의 매수 주문 실행 중 오류 발생: {}", userId, e.getMessage());
-//									}
-//									logger.info("사용자 {}의  매수 주문 실행: 코인 = KRW-BTC, 가격 = {}", userId, balances);
-//									account = coinservice2.account7(member);
-//									jsonArray3 = new JSONArray(account);
-//								} else {
-//									logger.info("사용자 {}의  목표가에 오지 않아 매수 주문 실행 안함: 코인 = KRW-BTC, 매수 금액 = {}, 목표 가격 = {}",
-//											userId, autoPrice, targetPrice);
-//								}
-//							}
-//						}
-//					}
-//
-//				}
-//			}
-//
-//		}
-//	}
+	@Scheduled(fixedRate = 5000) // 5초마다 실행
+	public void autoScuedule() {
+		Logger logger = LoggerFactory.getLogger(this.getClass());
+		List<MemberVO> list = coinservice2.autoCheck();
+
+		if (list == null || list.isEmpty()) {
+			logger.info("자동매매 실행한 유저가 존재하지 않습니다.");
+			return;
+		}
+
+		int i, j, k;
+
+		String balance, currency, market, market2, nowPrice2;
+		Long balances;
+		BigDecimal lowPrice, highPrice, prevClosePrice, targetPrice, minus, multi, nowPrice, lowPrice5, highPrice5,
+				lowPrice2, highPrice2;
+		BigDecimal dotFive = new BigDecimal(0.5);
+
+		LocalTime now3 = LocalTime.now();
+		DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("HH:mm");
+		String formatedNow3 = now3.format(formatter3);
+
+		if (formatedNow3.equals("08:59")) {
+			String mk = null;
+
+			try {
+				mk = coinservice2.currentPrice7();
+			} catch (Exception e) {
+				logger.error("전일 고가, 저가의 API 호출에 실패했습니다: {}", e.getMessage());
+
+			}
+
+			JSONArray jsonArray5 = new JSONArray(mk);
+
+			for (int p = 0; p < jsonArray5.length(); p++) {
+				JSONObject jsonObject5 = jsonArray5.getJSONObject(p);
+				currency = jsonObject5.getString("market");
+				highPrice5 = jsonObject5.getBigDecimal("high_price");
+				lowPrice5 = jsonObject5.getBigDecimal("low_price");
+
+				PriceVO po = new PriceVO();
+				po.setHighPrice(highPrice5);
+				po.setLowPrice(lowPrice5);
+				coinservice2.updatePrice(po);
+				break;
+			}
+
+		}
+
+		for (i = 0; i < list.size(); i++) {
+
+			String accc = list.get(i).getAccessCode();
+			String sece = list.get(i).getSecretCode();
+			String userId = list.get(i).getId();
+			String autoPrice = list.get(i).getAutoPrice();
+
+			if ((accc == null || accc.equals(' ')) || (sece == null || sece.equals(' '))
+					|| (autoPrice == null || autoPrice.equals(' '))) {
+
+				logger.info(
+						"사용자 {}의 secret코드 또는 access코드 저장하지 않거나 가격을 입력하지 않았습니다. 저장 및 입력 되어야 자동매매 프로그램을 작동시킬 수 있습니다.!!",
+						userId);
+				continue;
+			}
+
+			MemberVO member = new MemberVO();
+			member.setAccessCode(accc);
+			member.setSecretCode(sece);
+			member.setAutoPrice(autoPrice);
+
+			// String mk = null;
+			String cp = null;
+			String account = null;
+
+			try {
+				// mk = coinservice2.market7(); //마켓
+				cp = coinservice2.currentPrice7(); // 현재가
+				account = coinservice2.account7(member); // 잔고
+			} catch (Exception e) {
+				logger.error("사용자 {}의 API 호출에 실패했습니다: {}", userId, e.getMessage());
+				continue;
+			}
+
+			// JSONArray jsonArray = new JSONArray(mk);
+			JSONArray jsonArray2 = new JSONArray(cp); // 현재가
+			JSONArray jsonArray3 = new JSONArray(account); // 잔고
+
+			boolean hasKrwBtc = false;
+
+			for (j = 0; j < jsonArray3.length(); j++) {
+				JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
+				currency = jsonObject3.getString("currency");
+
+				if (currency.equals("BTC")) {
+					hasKrwBtc = true;
+					LocalTime now = LocalTime.now();
+					DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+					String formatedNow = now.format(formatter);
+
+					if (formatedNow.equals("09:00")) {
+						balance = jsonObject3.getString("balance");
+						OrderVO vo3 = new OrderVO();
+						vo3.setCoin("KRW-BTC");
+						vo3.setAccessCode(member.getAccessCode());
+						vo3.setSecretCode(member.getSecretCode());
+						vo3.setOrderType("ask");
+						vo3.setVolume(balance);
+
+						String market10;
+						BigDecimal nowPrice10;
+
+						try {
+							coinservice2.sell7(vo3);
+
+							for (int pm = 0; pm < jsonArray2.length(); pm++) {
+
+								JSONObject jsonObject10 = jsonArray2.getJSONObject(pm);
+								market10 = jsonObject10.getString("market");
+								if(market10.equals("KRW-BTC")) {
+									nowPrice10 = jsonObject10.getBigDecimal("trade_price");
+								}
+							}
+
+						} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+							logger.error("사용자 {}의 매도 주문 실행 중 오류 발생: {}", userId, e.getMessage());
+						}
+						logger.info("사용자 {}의 매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", userId, balance);
+						account = coinservice2.account7(member);
+						jsonArray3 = new JSONArray(account);
+					} else {
+						logger.info("사용자 {}의 9시가 되지 않아 매도 주문이 체결되지 않았습니다.", userId);
+					}
+					break; // 더 이상 순회할 필요가 없으므로 루프 종료
+				}
+			}
+
+			LocalTime now = LocalTime.now();
+			DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
+			String formatedNow2 = now.format(formatter2);
+
+			if (hasKrwBtc == false && !formatedNow2.equals("09:00")) {
+
+				for (j = 0; j < jsonArray3.length(); j++) {
+					JSONObject jsonObject5 = jsonArray3.getJSONObject(j);
+					currency = jsonObject5.getString("currency");
+
+					if (currency.equals("KRW")) {
+						balance = jsonObject5.getString("balance");
+						BigDecimal big = new BigDecimal(balance);
+						BigDecimal Dec = big.setScale(0, BigDecimal.ROUND_DOWN); // 숫자를 정수화
+						balances = Dec.longValue();
+						String balances2 = balances.toString();
+
+						if (balances <= 5000) {
+							break;
+						}
+
+						for (k = 0; k < jsonArray3.length(); k++) {
+							JSONObject jsonObject2 = jsonArray2.getJSONObject(k);
+							market = jsonObject2.getString("market");
+
+							if (market.contains("KRW-BTC")) {
+
+								PriceVO pv2 = new PriceVO();
+								pv2.setSeq(1);
+
+								List<PriceVO> pv =coinservice2.getPriceList();
+
+								highPrice2 = pv.get(0).getHighPrice();
+								lowPrice2 = pv.get(0).getLowPrice();
+
+
+								prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
+								nowPrice = jsonObject2.getBigDecimal("trade_price");
+								minus = highPrice2.subtract(lowPrice2);
+								// minus = highPrice.subtract(lowPrice);
+								multi = minus.multiply(dotFive);
+								targetPrice = prevClosePrice.add(multi);
+								nowPrice2 = nowPrice.toString();
+
+								if (targetPrice.compareTo(nowPrice) <= 0) {
+									logger.info("사용자 {}의 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}, 매수 금액 = {}", userId,
+											nowPrice, targetPrice, autoPrice);
+									OrderVO vo2 = new OrderVO();
+									vo2.setCoin("KRW-BTC");
+									vo2.setAccessCode(member.getAccessCode());
+									vo2.setSecretCode(member.getSecretCode());
+									vo2.setOrderType("bid");
+									vo2.setPrice(member.getAutoPrice());
+									// vo2.setPrice(balances2);
+
+									try {
+										coinservice2.order7(vo2);
+										MemberVO price2 = new MemberVO();
+										price2.setId(userId);
+										price2.setOrderPrice(nowPrice2);
+										coinservice2.saveOrderPrice(price2);
+									} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+
+										logger.error("사용자 {}의 매수 주문 실행 중 오류 발생: {}", userId, e.getMessage());
+									}
+									logger.info("사용자 {}의  매수 주문 실행: 코인 = KRW-BTC, 가격 = {}", userId, balances);
+									account = coinservice2.account7(member);
+									jsonArray3 = new JSONArray(account);
+								} else {
+									logger.info("사용자 {}의  목표가에 오지 않아 매수 주문 실행 안함: 코인 = KRW-BTC, 매수 금액 = {}, 목표 가격 = {}",
+											userId, autoPrice, targetPrice);
+								}
+							}
+						}
+					}
+
+				}
+			}
+
+		}
+	}
+
+
+	// 수익률 저장
+	@ResponseBody
+	@PostMapping("/saveProfit")
+	public void saveProfit(@RequestBody ProfitVO vo) {
+
+		String orderPrice, profit,sellPrice, status;
+		BigDecimal orderPrice2, profit2, sellPrice2, profit3, profit4;
+
+		List<MemberVO> list  =	coinservice2.getCode(vo.getId());
+
+		List<ProfitVO> list2 =	coinservice2.getProfitList(vo);
+
+		orderPrice = list.get(0).getOrderPrice();
+		sellPrice = list.get(0).getSellPrice();
+
+		profit = list2.get(0).getProfit();
+		status = list2.get(0).getStatus();
+		profit3 = new BigDecimal(profit);  //기존
+		orderPrice2 = new BigDecimal(orderPrice);
+		sellPrice2 = new BigDecimal(sellPrice);
+		BigDecimal ten = new BigDecimal("100");
+
+		profit2 = (sellPrice2.subtract(orderPrice2)).divide(orderPrice2).multiply(ten); // 방금 전
+
+		if(status.equals("plus")) {
+			if(orderPrice2.compareTo(sellPrice2) <= 0) {
+				profit4 = profit2.add(profit3);
+			}else {
+				profit4 = profit2.subtract(profit3);
+			}
+		}else{
+			if(orderPrice2.compareTo(sellPrice2) <= 0) {
+				profit4 =profit2.subtract(profit3);
+			}else {
+				profit4 = profit3.add(profit2);
+			}
+		}
+
+
+		ProfitVO pf = new ProfitVO();
+		pf.setId(list.get(0).getId());
+		pf.setProfit(profit);
+
+
+		coinservice2.saveProfit(vo);
+	}
+
+	// 수익률 불러오기
+	@ResponseBody
+	@PostMapping
+	public List<ProfitVO> getProfitList(@RequestBody ProfitVO vo){
+
+		List<ProfitVO> list = coinservice2.getProfitList(vo);
+
+		return list;
+	}
+
+	// 팔때 가격 저장
+	@ResponseBody
+	@PostMapping("/buySellPrice")
+	public void buySellPrice(@RequestBody MemberVO vo) {
+
+		coinservice2.updateSellPrice(vo);
+
+	}
+
 
 	// 자동 매매 전일 저가, 고가 저장
 	@ResponseBody
@@ -823,7 +902,7 @@ public class GetAccounts {
 		coinservice2.saveOrderPrice(vo);
 	}
 
-	// 수익률 계산
+	// 수익률 계산 사용X
 	@ResponseBody
 	@PostMapping("/profit")
 	public List<MemberVO> myAutoProfit(@RequestBody MemberVO vo) {
@@ -1045,8 +1124,6 @@ public class GetAccounts {
 			}
 		}
 	}
-
-
 
 
 //		}

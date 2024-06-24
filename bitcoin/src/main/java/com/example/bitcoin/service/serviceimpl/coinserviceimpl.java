@@ -35,6 +35,7 @@ import com.example.bitcoin.dto.MemberVO;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.PriceVO;
+import com.example.bitcoin.dto.ProfitVO;
 import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.dto.TickerVO;
 import com.example.bitcoin.mapper.coinmapper;
@@ -557,6 +558,27 @@ public class coinserviceimpl implements coinservice {
 		int page = (vo.getPage() - 1) * 10;
 		vo.setPage(page);
 		return coinmappers.getMemberLists(vo);
+	}
+
+	@Override
+	public void updateSellPrice(MemberVO vo) {
+
+		coinmappers.updateSellPrice(vo);
+
+	}
+
+	@Override
+	public void saveProfit(ProfitVO vo) {
+
+
+		coinmappers.saveProfit(vo);
+
+	}
+
+	@Override
+	public List<ProfitVO> getProfitList(ProfitVO vo) {
+
+		return coinmappers.getProfitList(vo);
 	}
 
 }

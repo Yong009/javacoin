@@ -259,4 +259,27 @@
 		  FROM price
 
 	</select>
+
+	<!-- 팔떄 가격 저장 -->
+	<update id="updateSellPrice">
+		UPDATE member
+		   SET sellPrice = #{sellPrice}
+		  WHERE id = #{id}
+
+
+	</update>
+
+	<!-- 수익률 계산 -->
+	<update id ="saveProfit">
+		UPDATE price
+		   SET
+
+	</update>
+
+	<!-- 수익률 불러오기 -->
+	<select id="getProfitList" resultType="com.example.bitcoin.dto.ProfitVO">
+		SELECT *
+		  FROM profit
+
+	</select>
 </mapper>

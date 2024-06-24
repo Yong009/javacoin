@@ -13,8 +13,17 @@ public class MemberVO {
 	String secretCode; // 시크릿코드
 	String role; // 권한
 	String auto; // 자동매매 y/n
-	String orderPrice;
-	String autoPrice;
+	public String getSellPrice() {
+		return sellPrice;
+	}
+
+	public void setSellPrice(String sellPrice) {
+		this.sellPrice = sellPrice;
+	}
+
+	String orderPrice; // 살떄 가격
+	String autoPrice; // 자동매매 돌리는 돈
+	String sellPrice; // 팔때 가격
 	/*  public static MemberVO createUser(String id, String pw, PasswordEncoder  passwordEncoder){
 
 		  MemberVO member = new MemberVO();
