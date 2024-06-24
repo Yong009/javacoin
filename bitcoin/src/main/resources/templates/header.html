@@ -393,9 +393,9 @@
                     </li>
                     <li class="cell menu-2">
                         <a href="#">차트</a>
-                        <ul class="row">
+                        <ul class="row" id="chartSearch">
                             <li><a href="/chart">차트 및 검색</a></li>
-                            <li><a href="/index">국내 주식 검색</a></li>
+
                         </ul>
                         <div class="sub-menu-width sub-menu-width-1"></div>
                     </li>
@@ -454,6 +454,8 @@
     if(username == 'goo'){
         $('#manager').append('<li><a href="/monitoring">모니터링</a></li>')
         $('#memberManage').append('<li><a href="/memberManage">회원 관리</a></li>')
+        $('#chartSearch').append('<li><a href="/index">국내 주식 검색</a></li>')
+
     	/*$('#question').append('<li><a href="/question">건의함</a></li>');*/
     }
 
