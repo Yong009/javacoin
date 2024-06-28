@@ -4,7 +4,9 @@ package com.example.bitcoin.service.serviceimpl;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -53,6 +55,8 @@ public class coinserviceimpl implements coinservice {
     @Autowired
     coinmapper coinmappers;
 
+    @Autowired
+    coinservice coinservice3;
     //PasswordEncoder passwordEncoder;
 
     //회원가입
@@ -560,6 +564,8 @@ public class coinserviceimpl implements coinservice {
 		return coinmappers.getMemberLists(vo);
 	}
 
+
+	//팔때 가격 저장
 	@Override
 	public void updateSellPrice(MemberVO vo) {
 
@@ -567,14 +573,88 @@ public class coinserviceimpl implements coinservice {
 
 	}
 
+	//수익률 저장
 	@Override
 	public void saveProfit(ProfitVO vo) {
 
+		String orderPrice, profit,sellPrice, status, status4;
+		BigDecimal orderPrice2, profit2, sellPrice2, profit3, profit4;
 
-		coinmappers.saveProfit(vo);
+		List<MemberVO> list  =	getCode(vo.getId());
+
+		List<ProfitVO> list2 =	getProfitList(vo);
+
+		orderPrice = list.get(0).getOrderPrice();
+		sellPrice = list.get(0).getSellPrice();
+
+		profit = list2.get(0).getProfit();
+		status = list2.get(0).getStatus();
+
+		profit3 = new BigDecimal(profit);  //기존
+		orderPrice2 = new BigDecimal(orderPrice);
+		sellPrice2 = new BigDecimal(sellPrice);
+		BigDecimal ten = new BigDecimal("100");
+
+
+		profit2 = ((sellPrice2.subtract(orderPrice2)).abs()).divide(orderPrice2,10, RoundingMode.HALF_UP).multiply(ten); // 방금 전
+
+		if(status.equals("plus")) {
+			if(orderPrice2.compareTo(sellPrice2) < 0) {
+
+				if(profit2.compareTo(profit3) < 0) {
+
+					profit4 = profit3.add(profit2);
+					status4 = "plus";
+				}else {
+					profit4 = profit2.add(profit3);
+					status4 = "plus";
+				}
+
+			}else {
+
+				if(profit2.compareTo(profit3) < 0) {
+					profit4 = profit3.subtract(profit2);
+					status4 = "plus";
+				}else{
+					profit4 = profit2.subtract(profit3);
+					status4 = "minus";
+				}
+			}
+		}else{
+
+			if(orderPrice2.compareTo(sellPrice2) < 0) {
+
+				if(profit2.compareTo(profit3) < 0) {
+					profit4 =profit3.subtract(profit2);
+					status4 = "minus";
+				}else {
+					profit4 =profit3.add(profit2);
+					status4 = "plus";
+				}
+			}else {
+				if(profit2.compareTo(profit3) < 0) {
+					profit4 =profit3.add(profit2);
+					status4 = "minus";
+				}else {
+					profit4 =profit3.add(profit2);
+					status4 = "minus";
+				}
+
+
+			}
+		}
+
+
+		ProfitVO pf = new ProfitVO();
+		pf.setId(list.get(0).getId());
+		pf.setProfit(profit4.toString());
+		pf.setStatus(status4);
+
+		coinmappers.saveProfit(pf);
 
 	}
 
+	//수익률 불러오기
 	@Override
 	public List<ProfitVO> getProfitList(ProfitVO vo) {
 

@@ -1354,6 +1354,19 @@
         alert("코드를 저장하였습니다.")
     })
 
+
+    $.ajax({
+		url:"/rsi",
+		type:"GET",
+		dataType:"json",
+		contentType:"application/json",
+		success:function(result){
+			console.log(result);
+		}
+
+    })
+
+
  /*    $.ajax({
 		url:"/koreaPrice",
 		type:"GET",

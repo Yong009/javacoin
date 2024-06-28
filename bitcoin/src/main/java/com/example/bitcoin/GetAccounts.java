@@ -603,6 +603,8 @@ public class GetAccounts {
 		DateTimeFormatter formatter3 = DateTimeFormatter.ofPattern("HH:mm");
 		String formatedNow3 = now3.format(formatter3);
 
+
+
 		if (formatedNow3.equals("08:59")) {
 			String mk = null;
 
@@ -612,6 +614,7 @@ public class GetAccounts {
 				logger.error("전일 고가, 저가의 API 호출에 실패했습니다: {}", e.getMessage());
 
 			}
+
 
 			JSONArray jsonArray5 = new JSONArray(mk);
 
@@ -670,6 +673,25 @@ public class GetAccounts {
 
 			boolean hasKrwBtc = false;
 
+
+
+
+//			String market10;
+//			BigDecimal nowPrice10;
+//
+//				for (int pm = 0; pm < jsonArray2.length(); pm++) {
+//
+//					JSONObject jsonObject10 = jsonArray2.getJSONObject(pm);
+//					market10 = jsonObject10.getString("market");
+//					if(market10.equals("KRW-BTC")) {
+//						nowPrice10 = jsonObject10.getBigDecimal("trade_price");
+//						List<MemberVO> list10 = coinservice2.getCode(userId);
+//						list10.get(0).getOrderPrice();
+//						list10.get(0).getSellPrice();
+//					}
+//
+//				}
+
 			for (j = 0; j < jsonArray3.length(); j++) {
 				JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
 				currency = jsonObject3.getString("currency");
@@ -689,20 +711,22 @@ public class GetAccounts {
 						vo3.setOrderType("ask");
 						vo3.setVolume(balance);
 
-						String market10;
-						BigDecimal nowPrice10;
+//						String market10;
+//						BigDecimal nowPrice10;
 
 						try {
 							coinservice2.sell7(vo3);
-
-							for (int pm = 0; pm < jsonArray2.length(); pm++) {
-
-								JSONObject jsonObject10 = jsonArray2.getJSONObject(pm);
-								market10 = jsonObject10.getString("market");
-								if(market10.equals("KRW-BTC")) {
-									nowPrice10 = jsonObject10.getBigDecimal("trade_price");
-								}
-							}
+							ProfitVO vo11 = new ProfitVO();
+							vo11.setId(userId);
+							coinservice2.saveProfit(vo11);
+//							for (int pm = 0; pm < jsonArray2.length(); pm++) {
+//
+//								JSONObject jsonObject10 = jsonArray2.getJSONObject(pm);
+//								market10 = jsonObject10.getString("market");
+//								if(market10.equals("KRW-BTC")) {
+//									nowPrice10 = jsonObject10.getBigDecimal("trade_price");
+//								}
+//							}
 
 						} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 							logger.error("사용자 {}의 매도 주문 실행 중 오류 발생: {}", userId, e.getMessage());
@@ -721,7 +745,7 @@ public class GetAccounts {
 			DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
 			String formatedNow2 = now.format(formatter2);
 
-			if (hasKrwBtc == false && !formatedNow2.equals("09:00")) {
+			if (hasKrwBtc == false && !formatedNow2.equals("09:00") && !formatedNow2.equals("08:59")) {
 
 				for (j = 0; j < jsonArray3.length(); j++) {
 					JSONObject jsonObject5 = jsonArray3.getJSONObject(j);
@@ -751,8 +775,6 @@ public class GetAccounts {
 
 								highPrice2 = pv.get(0).getHighPrice();
 								lowPrice2 = pv.get(0).getLowPrice();
-
-
 								prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
 								nowPrice = jsonObject2.getBigDecimal("trade_price");
 								minus = highPrice2.subtract(lowPrice2);
@@ -800,48 +822,93 @@ public class GetAccounts {
 	}
 
 
+	@ResponseBody
+	@GetMapping("/rsi")
+	public double[] rsi() {
+
+	       String bitcoinSymbol = "bitcoin";
+	        int period = 14;
+
+	        try {
+	            // CoinGecko API를 통해 비트코인의 최근 100일 가격 데이터 가져오기
+	            List<Double> closes = new ArrayList<>();
+	            String apiUrl = "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
+	            String params = "?vs_currency=usd&days=100&interval=daily";
+	            URL url = new URL(apiUrl + params);
+	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            conn.setRequestMethod("GET");
+
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	            StringBuilder response = new StringBuilder();
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                response.append(line);
+	            }
+	            reader.close();
+
+	            // JSON 데이터 파싱
+	            JSONArray pricesArray = new JSONObject(response.toString()).getJSONArray("prices");
+	            for (int i = 0; i < pricesArray.length(); i++) {
+	                JSONArray priceData = pricesArray.getJSONArray(i);
+	                double closePrice = priceData.getDouble(1); // 종가는 배열의 두 번째 요소입니다.
+	                closes.add(closePrice);
+	            }
+	        } catch(IOException e) {
+	        	e.printStackTrace();
+	        }
+
+	            // RSI 계산
+	            if (!closes.isEmpty()) {
+	                double[] rsiValues = new double[closes.size()];
+
+	                double sumGain = 0.0;
+	                double sumLoss = 0.0;
+
+	                // Calculate initial SMA (Simple Moving Average)
+	                for (int i = 1; i <= period; i++) {
+	                    double change = closes.get(i) - closes.get(i - 1);
+	                    if (change >= 0) {
+	                        sumGain += change;
+	                    } else {
+	                        sumLoss -= change;
+	                    }
+	                }
+	                double avgGain = sumGain / period;
+	                double avgLoss = sumLoss / period;
+
+	                // Calculate initial RS (Relative Strength) and RSI (Relative Strength Index)
+	                for (int i = period; i < closes.size(); i++) {
+	                    double change = closes.get(i) - closes.get(i - 1);
+	                    double gain = (change >= 0) ? change : 0;
+	                    double loss = (change < 0) ? -change : 0;
+
+	                    avgGain = (avgGain * (period - 1) + gain) / period;
+	                    avgLoss = (avgLoss * (period - 1) + loss) / period;
+
+	                    double rs = avgGain / avgLoss;
+	                    double rsi = 100 - (100 / (1 + rs));
+	                    rsiValues[i] = rsi;
+	                }
+
+	                return rsiValues;
+
+
+	            } else {
+	            	}
+
+
+
+
+	    }
+
+
+
+
+
 	// 수익률 저장
 	@ResponseBody
 	@PostMapping("/saveProfit")
 	public void saveProfit(@RequestBody ProfitVO vo) {
-
-		String orderPrice, profit,sellPrice, status;
-		BigDecimal orderPrice2, profit2, sellPrice2, profit3, profit4;
-
-		List<MemberVO> list  =	coinservice2.getCode(vo.getId());
-
-		List<ProfitVO> list2 =	coinservice2.getProfitList(vo);
-
-		orderPrice = list.get(0).getOrderPrice();
-		sellPrice = list.get(0).getSellPrice();
-
-		profit = list2.get(0).getProfit();
-		status = list2.get(0).getStatus();
-		profit3 = new BigDecimal(profit);  //기존
-		orderPrice2 = new BigDecimal(orderPrice);
-		sellPrice2 = new BigDecimal(sellPrice);
-		BigDecimal ten = new BigDecimal("100");
-
-		profit2 = (sellPrice2.subtract(orderPrice2)).divide(orderPrice2).multiply(ten); // 방금 전
-
-		if(status.equals("plus")) {
-			if(orderPrice2.compareTo(sellPrice2) <= 0) {
-				profit4 = profit2.add(profit3);
-			}else {
-				profit4 = profit2.subtract(profit3);
-			}
-		}else{
-			if(orderPrice2.compareTo(sellPrice2) <= 0) {
-				profit4 =profit2.subtract(profit3);
-			}else {
-				profit4 = profit3.add(profit2);
-			}
-		}
-
-
-		ProfitVO pf = new ProfitVO();
-		pf.setId(list.get(0).getId());
-		pf.setProfit(profit);
 
 
 		coinservice2.saveProfit(vo);
@@ -915,10 +982,7 @@ public class GetAccounts {
 
 	}
 
-	@ResponseBody
-	@GetMapping("/rsi")
-	public void rsi() {
-	}
+
 
 	// 관리자가 자동매매 끄기
 	@ResponseBody

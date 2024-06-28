@@ -102,6 +102,7 @@ public interface coinservice {
 
 	// 수익률 저장
 	public void saveProfit(ProfitVO vo);
+
 	// 수익률 불러오기
 	public List<ProfitVO> getProfitList(ProfitVO vo);
 }

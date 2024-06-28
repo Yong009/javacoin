@@ -271,8 +271,11 @@
 
 	<!-- 수익률 계산 -->
 	<update id ="saveProfit">
-		UPDATE price
-		   SET
+		UPDATE profit
+		   SET profit = #{profit},
+		   	   status = #{status},
+		   	   profit_date = SYSDATE()
+		 WHERE ID = #{id}
 
 	</update>
 
