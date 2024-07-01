@@ -52,6 +52,7 @@ import com.example.bitcoin.dto.Body;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.IndexData;
 import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.dto.MinuteCandleRes;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.PriceVO;
@@ -821,19 +822,18 @@ public class GetAccounts {
 		}
 	}
 
-
-	@ResponseBody
-	@GetMapping("/rsi")
-	public double[] rsi() {
-
-	       String bitcoinSymbol = "bitcoin";
+	// 이건 rsi 9랑 값이 같다!!! ( 업비트 rsi 방식 )
+	 	@ResponseBody
+	    @GetMapping("/rsi")
+	    public double getCurrentRsi() {
+	        String bitcoinSymbol = "bitcoin";
 	        int period = 14;
+	        List<Double> closes = new ArrayList<>();
 
 	        try {
-	            // CoinGecko API를 통해 비트코인의 최근 100일 가격 데이터 가져오기
-	            List<Double> closes = new ArrayList<>();
+	            // CoinGecko API를 통해 비트코인의 최근 14일 가격 데이터 가져오기
 	            String apiUrl = "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
-	            String params = "?vs_currency=usd&days=100&interval=daily";
+	            String params = "?vs_currency=usd&days=14&interval=daily";
 	            URL url = new URL(apiUrl + params);
 	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	            conn.setRequestMethod("GET");
@@ -853,56 +853,274 @@ public class GetAccounts {
 	                double closePrice = priceData.getDouble(1); // 종가는 배열의 두 번째 요소입니다.
 	                closes.add(closePrice);
 	            }
-	        } catch(IOException e) {
-	        	e.printStackTrace();
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return -1; // 오류 발생 시 -1 반환
 	        }
 
-	            // RSI 계산
-	            if (!closes.isEmpty()) {
-	                double[] rsiValues = new double[closes.size()];
+	        // 데이터가 부족한 경우 처리
+	        if (closes.size() < period + 1) {
+	            return -1; // 데이터가 부족한 경우 -1 반환
+	        }
 
-	                double sumGain = 0.0;
-	                double sumLoss = 0.0;
+	        // RSI 계산
+	        double sumGain = 0.0;
+	        double sumLoss = 0.0;
 
-	                // Calculate initial SMA (Simple Moving Average)
-	                for (int i = 1; i <= period; i++) {
-	                    double change = closes.get(i) - closes.get(i - 1);
-	                    if (change >= 0) {
-	                        sumGain += change;
-	                    } else {
-	                        sumLoss -= change;
-	                    }
-	                }
-	                double avgGain = sumGain / period;
-	                double avgLoss = sumLoss / period;
-
-	                // Calculate initial RS (Relative Strength) and RSI (Relative Strength Index)
-	                for (int i = period; i < closes.size(); i++) {
-	                    double change = closes.get(i) - closes.get(i - 1);
-	                    double gain = (change >= 0) ? change : 0;
-	                    double loss = (change < 0) ? -change : 0;
-
-	                    avgGain = (avgGain * (period - 1) + gain) / period;
-	                    avgLoss = (avgLoss * (period - 1) + loss) / period;
-
-	                    double rs = avgGain / avgLoss;
-	                    double rsi = 100 - (100 / (1 + rs));
-	                    rsiValues[i] = rsi;
-	                }
-
-	                return rsiValues;
-
-
+	        // 초기 SMA (Simple Moving Average) 계산
+	        for (int i = 1; i <= period; i++) {
+	            double change = closes.get(i) - closes.get(i - 1);
+	            if (change >= 0) {
+	                sumGain += change;
 	            } else {
-	            	}
+	                sumLoss -= change;
+	            }
+	        }
+	        double avgGain = sumGain / period;
+	        double avgLoss = sumLoss / period;
 
+	        // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
+	        for (int i = period; i < closes.size(); i++) {
+	            double change = closes.get(i) - closes.get(i - 1);
+	            double gain = (change >= 0) ? change : 0;
+	            double loss = (change < 0) ? -change : 0;
 
+	            avgGain = (avgGain * (period - 1) + gain) / period;
+	            avgLoss = (avgLoss * (period - 1) + loss) / period;
+	        }
 
+	        double rs = avgGain / avgLoss;
+	        double rsi = 100 - (100 / (1 + rs));
 
+	        return rsi;
 	    }
 
 
 
+
+	 	//일반 rsi
+	 	@ResponseBody
+	    @GetMapping("/rsi2")
+	    public double getCurrentRsi2() {
+	        String bitcoinSymbol = "bitcoin";
+	        int period = 14;
+	        List<Double> closes = new ArrayList<>();
+
+	        try {
+	            // CoinGecko API를 통해 비트코인의 최근 15일 가격 데이터 가져오기
+	            String apiUrl = "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
+	            String params = "?vs_currency=usd&days=15&interval=daily"; // 15일을 가져와서 14일 간의 변화를 계산
+	            URL url = new URL(apiUrl + params);
+	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	            conn.setRequestMethod("GET");
+
+	            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	            StringBuilder response = new StringBuilder();
+	            String line;
+	            while ((line = reader.readLine()) != null) {
+	                response.append(line);
+	            }
+	            reader.close();
+
+	            // JSON 데이터 파싱
+	            JSONArray pricesArray = new JSONObject(response.toString()).getJSONArray("prices");
+	            for (int i = 0; i < pricesArray.length(); i++) {
+	                JSONArray priceData = pricesArray.getJSONArray(i);
+	                double closePrice = priceData.getDouble(1); // 종가는 배열의 두 번째 요소입니다.
+	                closes.add(closePrice);
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	            return -1; // 오류 발생 시 -1 반환
+	        }
+
+	        // 데이터가 부족한 경우 처리
+	        if (closes.size() < period + 1) {
+	            return -1; // 데이터가 부족한 경우 -1 반환
+	        }
+
+	        // RSI 계산
+	        double[] rsiValues = calculateRsi(closes, period);
+
+	        return rsiValues[rsiValues.length - 1]; // 최신 RSI 값 반환
+	    }
+
+	    private double[] calculateRsi(List<Double> closes, int period) {
+	        double[] rsiValues = new double[closes.size()];
+	        double sumGain = 0.0;
+	        double sumLoss = 0.0;
+
+	        // 초기 SMA (Simple Moving Average) 계산
+	        for (int i = 1; i <= period; i++) {
+	            double change = closes.get(i) - closes.get(i - 1);
+	            if (change >= 0) {
+	                sumGain += change;
+	            } else {
+	                sumLoss -= change;
+	            }
+	        }
+	        double avgGain = sumGain / period;
+	        double avgLoss = sumLoss / period;
+
+	        // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
+	        for (int i = period; i < closes.size(); i++) {
+	            double change = closes.get(i) - closes.get(i - 1);
+	            double gain = (change >= 0) ? change : 0;
+	            double loss = (change < 0) ? -change : 0;
+
+	            avgGain = (avgGain * (period - 1) + gain) / period;
+	            avgLoss = (avgLoss * (period - 1) + loss) / period;
+
+	            double rs = avgGain / avgLoss;
+	            double rsi = 100 - (100 / (1 + rs));
+	            rsiValues[i] = rsi;
+	        }
+
+	        return rsiValues;
+	    }
+
+//		  @ResponseBody
+//	    @GetMapping("/rsi")
+//	    public double getCurrentRsi() {
+//	        String bitcoinSymbol = "bitcoin";
+//	        int period = 14;
+//	        List<Double> closes = new ArrayList<>();
+//
+//	        try {
+//	            // CoinGecko API를 통해 비트코인의 최근 14일 가격 데이터 가져오기
+//	            String apiUrl = "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
+//	            String params = "?vs_currency=usd&days=15&interval=daily"; // 15일을 가져와서 14일 간의 변화를 계산
+//	            URL url = new URL(apiUrl + params);
+//	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//	            conn.setRequestMethod("GET");
+//
+//	            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+//	            StringBuilder response = new StringBuilder();
+//	            String line;
+//	            while ((line = reader.readLine()) != null) {
+//	                response.append(line);
+//	            }
+//	            reader.close();
+//
+//	            // JSON 데이터 파싱
+//	            JSONArray pricesArray = new JSONObject(response.toString()).getJSONArray("prices");
+//	            for (int i = 0; i < pricesArray.length(); i++) {
+//	                JSONArray priceData = pricesArray.getJSONArray(i);
+//	                double closePrice = priceData.getDouble(1); // 종가는 배열의 두 번째 요소입니다.
+//	                closes.add(closePrice);
+//	            }
+//	        } catch (IOException e) {
+//	            e.printStackTrace();
+//	            return -1; // 오류 발생 시 -1 반환
+//	        }
+//
+//	        // 데이터가 부족한 경우 처리
+//	        if (closes.size() < period + 1) {
+//	            return -1; // 데이터가 부족한 경우 -1 반환
+//	        }
+//
+//	        // RSI 계산
+//	        double[] rsiValues = new double[closes.size()];
+//	        double sumGain = 0.0;
+//	        double sumLoss = 0.0;
+//
+//	        // 초기 SMA (Simple Moving Average) 계산
+//	        for (int i = 1; i <= period; i++) {
+//	            double change = closes.get(i) - closes.get(i - 1);
+//	            if (change >= 0) {
+//	                sumGain += change;
+//	            } else {
+//	                sumLoss -= change;
+//	            }
+//	        }
+//	        double avgGain = sumGain / period;
+//	        double avgLoss = sumLoss / period;
+//
+//	        // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
+//	        for (int i = period; i < closes.size(); i++) {
+//	            double change = closes.get(i) - closes.get(i - 1);
+//	            double gain = (change >= 0) ? change : 0;
+//	            double loss = (change < 0) ? -change : 0;
+//
+//	            avgGain = (avgGain * (period - 1) + gain) / period;
+//	            avgLoss = (avgLoss * (period - 1) + loss) / period;
+//
+//	            double rs = avgGain / avgLoss;
+//	            double rsi = 100 - (100 / (1 + rs));
+//	            rsiValues[i] = rsi;
+//	        }
+//
+//	        return rsiValues[rsiValues.length - 1]; // 최신 RSI 값 반환
+//	    }
+
+
+//	 	@ResponseBody
+//	 	public Double getRsiByMinutes() {
+//	 	    final int minutes = 30;
+//	 	    final String market = "KRW-BTC";
+//	 	    final int maxCount = 200;
+//	 	    // 업비트 캔들 API 호출 (Docs: https://docs.upbit.com/reference/%EB%B6%84minute-%EC%BA%94%EB%93%A4-1)
+//	 	    List<MinuteCandleRes> candleResList = marketPriceReaderService.getCandleMinutes(minutes, market, maxCount);
+//	 	    if (CollectionUtils.isEmpty(candleResList)) {
+//	 	        return null;
+//	 	    }
+//
+//	 	    // 지수 이동 평균은 과거 데이터부터 구해주어야 합니다.
+//	 	    candleResList = candleResList.stream()
+//	 	            .sorted(Comparator.comparing(CandleRes::getTimestamp))  // 오름차순 (과거 순)
+//	 	            .collect(Collectors.toList());  // Sort
+//
+//	 	    double zero = 0;
+//	 	    List<Double> upList = new ArrayList<>();  // 상승 리스트
+//	 	    List<Double> downList = new ArrayList<>();  // 하락 리스트
+//	 	    for (int i = 0; i < candleResList.size() - 1; i++) {
+//	 	        // 최근 종가 - 전일 종가 = gap 값이 양수일 경우 상승했다는 뜻 / 음수일 경우 하락이라는 뜻
+//	 	        double gapByTradePrice = candleResList.get(i + 1).getTradePrice().doubleValue() - candleResList.get(i).getTradePrice().doubleValue();
+//	 	        if (gapByTradePrice > 0) {  // 종가가 전일 종가보다 상승일 경우
+//	 	            upList.add(gapByTradePrice);
+//	 	            downList.add(zero);
+//	 	        } else if (gapByTradePrice < 0) {  // 종가가 전일 종가보다 하락일 경우
+//	 	            downList.add(gapByTradePrice * -1);  // 음수를 양수로 변환해준다.
+//	 	            upList.add(zero);
+//	 	        } else {  // 상승, 하락이 없을 경우 종가 - 전일 종가 = gap은 0이므로 0값을 넣어줍니다.
+//	 	            upList.add(zero);
+//	 	            downList.add(zero);
+//	 	        }
+//	 	    }
+//
+//	 	    double day = 14;  // 가중치를 위한 기준 일자 (보통 14일 기준)
+//	 	    double a = (double) 1 / (1 + (day - 1));  // 지수 이동 평균의 정식 공식은 a = 2 / 1 + day 이지만 업비트에서 사용하는 수식은 a = 1 / (1 + (day - 1))
+//
+//	 	    // AU값 구하기
+//	 	    double upEma = 0;  // 상승 값의 지수이동평균
+//	 	    if (CollectionUtils.isNotEmpty(upList)) {
+//	 	        upEma = upList.get(0).doubleValue();
+//	 	        if (upList.size() > 1) {
+//	 	            for (int i = 1 ; i < upList.size(); i++) {
+//	 	                upEma = (upList.get(i).doubleValue() * a) + (upEma * (1 - a));
+//	 	            }
+//	 	        }
+//	 	    }
+//
+//	 	    // AD값 구하기
+//	 	    double downEma = 0;  // 하락 값의 지수이동평균
+//	 	    if (CollectionUtils.isNotEmpty(downList)) {
+//	 	        downEma = downList.get(0).doubleValue();
+//	 	        if (downList.size() > 1) {
+//	 	            for (int i = 1; i < downList.size(); i++) {
+//	 	                downEma = (downList.get(i).doubleValue() * a) + (downEma * (1 - a));
+//	 	            }
+//	 	        }
+//	 	    }
+//
+//	 	    // rsi 계산
+//	 	    double au = upEma;
+//	 	    double ad = downEma;
+//	 	    double rs = au / ad;
+//	 	    double rsi = 100 - (100 / (1 + rs));
+//
+//	 	    return rsi;
+//	 	}
 
 
 	// 수익률 저장
