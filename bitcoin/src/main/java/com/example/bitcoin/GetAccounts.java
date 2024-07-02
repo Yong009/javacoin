@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -17,17 +18,24 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.apache.ibatis.type.TypeReference;
+import org.hibernate.internal.build.AllowSysOut;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -43,6 +51,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.auth0.jwt.JWT;
@@ -52,11 +61,9 @@ import com.example.bitcoin.dto.Body;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.IndexData;
 import com.example.bitcoin.dto.MemberVO;
-import com.example.bitcoin.dto.MinuteCandleRes;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.PriceVO;
-import com.example.bitcoin.dto.ProfitVO;
 import com.example.bitcoin.dto.ProfitVO;
 import com.example.bitcoin.dto.QuestionVO;
 import com.example.bitcoin.mapper.coinmapper;
@@ -65,6 +72,9 @@ import com.example.bitcoin.service.serviceimpl.coinserviceimpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -824,7 +834,7 @@ public class GetAccounts {
 
 	// 이건 rsi 9랑 값이 같다!!! ( 업비트 rsi 방식 )
 	 	@ResponseBody
-	    @GetMapping("/rsi")
+	    @GetMapping("/upbitRsi")
 	    public double getCurrentRsi() {
 	        String bitcoinSymbol = "bitcoin";
 	        int period = 14;
@@ -898,9 +908,9 @@ public class GetAccounts {
 
 
 
-	 	//일반 rsi
+	 	//일반 rsi ( 업비트 rsi 14랑 흡사 )
 	 	@ResponseBody
-	    @GetMapping("/rsi2")
+	    @GetMapping("/rsi")
 	    public double getCurrentRsi2() {
 	        String bitcoinSymbol = "bitcoin";
 	        int period = 14;
@@ -978,6 +988,478 @@ public class GetAccounts {
 
 	        return rsiValues;
 	    }
+
+	    //업비트 rsi14 적용
+	    @ResponseBody
+	    @GetMapping("/rsi14")
+	    public double getCurrentRsi14() {
+	    	  String market = "KRW-BTC";
+	          int period = 14;
+	          List<BigDecimal> closes = new ArrayList<>();
+
+	          OkHttpClient client = new OkHttpClient();
+
+	          // Upbit API를 통해 비트코인의 최근 100개의 3분봉 가격 데이터 가져오기
+	          String apiUrl = "https://api.upbit.com/v1/candles/minutes/3?market=" + market + "&count=100";
+	          Request request = new Request.Builder()
+	                  .url(apiUrl)
+	                  .get()
+	                  .build();
+
+	          try (Response response = client.newCall(request).execute()) {
+	              if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+	              String responseBody = response.body().string();
+
+	              // JSON 데이터 파싱
+	              JSONArray candlesArray = new JSONArray(responseBody);
+	              for (int i = 0; i < candlesArray.length(); i++) {
+	                  JSONObject candle = candlesArray.getJSONObject(i);
+	                  BigDecimal closePrice = candle.getBigDecimal("trade_price");
+	                  closes.add(closePrice);
+	              }
+	          } catch (IOException e) {
+	              e.printStackTrace();
+	              return -1; // 오류 발생 시 -1 반환
+	          }
+
+	          // 데이터가 부족한 경우 처리
+	          if (closes.size() < period + 1) {
+	              return -1; // 데이터가 부족한 경우 -1 반환
+	          }
+
+	          // RSI 계산
+	          double rsi = calculateRsi14(closes, period);
+
+	          return rsi; // 최신 RSI 값 반환
+	      }
+
+	      private double calculateRsi14(List<BigDecimal> closes, int period) {
+	          BigDecimal sumGain = BigDecimal.ZERO;
+	          BigDecimal sumLoss = BigDecimal.ZERO;
+
+	          // 초기 SMA (Simple Moving Average) 계산
+	          for (int i = 1; i <= period; i++) {
+	              BigDecimal change = closes.get(i).subtract(closes.get(i - 1));
+	              if (change.compareTo(BigDecimal.ZERO) >= 0) {
+	                  sumGain = sumGain.add(change);
+	              } else {
+	                  sumLoss = sumLoss.add(change.abs());
+	              }
+	          }
+	          BigDecimal avgGain = sumGain.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+	          BigDecimal avgLoss = sumLoss.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+
+	          // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
+	          for (int i = period; i < closes.size(); i++) {
+	              BigDecimal change = closes.get(i).subtract(closes.get(i - 1));
+	              BigDecimal gain = (change.compareTo(BigDecimal.ZERO) >= 0) ? change : BigDecimal.ZERO;
+	              BigDecimal loss = (change.compareTo(BigDecimal.ZERO) < 0) ? change.abs() : BigDecimal.ZERO;
+
+	              avgGain = (avgGain.multiply(BigDecimal.valueOf(period - 1)).add(gain)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+	              avgLoss = (avgLoss.multiply(BigDecimal.valueOf(period - 1)).add(loss)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+
+	              double rs = avgGain.divide(avgLoss, 4, RoundingMode.HALF_UP).doubleValue();
+	              double rsi = 100 - (100 / (1 + rs));
+	              return rsi;
+	          }
+
+	          return -1; // 데이터가 부족한 경우 -1 반환
+	      }
+
+
+
+
+	    //거래대금 50개 상위
+	    @ResponseBody
+	    @GetMapping("/rsiSearch")
+	    public String rsiSearch() {
+
+	    	String a = coinservice2.currentPrice7();
+
+	    	JSONArray jsonArray = new JSONArray(a);
+	    	List<JSONObject> jsonObjects = new ArrayList<>();
+	    	for(int i=0; i< jsonArray.length(); i++) {
+	    		JSONObject jsonobject =jsonArray.getJSONObject(i);
+	    		jsonObjects.add(jsonobject);
+	    	}
+
+	    	jsonObjects.sort(Comparator.comparing(obj ->obj.getBigDecimal("acc_trade_price_24h"),Comparator.reverseOrder()));
+
+	    	List<JSONObject> top50List = jsonObjects.subList(0, Math.min(jsonObjects.size(), 50));
+
+	    	System.out.println("내림차순");
+
+	    	for(JSONObject obj : top50List) {
+	    		System.out.println(obj.getString("market")+ ": " + obj.getBigDecimal("acc_trade_price_24h"));
+	    	}
+
+
+	    	//jsonArray.sort(Comparator.comparing(e -> new BigDecimal(e.getAsJsonObject().get(""))))
+//	    	for(int i = 0; i<jsonArray.length(); i++) {
+//	    		JSONObject jsonObject = jsonArray.getJSONObject(i);
+//	    		BigDecimal price = jsonObject.getBigDecimal("acc_trade_price_24h");
+//	    		System.out.println(price);
+//	    	}
+
+
+
+
+
+	    	return "test";
+
+	    }
+
+
+
+
+//	    //업비트 api 이용 rsi
+//	    @ResponseBody
+//	    @GetMapping("/rsi14")
+//	    public double getRsi14() throws IOException {
+//
+//	    	String MARKET_URL = "https://api.upbit.com/v1/candles/minutes/3";
+//	        String MARKET_PARAM = "?market=KRW-BTC&count=100"; // 최근 100개의 3분봉 데이터를 가져옴
+//
+//	    	String url = MARKET_URL + MARKET_PARAM;
+//
+//	    	okhttp3.Request request = new Request.Builder()
+//	                .url(url)
+//	                .get()
+//	                .build();
+//
+//	    	 OkHttpClient client = new OkHttpClient();
+//	    	 okhttp3.Response response = client.newCall(request).execute();
+//
+//	    	 String responseBody = response.body().string();
+//
+//
+//	        //String responseBody = okhttp3.Request.Get(url).execute().returnContent().asString();
+//
+//	        JSONArray jsonArray = new JSONArray(responseBody);
+//	        List<BigDecimal> closePrices = new ArrayList<>();
+//
+//	        for (int i = 0; i < jsonArray.length(); i++) {
+//	            JSONObject jsonObject = jsonArray.getJSONObject(i);
+//	            BigDecimal closePrice = jsonObject.getBigDecimal("trade_price");
+//	            closePrices.add(closePrice);
+//	        }
+//
+//	        int period = 14; // RSI 기간 설정 (14일 기간)
+//	        double rsi = calculateRSI4(closePrices, period);
+//
+//	        return rsi;
+//
+//	    }
+//
+//	    private double calculateRSI4(List<BigDecimal> closePrices, int period) {
+//	        if (closePrices.size() < period + 1) {
+//	            throw new IllegalArgumentException("Insufficient data points for RSI calculation");
+//	        }
+//
+//	        List<BigDecimal> priceChanges = new ArrayList<>();
+//	        for (int i = 1; i < closePrices.size(); i++) {
+//	            BigDecimal priceChange = closePrices.get(i).subtract(closePrices.get(i - 1));
+//	            priceChanges.add(priceChange);
+//	        }
+//
+//	        List<BigDecimal> gainList = new ArrayList<>();
+//	        List<BigDecimal> lossList = new ArrayList<>();
+//
+//	        for (int i = 0; i < period; i++) {
+//	            BigDecimal priceChange = priceChanges.get(i);
+//	            if (priceChange.compareTo(BigDecimal.ZERO) > 0) {
+//	                gainList.add(priceChange);
+//	                lossList.add(BigDecimal.ZERO);
+//	            } else {
+//	                gainList.add(BigDecimal.ZERO);
+//	                lossList.add(priceChange.abs());
+//	            }
+//	        }
+//
+//	        BigDecimal avgGain = calculateAverage(gainList);
+//	        BigDecimal avgLoss = calculateAverage(lossList);
+//
+//	        double rs = avgGain.divide(avgLoss, 4, RoundingMode.HALF_UP).doubleValue();
+//	        double rsi = 100.0 - (100.0 / (1.0 + rs));
+//
+//	        return rsi;
+//	    }
+//
+//	    private BigDecimal calculateAverage(List<BigDecimal> values) {
+//	        BigDecimal sum = BigDecimal.ZERO;
+//	        for (BigDecimal value : values) {
+//	            sum = sum.add(value);
+//	        }
+//	        System.out.println(sum.divide(BigDecimal.valueOf(values.size()), 4, RoundingMode.HALF_UP));
+//	        return sum.divide(BigDecimal.valueOf(values.size()), 4, RoundingMode.HALF_UP);
+//
+//	    }
+//	    @ResponseBody
+//	    @GetMapping("/rsi14")
+//	    public double getCurrentRsi14() {
+//	        String market = "KRW-BTC";
+//	        int period = 14;
+//	        List<BigDecimal> closes = new ArrayList<>();
+//
+//	        OkHttpClient client = new OkHttpClient();
+//
+//	        // Upbit API를 통해 비트코인의 최근 100개의 3분봉 가격 데이터 가져오기
+//	        String apiUrl = "https://api.upbit.com/v1/candles/minutes/3?market=" + market + "&count=100";
+//	        Request request = new Request.Builder()
+//	                .url(apiUrl)
+//	                .get()
+//	                .build();
+//
+//	        try (Response response = client.newCall(request).execute()) {
+//	            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+//
+//	            String responseBody = response.body().string();
+//
+//	            // JSON 데이터 파싱
+//	            JSONArray candlesArray = new JSONArray(responseBody);
+//	            for (int i = 0; i < candlesArray.length(); i++) {
+//	                JSONObject candle = candlesArray.getJSONObject(i);
+//	                BigDecimal closePrice = candle.getBigDecimal("trade_price");
+//	                closes.add(closePrice);
+//	            }
+//	        } catch (IOException e) {
+//	            e.printStackTrace();
+//	            return -1; // 오류 발생 시 -1 반환
+//	        }
+//
+//	        // 데이터가 부족한 경우 처리
+//	        if (closes.size() < period + 1) {
+//	            return -1; // 데이터가 부족한 경우 -1 반환
+//	        }
+//
+//	        // RSI 계산
+//	        double[] rsiValues = calculateRsi14(closes, period);
+//
+//	        return rsiValues[rsiValues.length - 1]; // 최신 RSI 값 반환
+//	    }
+//
+//	    private double[] calculateRsi14(List<BigDecimal> closes, int period) {
+//	        double[] rsiValues = new double[closes.size()];
+//	        BigDecimal sumGain = BigDecimal.ZERO;
+//	        BigDecimal sumLoss = BigDecimal.ZERO;
+//
+//	        // 초기 SMA (Simple Moving Average) 계산
+//	        for (int i = 1; i <= period; i++) {
+//	            BigDecimal change = closes.get(i).subtract(closes.get(i - 1));
+//	            if (change.compareTo(BigDecimal.ZERO) >= 0) {
+//	                sumGain = sumGain.add(change);
+//	            } else {
+//	                sumLoss = sumLoss.add(change.abs());
+//	            }
+//	        }
+//	        BigDecimal avgGain = sumGain.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+//	        BigDecimal avgLoss = sumLoss.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+//
+//	        // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
+//	        for (int i = period; i < closes.size(); i++) {
+//	            BigDecimal change = closes.get(i).subtract(closes.get(i - 1));
+//	            BigDecimal gain = (change.compareTo(BigDecimal.ZERO) >= 0) ? change : BigDecimal.ZERO;
+//	            BigDecimal loss = (change.compareTo(BigDecimal.ZERO) < 0) ? change.abs() : BigDecimal.ZERO;
+//
+//	            avgGain = (avgGain.multiply(BigDecimal.valueOf(period - 1)).add(gain)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+//	            avgLoss = (avgLoss.multiply(BigDecimal.valueOf(period - 1)).add(loss)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+//
+//	            double rs = avgGain.divide(avgLoss, 4, RoundingMode.HALF_UP).doubleValue();
+//	            double rsi = 100 - (100 / (1 + rs));
+//	            rsiValues[i] = rsi;
+//	        }
+//
+//	        return rsiValues;
+//	    }
+
+	    //
+
+//	    @ResponseBody
+//	    @GetMapping("/rsiSearch")
+//	    public String rsiSearch() {
+//
+//	    	 String MARKET_URL = "https://api.upbit.com/v1/market/all";
+//	    	 String TICKER_URL = "https://api.upbit.com/v1/ticker?markets=";
+//
+//	    	 CloseableHttpClient httpClient = HttpClients.createDefault();
+//
+//	    	 try {
+//	    		  HttpGet request = new HttpGet(MARKET_URL);
+//	              CloseableHttpResponse response = httpClient.execute(request);
+//	              ObjectMapper mapper = new ObjectMapper();
+//
+//	              if (response.getCode() == 200) {
+//	                  List<Market> markets = mapper.readValue(response.getEntity().getContent(),
+//	                          new ObjectMapper().getTypeFactory().constructCollectionType(List.class, Market.class));
+//
+//	                  // Filter KRW markets
+//	                  List<String> krwMarkets = markets.stream()
+//	                          .filter(market -> market.getMarket().startsWith("KRW"))
+//	                          .map(Market::getMarket)
+//	                          .collect(Collectors.toList());
+//
+//	                  String marketsParam = String.join(",", krwMarkets);
+//	                  HttpGet tickerRequest = new HttpGet(TICKER_URL + marketsParam);
+//	                  CloseableHttpResponse tickerResponse = httpClient.execute(tickerRequest);
+//
+//	                  if (tickerResponse.getCode() == 200) {
+//	                      List<Ticker> tickers = mapper.readValue(tickerResponse.getEntity().getContent(),
+//	                              new ObjectMapper().getTypeFactory().constructCollectionType(List.class, Ticker.class));
+//
+//	                      // Step 3: Sort tickers by 24h trade price in descending order
+//	                      tickers.sort((t1, t2) -> Double.compare(t2.getAcc_trade_price_24h(), t1.getAcc_trade_price_24h()));
+//
+//	                      // Step 4: Print top 50 KRW markets by 24h trade price
+//	                      System.out.println("Top 50 KRW Markets by 24h Trade Price:");
+//	                      for (int i = 0; i < 50 && i < tickers.size(); i++) {
+//	                          System.out.println((i + 1) + ". " + tickers.get(i).getMarket() + ": " + tickers.get(i).getAcc_trade_price_24h());
+//	                      }
+//	                  } else {
+//	                      System.err.println("Failed to fetch ticker data: " + tickerResponse.getCode());
+//	                  }
+//	              } else {
+//	                  System.err.println("Failed to fetch market data: " + response.getCode());
+//	              }
+//
+//	          } catch (IOException e) {
+//	              e.printStackTrace();
+//	          } finally {
+//	              try {
+//	                  httpClient.close();
+//	              } catch (IOException e) {
+//	                  e.printStackTrace();
+//	              }
+//	          }
+//	      }
+//	    	 }
+//
+//		class Market {
+//		    private String market;
+//
+//		    public String getMarket() {
+//		        return market;
+//		    }
+//
+//		    public void setMarket(String market) {
+//		        this.market = market;
+//		    }
+//		}
+//
+//		class Ticker {
+//		    private String market;
+//		    private double acc_trade_price_24h;
+//
+//		    public String getMarket() {
+//		        return market;
+//		    }
+//
+//		    public void setMarket(String market) {
+//		        this.market = market;
+//		    }
+//
+//		    public double getAcc_trade_price_24h() {
+//		        return acc_trade_price_24h;
+//		    }
+//
+//		    public void setAcc_trade_price_24h(double acc_trade_price_24h) {
+//		        this.acc_trade_price_24h = acc_trade_price_24h;
+//		    }
+//		}
+
+		//}
+
+//	    RestTemplate restTemplate;
+// 	    ObjectMapper objectMapper;
+//
+// 	    public GetAccounts(RestTemplate restTemplate, ObjectMapper objectMapper) {
+// 	        this.restTemplate = restTemplate;
+// 	        this.objectMapper = objectMapper;
+// 	    }
+
+//	    @ResponseBody
+//	    @GetMapping("/rsiSearch")
+//	    public String rsiSearch() throws IOException {
+//
+//	    	String MARKET_URL = "https://api.upbit.com/v1/market/all";
+//	    	String TICKER_URL = "https://api.upbit.com/v1/ticker?markets=";
+//
+//	    	String marketResponse = restTemplate.getForObject(MARKET_URL, String.class);
+//	        List<Market> markets = objectMapper.readValue(marketResponse, new TypeReference<List<Market>>() {});
+//
+//
+//
+//	    	List<String> krwMarkets = markets.stream()
+//	    				.filter(market -> market.getMarket().startsWith("KRW"))
+//	    				.map(Market::getMarket)
+//	    				.collect(Collectors.toList());
+//
+//	    	String marketsParam = String.join(",", krwMarkets);
+//	        String tickerResponse = restTemplate.getForObject(TICKER_URL + marketsParam, String.class);
+//	        List<Ticker> tickers = objectMapper.readValue(tickerResponse, new TypeReference<List<Ticker>>() {});
+//
+//	    	tickers.sort((ticker1, ticker2) -> Double.compare(ticker2.getAcc_trade_price_24h(), ticker1.getAcc_trade_price_24h()));
+//
+//	    	StringBuilder result = new StringBuilder();
+//	        result.append("Top 50 KRW Markets by 24h Trade Price:\n");
+//	        for (int i = 0; i < 50 && i < tickers.size(); i++) {
+//	            Ticker ticker = tickers.get(i);
+//	            result.append((i + 1)).append(". ").append(ticker.getMarket()).append(": ").append(ticker.getAcc_trade_price_24h()).append("\n");
+//	         }
+//
+//	         return result.toString();
+//	    }
+//
+//	    static class Market {
+//            private String market;
+//            private String korean_name;
+//            private String english_name;
+//
+//            public String getMarket() {
+//                return market;
+//            }
+//
+//            public void setMarket(String market) {
+//                this.market = market;
+//            }
+//
+//            public String getKorean_name() {
+//                return korean_name;
+//            }
+//
+//            public void setKorean_name(String korean_name) {
+//                this.korean_name = korean_name;
+//            }
+//
+//            public String getEnglish_name() {
+//                return english_name;
+//            }
+//
+//            public void setEnglish_name(String english_name) {
+//                this.english_name = english_name;
+//            }
+//        }
+//
+//        static class Ticker {
+//            private String market;
+//            private double acc_trade_price_24h;
+//
+//            public String getMarket() {
+//                return market;
+//            }
+//
+//            public void setMarket(String market) {
+//                this.market = market;
+//            }
+//
+//            public double getAcc_trade_price_24h() {
+//                return acc_trade_price_24h;
+//            }
+//
+//            public void setAcc_trade_price_24h(double acc_trade_price_24h) {
+//                this.acc_trade_price_24h = acc_trade_price_24h;
+//            }
+//        }
 
 //		  @ResponseBody
 //	    @GetMapping("/rsi")
