@@ -1,0 +1,100 @@
+<html>
+
+<head>
+	<title>거래 내역</title>
+
+    <style>
+
+		#wrap-buySell{
+
+		}
+
+    </style>
+</head>
+
+<body id="wrap-buySell">
+
+	<div id="header" ></div>
+	 <div  >
+	 <h2 >거래 내역</h4>
+	 <table >
+          <thead >
+          <tr >
+              <th>코인</th>
+              <th>수량</th>
+              <th>매수/매도</th>
+              <th>일시</th>
+          </tr>
+          </thead>
+          <tbody id="Tb" >
+
+          </tbody>
+      </table>
+	</div>
+
+	<div id ="footer" ></div>
+
+	<script>
+	 $('#header').load('header.html')
+	 $('#footer').load('footer.html')
+
+	 var username = '[[${user}]]';
+    //console.log(username);
+
+    var userid = {
+        id: username
+    }
+
+    function formatDate(dateStr) {
+        // 날짜 문자열을 Date 객체로 변환
+        var date = new Date(dateStr);
+
+        // 년, 월, 일을 추출
+        var year = date.getFullYear();
+        var month = ('0' + (date.getMonth() + 1)).slice(-2); // 월은 0부터 시작하므로 1을 더함
+        var day = ('0' + date.getDate()).slice(-2);
+
+        // 시, 분을 추출
+        var hours = ('0' + date.getHours()).slice(-2);
+        var minutes = ('0' + date.getMinutes()).slice(-2);
+
+        // "년-월-일 시:분" 형식으로 반환
+        return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes;
+    }
+
+    $.ajax({
+        url:"/orderList",
+        type:"POST",
+        data: JSON.stringify(userid),
+        dataType:"json",
+        contentType:"application/json",
+        success:function(result){
+        	var tbody = $('#Tb');
+        	$.each(result,function(i,item){
+				var row = $('<tr>');
+				var td1 = $('<td class="center">').text(result[i].market);
+				row.append(td1);
+				var td2 = $('<td class="center">').text(result[i].volume);
+				row.append(td2);
+				var td3 = $('<td class="center">').text(result[i].side);
+				 if(result[i].side =='bid'){
+					var td3 = $('<td class="center">').text('매수');
+					td3.css("color","red");
+				}else if(result[i].side =='ask'){
+					var td3 = $('<td class="center">').text('매도');
+					td3.css("color","blue");
+				}
+				row.append(td3);
+
+				var td4 = $('<td class="center">').text(formatDate(result[i].created_at));
+				row.append(td4);
+				tbody.append(row);
+        	})
+        }
+    })
+
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>주문하기</title>
+
+    <style>
+
+		#wrap-order{
+
+		}
+
+
+    </style>
+</head>
+<body id="wrap-order">
+<div id="header" ></div>
+<div >
+    <h2 >주문하기</h2>
+
+    <!--  <button type="button" id="accountSaveBtn" class="btn-gradient blue" style="float:right; margin-bottom:30px;"><span class="noto-sans-kr-font">저장</span>-->
+    </button>
+    <br/><br/>
+    <label for="access" >access키</label><br/><br/>
+    <input id="access" type="text" class="noto-sans-kr-font" style="width:300px;"/><br/><br/>
+    <label for="secret" >secret키</label><br/><br/>
+    <input id="secret" type="text" /><br/>
+</div>
+<div >
+    <button id="orderBtn" type="button" >매수</span></button>
+    <br/><br/>
+    <label for="coins" >코인</label><br/><br/>
+    <select id="coins" ></select><br/><br/>
+    <label for="price" id="account3" >금액(원)</label><br/><br/>
+    <input id="price" type="text" />
+</div>
+<div id="footer" ></div>
+
+<script>
+    $('#header').load('header.html')
+    $('#footer').load('footer.html')
+    var username = '[[${user}]]';
+
+
+    var userid = {
+        id: username
+    }
+
+    $.ajax({
+        url: "/getCode",
+        type: "POST",
+        data: JSON.stringify(userid),
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+            $('#access').val(result[0].accessCode);
+            var a = $('#access').val();
+            $('#secret').val(result[0].secretCode)
+            var b = $('#secret').val();
+
+
+            if ($('#access').val() != '' && $('#secret').val() != '') {
+
+                var tbody = $('#Tb');
+
+
+                var acc = $('#access').val();
+                var sec = $('#secret').val();
+                var account2 = {
+                    accessCode: acc,
+                    secretCode: sec
+                }
+
+                $.ajax({
+                    url: "/account7",
+                    type: "POST",
+                    dataType: "json",
+                    data: JSON.stringify(account2),
+                    contentType: "application/json",
+                    success: function (result) {
+
+                        $.each(result, function (i, item) {
+                            if (item.currency == 'KRW') {
+                                $('#account3').text("금액 " + "(잔액 : " + Math.floor(item.balance) + "원)")
+                            }
+
+                        })
+
+                    }
+                })
+
+
+                var accessCode = $('#access').val();
+                var secretCode = $('#secret').val();
+                var account = {
+                    accessCode: accessCode,
+                    secretCode: secretCode
+                }
+
+
+                if (accessCode == '') {
+                    alert('엑세스키를 입력해주세요')
+                    return
+                }
+
+                if (secretCode == '') {
+                    alert('시크릿키를 입력해주세요')
+                    return
+                }
+            }
+        }
+    })
+
+
+    $.ajax({
+        url: "/market7",
+        type: "Get",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+
+            $.each(result, function (i, item) {
+
+                if (result[i].market.includes('KRW')) {
+
+                    var option = $('<option style="height:50px; font-size:15px;" class="noto-sans-kr-font">');
+                    var text = result[i].korean_name;
+
+                    option.text(text);
+                    $('#coins').append(option);
+
+
+                }
+
+
+            })
+
+        }
+    })
+
+
+    $('#orderBtn').on('click', function () {
+
+        //var coin = $('#coin').val();
+        var coin = $('#coins').val();
+
+        var coin2;
+        $.ajax({
+            url: "/market7",
+            type: "Get",
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result2) {
+
+                $.each(result2, function (i, item) {
+
+                    if (result2[i].korean_name == coin && result2[i].market.includes('KRW-')) {
+
+                        coin2 = result2[i].market;
+
+
+                    }
+
+
+                })
+
+                var type = 'bid';
+                var price = $('#price').val();
+
+                if (price < 5000) {
+                    alert('최소주문금액은 5000원 이상입니다!!!')
+                }
+                var accessCode = $('#access').val();
+                var secretCode = $('#secret').val();
+                var order = {
+                    coin: coin2,
+                    orderType: type,
+                    price: price,
+                    accessCode: accessCode,
+                    secretCode: secretCode
+                }
+
+
+                    $.ajax({
+
+                        url: "/order7",
+                        type: "POST",
+                        dataType: "json",
+                        data: JSON.stringify(order),
+                        contentType: "application/json",
+                        success: function (result) {
+
+                            // if(result == true ){
+                            //     alert('매수 성공!!!');
+                            // else{
+                            //     alert('매수 실패!!!');
+                            //     }
+                            // }
+                           // alert(coin + "을" + price + "원치" + "매수하였습니다.");
+
+
+                        }
+
+
+                    })
+
+
+
+
+            }
+        })
+
+		alert("매수하였습니다.")
+    })
+
+</script>
+</body>
+</html>

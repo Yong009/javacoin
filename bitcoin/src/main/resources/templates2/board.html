@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>토론방(자유게시판)</title>
+
+    <style>
+
+		#wrap-board{
+
+		}
+
+    </style>
+</head>
+<body id="wrap-board">
+
+<div id="header"></div>
+<h1 >토론방(자유게시판)</h1>
+<div id="write" >
+	 <button id="writeBtn" type="button" >글쓰기</button>
+    <table >
+        <thead>
+        <tr >
+            <th>번호</th>
+            <th>제목</th>
+            <th>글쓴이</th>
+            <th>일시</th>
+            <th>조회수</th>
+        </tr>
+        </thead>
+        <tbody id="Tb" >
+
+        </tbody>
+    </table>
+	<div id="pagination" ></div>
+</div>
+<div id="footer"></div>
+
+<script>
+
+    $('#header').load('header.html');
+    $('#footer').load('footer.html');
+
+
+
+    function Board(seq, title, writer, writeDate, viewCount) {
+        this.seq = seq;
+        this.title = title;
+        this.writer = writer;
+        this.writeDate = writeDate;
+        this.viewCount = viewCount;
+
+    }
+
+
+    function refreshTable() {
+
+        var tbody = $('#Tb');
+        tbody.empty();
+
+        $.each(board, function (i, item) {
+
+
+            var row = $('<tr>');
+
+            var td1 = $('<td class="center">').text(item.seq);
+            row.append(td1);
+
+            var td2 = $('<td class="center">');
+            var link = $('<a>').attr('href', '#').text(item.title);
+            td2.append(link);
+            row.append(td2);
+
+            var td3 = $('<td class="center">').text(item.writer);
+            row.append(td3);
+
+            var td4 = $('<td class="center">').text(item.writeDate);
+            row.append(td4);
+
+            var td5 = $('<td class="center">').text(item.viewCount);
+            row.append(td5);
+
+            tbody.append(row);
+
+            link.on('click', function (event) {
+              event.preventDefault();
+                // 여기에서 seq 값을 이용하여 상세 페이지로 이동하도록 구현
+				//consolo.log("조회수 증가!!!!")
+                var board = {
+				 	seq : item.seq }
+
+                $.ajax({
+					url:"/updateView",
+					type:"POST",
+					data:JSON.stringify(board),
+					dataType:"json",
+					contentType:"application/json",
+					success:function(result){
+
+					}
+
+
+				})
+
+				 var responseData = {seq: item.seq};
+
+                localStorage.setItem('seq', JSON.stringify(responseData));
+
+                window.location.href = "/boardDetail";
+
+
+
+            });
+
+
+        })
+    }
+
+
+    var page = 1;
+
+    $.ajax({
+        url: "/boardListAjax",
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+
+            board = result;
+
+            refreshTable();
+        }
+    })
+
+/* 	 var username = '[[${user}]]';
+
+    if(username != ''){
+		var btn = $('<button id="writeBtn" type="button" class="btn-gradient green" style="float:right;">글쓰기</button>')
+		$('#write').append(btn)
+
+    } */
+
+    $('#writeBtn').on('click',function(){
+
+    	location.href= "/boardwrite";
+
+    })
+
+    var max;
+
+	  $.ajax({
+			 url:"/boardMax",
+			 type:"get",
+			 dataType: "json",
+			 contentType: "application/json",
+			 success: function (result) {
+
+				 if(result <= 10 || result != 0){
+					 max = 1;
+				 }else{
+					max = Math.floor((result/10)+1);
+				 }
+
+				 $('#pagination').empty();
+
+				    for(var i = 1; i<= max; i++){
+						console.log(max);
+						var pageButton = $('<button class="btn-gradient purple mini" id='+i+'>').text(i);
+
+						pageButton.click(function(){
+
+							var selectedPage = $(this).text();
+
+							var vo = {
+								page : selectedPage
+							}
+
+							pageButton.css('font-weight','bold');
+
+							$.ajax({
+							        url:"/boardListAjax2",
+							        type:"post",
+							        dataType: "json",
+							        data:JSON.stringify(vo),
+							        contentType: "application/json",
+							        success: function (result3) {
+
+							            board = result3;
+
+							            refreshTable();
+							        }
+							    })
+
+						})
+						$('#pagination').append(pageButton);
+				    }
+			}
+	  })
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

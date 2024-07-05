@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+
+		#wrap-myContents{
+
+		}
+
+    </style>
+</head>
+<body id="wrap-myContents">
+  <div id="header" ></div>
+  <div id="footer" ></div>
+  <div class="div">
+      <label for="id" >아이디</label><br/><br/>
+      <input id="id" type="text" readonly ><br/><br/>
+      <label for="pw" >비밀번호</label><br/><br/>
+      <input id="pw" type="text" ><br/><br/>
+      <label for="access" >엑세스 코드</label><br/><br/>
+      <input id="access" type="text" ><br/><br/>
+      <label for="secret" >시크릿 코드</label><br/><br/>
+      <input id="secret" type="text" ><br/><br/>
+      <button type="button" id="saveBtn" >수정 완료</button>
+  </div>
+  <script>
+    $('#header').load('header.html')
+    $('#footer').load('footer.html')
+
+    var username = '[[${user}]]';
+    console.log(username);
+
+    var userid = {
+        id: username
+    }
+
+    $.ajax({
+        url: "/getCode",
+        type: "POST",
+        data: JSON.stringify(userid),
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+
+            $('#id').val(result[0].id)
+            $('#pw').val(result[0].password)
+            $('#access').val(result[0].accessCode)
+            $('#secret').val(result[0].secretCode)
+        }
+    })
+
+    $('#saveBtn').on('click',function(){
+
+        var password = $('#pw').val()
+        var access  = $('#access').val()
+        var secret  = $('#secret').val()
+
+        var member = {
+            id : username,
+            password :password,
+            accessCode: access,
+            secretCode : secret
+
+        }
+
+        console.log(member)
+
+        $.ajax({
+            url:"/updateMember",
+            type:"POST",
+            data:JSON.stringify(member),
+            dataType:"json",
+            contentType:"application/json",
+            success:function(result2){
+
+
+                $.ajax({
+                    url: "/getCode",
+                    type: "POST",
+                    data: JSON.stringify(userid),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (result) {
+
+                        $('#id').val(result[0].id)
+                        $('#pw').val(result[0].password)
+                        $('#access').val(result[0].accessCode)
+                        $('#secret').val(result[0].secretCode)
+                    }
+                })
+
+            }
+        })
+
+        alert('수정 성공!!!')
+    })
+
+
+
+  </script>
+</body>
+</html>

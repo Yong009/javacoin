@@ -1,0 +1,86 @@
+<html>
+
+<head>
+	 <meta charset="UTF-8">
+	<title>글쓰기</title>
+
+    <style>
+
+		#wrap-write{
+
+		}
+
+    </style>
+</head>
+
+
+
+
+<body id="wrap-write">
+	<div id="header"></div>
+	  <div >
+	  <label for="title" >제목</label><br/><br/>
+      <input id="title" type="text" ><br/><br/>
+      <label for="id" >작성자</label><br/><br/>
+      <input id="id" type="text" readonly ><br/><br/>
+      <label for="content" >내용</label><br/><br/>
+      <input id="content" type="text" ><br/><br/>
+       <button id="prev" type="button">이전</button>
+      <button type="button" id="saveBtn" >저장</button>
+	</div>
+
+
+
+	<div id="footer"></div>
+
+
+
+	<script>
+
+		 $('#header').load('header.html')
+	     $('#footer').load('footer.html')
+
+	      var username = '[[${user}]]';
+
+		 $('#id').val(username);
+
+
+
+		 $('#saveBtn').on('click',function(){
+
+			 var id = $('#id').val();
+			 var title = $('#title').val()
+			 var content = $('#content').val()
+
+			 var board = {
+				 	writer : id,
+					title : title,
+					textWrite : content
+			 	}
+
+			 $.ajax({
+				url:"/insertBoard",
+				type:"POST",
+				data:JSON.stringify(board),
+				dataType:"json",
+				contentType:"application/json",
+				success:function(result){
+
+
+					}
+				})
+				alert("게시글 저장 성공!!")
+				location.href="/board";
+			 })
+
+
+			 	$('#prev').on('click',function(){
+
+				window.location.href = "/board";
+			})
+
+
+    </script>
+</body>
+
+</html>
