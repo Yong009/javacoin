@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>myPage</title>
-
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
 
 		#wrap-mainPage{
@@ -77,56 +77,10 @@
 <div id ="footer" ></div>
 <script>
 
-function loadHTML(elementId, url, callback) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            document.getElementById(elementId).innerHTML = xhr.responseText;
-            if (callback) callback();
-        }
-    };
-    xhr.send();
-}
-
-function onjQueryReady(callback) {
-    const checkReady = setInterval(function () {
-        if (typeof jQuery !== 'undefined') {
-            clearInterval(checkReady);
-            callback();
-        }
-    }, 100);
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    loadHTML("header", "header.html", function() {
-        onjQueryReady(function() {
-            // jQuery is loaded, you can use jQuery dependent code here
-            console.log("jQuery is ready!");
-        });
-    });
-    loadHTML("footer", "footer.html");
-});
-
-/*function loadHTML(elementId, url) {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', url, true);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            document.getElementById(elementId).innerHTML = xhr.responseText;
-        }
-    };
-    xhr.send();
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    loadHTML("header", "header.html");
-    loadHTML("footer", "footer.html");
-});*/
 
 
-   // $('#header').load('header.html')
-   // $('#footer').load('footer.html')
+    $('#header').load('header.html')
+    $('#footer').load('footer.html')
 
 
     $('a').click(function (event) {

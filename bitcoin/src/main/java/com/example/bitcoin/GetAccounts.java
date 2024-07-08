@@ -111,6 +111,21 @@ public class GetAccounts {
 		return "login";
 	}
 
+//	// 로그인 페이지
+//	@GetMapping("/jsp")
+//	public String loginPage3() {
+//
+//			return "login";
+//		}
+//
+//
+//	// 로그인 후 첫 페이지 ( 로그인 정보 가져옴 )
+//	@GetMapping("/mainPage5")
+//	public String getUserInfo5(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+//		model.addAttribute("user", userDetails.getUsername());
+//		return "mainPage5.jsp";
+//	}
+
 	@GetMapping("/error")
 	public String error() {
 
@@ -467,7 +482,7 @@ public class GetAccounts {
 	@GetMapping("/header.html")
 	public String header(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		model.addAttribute("user", userDetails.getUsername());
-		return "header";
+		return "headerTest";
 	}
 
 	// 헤더2 호출
@@ -480,7 +495,7 @@ public class GetAccounts {
 	// 푸터 호출
 	@GetMapping("/footer.html")
 	public String footer() {
-		return "footer";
+		return "footerTest";
 	}
 
 	// 회원 관리
