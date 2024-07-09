@@ -23,22 +23,51 @@
     <style>
 		.wrap-footer{
 			text-align:center;
+
 		}
 
+		.wrap-center{
+			position: absolute;
+			left:50%;
+			top:50%;
+			transform: translate(-50%,-50%);
+		}
+
+		.wrap-span{
+			color:white;
+
+		}
+
+		.wrap-a{
+			text-decoration-line : none;
+			color:white;
+		}
     </style>
 </head>
 <body>
 
   <footer class="py-5 bg-dark fixed-bottom">
+  <div class="wrap-center">
   <div class="wrap-footer">
         <div class="container" >
-          <a href="https://www.instagram.com/codesabu?igsh=MjJxNHlsYW9yYmZj&utm_source=qr" class="m-0 text-center text-white">&emsp;인스타&emsp;</a>
-          <a href="https://kmong.com/gig/554066"  class="m-0 text-center text-white">&emsp;크몽</a>
-          <p class="m-0 text-center text-white">Footer Copy Here</p>
-          <p>
-          <span class="m-0 text-center text-white">관리자( 인스타 : codesabu / 크몽 : 코딩사랑 )  요쪽으로 문의 주시면 됩니다.</span>
-      	  </p>
+	          <a href="https://www.instagram.com/codesabu?igsh=MjJxNHlsYW9yYmZj&utm_source=qr" class="m-0 text-center text-white"><span class="wrap-a">&emsp;인스타&emsp;</span></a>
+	          <a href="https://kmong.com/gig/554066"  class="m-0 text-center text-white"><span class="wrap-a">&emsp;크몽</span></a>
+	          <p><span class="m-0 text-center text-white">관리자( 인스타 : codesabu / 크몽 : 코딩사랑 )  요쪽으로 문의 주시면 됩니다.</span></p>
+		<!-- <nav aria-label="breadcrumb">
+		  <ol class="breadcrumb">
+		    <li class="breadcrumb-item"><a href="https://www.instagram.com/codesabu?igsh=MjJxNHlsYW9yYmZj&utm_source=qr">인스타</a></li>
+		    <li class="breadcrumb-item"><a href="https://kmong.com/gig/554066">크몽</a></li>
+		   </ol>
+		</nav>
+
+
+ <p class="wrap-span">관리자( 인스타 : codesabu / 크몽 : 코딩사랑 )  요쪽으로 문의 주시면 됩니다.</p> -->
+
+      <!--      <a href="https://www.instagram.com/codesabu?igsh=MjJxNHlsYW9yYmZj&utm_source=qr" class="m-0 text-center text-white"><span class="wrap-span">&emsp;인스타&emsp;</span></a>
+          <a href="https://kmong.com/gig/554066"  class="m-0 text-center text-white"><span class="wrap-span">&emsp;크몽</span></a>
+          <p><span class="m-0 text-center text-white">관리자( 인스타 : codesabu / 크몽 : 코딩사랑 )  요쪽으로 문의 주시면 됩니다.</span></p>-->
         </div>
+   </div>
    </div>
    </footer>
 
