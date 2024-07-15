@@ -482,7 +482,7 @@ public class GetAccounts {
 	@GetMapping("/header.html")
 	public String header(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		model.addAttribute("user", userDetails.getUsername());
-		return "headerTest";
+		return "header";
 	}
 
 	// 헤더2 호출

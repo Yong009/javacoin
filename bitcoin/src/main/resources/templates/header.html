@@ -19,6 +19,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+    <link href="/css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="/js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
     <style>
 
 
@@ -369,10 +375,38 @@
     </style>
 
 </head>
-<body>
+<body class="sb-nav-fixed">
 <div th:fragment="header">
-    <div class="header">
-        <div class="header-inner">
+   <!--  <div class="header"> -->
+
+    	 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+
+   <a class="navbar-brand ps-3" href="index.html">Coin Sabu</a>
+
+    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+
+    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        <div class="input-group">
+
+            <!--<input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+            <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>-->
+        </div>
+    </form>
+
+    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li class="nav-item dropdown">
+
+            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                <li><a class="dropdown-item" href="/myPage">마이페이지</a></li>
+               <li><a class="dropdown-item" href="#!">Activity Log</a></li>
+              <li><hr class="dropdown-divider" /></li>
+                <li><a class="dropdown-item" href="#!" id="" onclick="submitForm()">로그아웃</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+        <!--  <div class="header-inner">
             <div class="logo img-box">
                 <img src="bitcoin.jpg" alt="예제 이미지" width="75" height="75" style="">
             </div>
@@ -446,11 +480,29 @@
             <div class="search-box-on">
                 <input type="search" placeholder="">
             </div>
-            -->
-        </div>
+
+        </div>-->
     </div>
 </div>
 <script>
+
+function submitForm() {
+    // 폼 생성
+    var form = document.createElement("form");
+    form.setAttribute("method", "post"); // 혹은 "get"
+    form.setAttribute("action", "/logout"); // 서버 엔드포인트
+
+    // 폼 데이터 추가 (필요에 따라 입력 필드 추가)
+    var hiddenField = document.createElement("input");
+    hiddenField.setAttribute("type", "hidden");
+    hiddenField.setAttribute("name", "fieldName");
+    hiddenField.setAttribute("value", "fieldValue");
+    form.appendChild(hiddenField);
+
+    // 폼을 body에 추가하고 제출
+    document.body.appendChild(form);
+    form.submit();
+}
 
     var username = '[[${user}]]';
     //console.log(username);
