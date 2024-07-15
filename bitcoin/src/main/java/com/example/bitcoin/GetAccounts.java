@@ -495,7 +495,7 @@ public class GetAccounts {
 	// 푸터 호출
 	@GetMapping("/footer.html")
 	public String footer() {
-		return "footerTest";
+		return "footer";
 	}
 
 	// 회원 관리
