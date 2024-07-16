@@ -65,80 +65,7 @@
 <nav id="nav"></nav>
 
 <div id="layoutSidenav">
-    <div id="layoutSidenav_nav">
-        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-            <div class="sb-sidenav-menu">
-                <div class="nav">
-                    <div class="sb-sidenav-menu-heading">Core</div>
-                    <a class="nav-link" href="/mainPage">
-                        <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                        나의 잔고 및 매도
-                    </a>
-                    <div class="sb-sidenav-menu-heading">Interface</div>
-
-                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
-                         data-bs-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav">
-                            <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                            <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                        </nav>
-                    </div>
-                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages"
-                       aria-expanded="false" aria-controls="collapsePages">
-                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                        Pages
-                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                    </a>
-                    <div class="collapse" id="collapsePages" aria-labelledby="headingTwo"
-                         data-bs-parent="#sidenavAccordion">
-                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                               data-bs-target="#pagesCollapseAuth" aria-expanded="false"
-                               aria-controls="pagesCollapseAuth">
-                                Authentication
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne"
-                                 data-bs-parent="#sidenavAccordionPages">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="login.html">Login</a>
-                                    <a class="nav-link" href="register.html">Register</a>
-                                    <a class="nav-link" href="password.html">Forgot Password</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                               data-bs-target="#pagesCollapseError" aria-expanded="false"
-                               aria-controls="pagesCollapseError">
-                                Error
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne"
-                                 data-bs-parent="#sidenavAccordionPages">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="401.html">401 Page</a>
-                                    <a class="nav-link" href="404.html">404 Page</a>
-                                    <a class="nav-link" href="500.html">500 Page</a>
-                                </nav>
-                            </div>
-                        </nav>
-                    </div>
-                    <div class="sb-sidenav-menu-heading">Addons</div>
-                    <a class="nav-link" href="charts.html">
-                        <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                        Charts
-                    </a>
-                    <a class="nav-link" href="tables.html">
-                        <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                        Tables
-                    </a>
-                </div>
-            </div>
-            <div class="sb-sidenav-footer">
-                <div class="small">Logged in as:</div>
-                Start Bootstrap
-            </div>
-        </nav>
-    </div>
+    <div id="sidebar"></div>
     <div id="layoutSidenav_content">
         <main>
             <div class="container-fluid px-4">
@@ -186,13 +113,6 @@
                                 <th>매도</th>
                             </tr>
                             </thead>
-                            <!--      <tfoot>
-                                 <tr>
-                                     <th>코인</th>
-                                     <th>수량</th>
-                                     <th>매도</th>
-                                 </tr>
-                                 </tfoot> -->
                             <tbody id="Tb">
 
                             </tbody>
@@ -202,84 +122,16 @@
 
             </div>
         </main>
-   <!--     <footer class="py-4 bg-light mt-auto">
-            <div class="container-fluid px-4">
-                <div class="d-flex align-items-center justify-content-between small">
-                    <div class="text-muted">Copyright &copy; Your Website 2023</div>
-                    <div>
-                        <a href="#">Privacy Policy</a>
-                        &middot;
-                        <a href="#">Terms &amp; Conditions</a>
-                    </div>
-                </div>
-            </div>
-        </footer>-->
+
     </div>
 </div>
 
-<!--<div id="header" ></div>
-
-
-<table width="100%" >
-    <tr>
-        <td colspan="2" >
-
-            <h4 id="userid" ><span th:text="${user}"
-                                                           ></span>님 환영합니다.&emsp;<span>&emsp;자동매매 : </span><span id="auto" ></span><span id="profit2" ></span></span><span id="profit"></span></span></h4>
-
-            <form id="logoutForm" action="/logout" method="post">
-                <button type="submit" ><span >로그아웃</span></button>
-            </form>
-
-
-        </td>
-    </tr>
-    <tr>
-        <td >
-            <h2  >업비트 api코드</h2>
-            <button type="button" id="accountBtn" ><span >잔고 조회</span>
-            </button>
-            <button type="button" id="accountSaveBtn"
-                    >
-              <span >Key 저장</span>
-            </button>
-            <br/>
-
-            <br/>
-            <label for="access" >access키</label><br/><br/>
-            <input id="access" type="text" /><br/><br/>
-            <label for="secret"  >secret키</label><br/><br/>
-            <input id="secret" type="text" />
-
-        </td>
-        <td >
-            <h4 >매도 예약 주문이 걸려 있으면 수량이 '0'으로 뜹니다!!!</h4>
-            <h2 >my 잔고</h2>
-
-
-            <table >
-                <thead>
-                <tr >
-                    <th scope="row" >코인</th>
-                    <th scope="row" >수량</th>
-                    <th scope="row" >매도</th>
-
-                </tr>
-                </thead>
-                <tbody id="Tb">
-
-                </tbody>
-            </table>
-        </td>
-    </tr>
-
-</table>-->
-<footer id ="footer" ></footer>
+<footer id="footer"></footer>
 <script>
 
     $('#nav').load('header.html')
-     $('#footer').load('footer.html')
-
+    $('#footer').load('footer.html')
+    $('#sidebar').load('sidebar.html')
 
     /*$('a').click(function (event) {
         event.preventDefault();

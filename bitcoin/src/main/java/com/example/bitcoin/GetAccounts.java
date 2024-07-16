@@ -14,7 +14,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,25 +23,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.CloseableHttpResponse;
+
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
+
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
+
 import org.apache.http.util.EntityUtils;
-import org.apache.ibatis.type.TypeReference;
-import org.hibernate.internal.build.AllowSysOut;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -51,7 +50,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.RestTemplate;
+
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.auth0.jwt.JWT;
@@ -490,6 +489,12 @@ public class GetAccounts {
 	public String header2() {
 
 		return "header2";
+	}
+
+	// 사이드바 호출
+	@GetMapping("/sidebar.html")
+	public String sidebar(){
+		return "sidebar";
 	}
 
 	// 푸터 호출
@@ -1693,8 +1698,6 @@ public class GetAccounts {
 		return list;
 
 	}
-
-
 
 	// 관리자가 자동매매 끄기
 	@ResponseBody
