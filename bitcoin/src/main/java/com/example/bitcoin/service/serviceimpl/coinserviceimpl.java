@@ -57,35 +57,7 @@ public class coinserviceimpl implements coinservice {
 
     @Autowired
     coinservice coinservice3;
-    //PasswordEncoder passwordEncoder;
 
-    //회원가입
-    /*@Override
-    public void join(MemberVO vo) {
-
-        MemberVO member = MemberVO.createUser(vo.getId(), vo.getPassword(), passwordEncoder);
-        coinmappers.join(member);
-
-
-    }*/
-
-    //로그인
-    /*@Override
-    public boolean findOne(String userId, String pw) {
-        MemberVO member = coinmappers.getUserDetails(userId);
-
-        if(bCryptPasswordEncoder.matches(pw, member.getPassword())){
-            return true; // 입력한 비밀번호와 저장소의 비밀번호가 일치
-        } else {
-            return false;
-        }
-
-    }*/
-
-    @Override
-    public boolean findOne(String userId, String pw) {
-        return false;
-    }
 
     //코드 가져오기
     @Override

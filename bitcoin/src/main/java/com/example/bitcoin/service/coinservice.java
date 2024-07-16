@@ -16,8 +16,6 @@ import com.example.bitcoin.dto.QuestionVO;
 
 public interface coinservice {
 
-	// 시큐리티 로그인
-	public  boolean findOne(String userId, String pw);
 	// 코드 가져오기
 	public List<MemberVO> getCode(String id);
 	// 코드 저장

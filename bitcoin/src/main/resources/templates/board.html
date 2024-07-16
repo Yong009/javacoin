@@ -4,46 +4,81 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <title>토론방(자유게시판)</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>코인 토론방</title>
 
     <style>
 
-		#wrap-board{
+        #wrap-board {
 
-		}
+        }
+
+        .button-right {
+            float: right;
+            margin-bottom: 15px;
+        }
+
+        .pageing-btn{
+            position: relative;
+            left:50%;
+            right:50%;
+        }
 
     </style>
 </head>
-<body id="wrap-board">
+<body class="sb-nav-fixed">
 
-<div id="header"></div>
-<h1 >토론방(자유게시판)</h1>
-<div id="write" >
-	 <button id="writeBtn" type="button" >글쓰기</button>
-    <table >
-        <thead>
-        <tr >
-            <th>번호</th>
-            <th>제목</th>
-            <th>글쓴이</th>
-            <th>일시</th>
-            <th>조회수</th>
-        </tr>
-        </thead>
-        <tbody id="Tb" >
+<nav id="nav"></nav>
+<div id="layoutSidenav">
+    <div id="sidebar"></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h3 class="mt-4">코인토론방</h3>
+                <ol class="breadcrumb mb-4">
+                    <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                   <li class="breadcrumb-item active">Tables</li> -->
+                </ol>
+                <div class="card mb-4 col-md-6">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        자유게시판
+                    </div>
+                    <div class="card-body">
 
-        </tbody>
-    </table>
-	<div id="pagination" ></div>
+                        <div class="button-right">
+                            <button id="writeBtn" type="button" class="btn btn-success">글쓰기</button>
+                        </div>
+                        <table class="table table-hover table-bordered text-center">
+                            <thead>
+                            <tr class="table-secondary border">
+                                <th>번호</th>
+                                <th>제목</th>
+                                <th>글쓴이</th>
+                                <th>일시</th>
+                                <th>조회수</th>
+                            </tr>
+                            </thead>
+                            <tbody id="Tb">
+
+                            </tbody>
+                        </table>
+                        <div id="pagination" class="pageing-btn"></div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 </div>
-<div id="footer"></div>
+
+<footer id="footer"></footer>
 
 <script>
 
-    $('#header').load('header.html');
+    $('#nav').load('header.html');
+    $('#sidebar').load('sidebar.html');
     $('#footer').load('footer.html');
-
 
 
     function Board(seq, title, writer, writeDate, viewCount) {
@@ -86,31 +121,31 @@
             tbody.append(row);
 
             link.on('click', function (event) {
-              event.preventDefault();
+                event.preventDefault();
                 // 여기에서 seq 값을 이용하여 상세 페이지로 이동하도록 구현
-				//consolo.log("조회수 증가!!!!")
+                //consolo.log("조회수 증가!!!!")
                 var board = {
-				 	seq : item.seq }
+                    seq: item.seq
+                }
 
                 $.ajax({
-					url:"/updateView",
-					type:"POST",
-					data:JSON.stringify(board),
-					dataType:"json",
-					contentType:"application/json",
-					success:function(result){
+                    url: "/updateView",
+                    type: "POST",
+                    data: JSON.stringify(board),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (result) {
 
-					}
+                    }
 
 
-				})
+                })
 
-				 var responseData = {seq: item.seq};
+                var responseData = {seq: item.seq};
 
                 localStorage.setItem('seq', JSON.stringify(responseData));
 
                 window.location.href = "/boardDetail";
-
 
 
             });
@@ -135,77 +170,63 @@
         }
     })
 
-/* 	 var username = '[[${user}]]';
 
-    if(username != ''){
-		var btn = $('<button id="writeBtn" type="button" class="btn-gradient green" style="float:right;">글쓰기</button>')
-		$('#write').append(btn)
+    $('#writeBtn').on('click', function () {
 
-    } */
-
-    $('#writeBtn').on('click',function(){
-
-    	location.href= "/boardwrite";
+        location.href = "/boardwrite";
 
     })
 
     var max;
 
-	  $.ajax({
-			 url:"/boardMax",
-			 type:"get",
-			 dataType: "json",
-			 contentType: "application/json",
-			 success: function (result) {
+    $.ajax({
+        url: "/boardMax",
+        type: "get",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
 
-				 if(result <= 10 || result != 0){
-					 max = 1;
-				 }else{
-					max = Math.floor((result/10)+1);
-				 }
+            if (result <= 10 || result != 0) {
+                max = 1;
+            } else {
+                max = Math.floor((result / 10) + 1);
+            }
 
-				 $('#pagination').empty();
+            $('#pagination').empty();
 
-				    for(var i = 1; i<= max; i++){
-						console.log(max);
-						var pageButton = $('<button class="btn-gradient purple mini" id='+i+'>').text(i);
+            for (var i = 1; i <= max; i++) {
+                console.log(max);
+                var pageButton = $('<button class="btn btn-secondary sm" id=' + i + '>').text(i);
 
-						pageButton.click(function(){
+                pageButton.click(function () {
 
-							var selectedPage = $(this).text();
+                    var selectedPage = $(this).text();
 
-							var vo = {
-								page : selectedPage
-							}
+                    var vo = {
+                        page: selectedPage
+                    }
 
-							pageButton.css('font-weight','bold');
+                    pageButton.css('font-weight', 'bold');
 
-							$.ajax({
-							        url:"/boardListAjax2",
-							        type:"post",
-							        dataType: "json",
-							        data:JSON.stringify(vo),
-							        contentType: "application/json",
-							        success: function (result3) {
+                    $.ajax({
+                        url: "/boardListAjax2",
+                        type: "post",
+                        dataType: "json",
+                        data: JSON.stringify(vo),
+                        contentType: "application/json",
+                        success: function (result3) {
 
-							            board = result3;
+                            board = result3;
 
-							            refreshTable();
-							        }
-							    })
+                            refreshTable();
+                        }
+                    })
 
-						})
-						$('#pagination').append(pageButton);
-				    }
-			}
-	  })
-
-
-
-
-
-
-
+                })
+                $('#pagination').append(pageButton);
+            }
+        }
+    })
 
 
 </script>
