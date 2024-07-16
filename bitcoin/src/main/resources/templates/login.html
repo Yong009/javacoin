@@ -11,10 +11,38 @@
   <link type="text/css" href="/css/styles.css" rel="stylesheet" />
   <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <style>
 
+  	.div-center-outer {
+
+  		position: relative;
+  	}
+
+	.div-center-inner{
+
+		position: absolute;
+		  	 top: 50%;
+		  	left: 50%;
+		  margin: -50px 0 0 -50px;
+	}
+
+	.div-center- innner2{
+
+		position: absolute;
+			top:100%;
+			left:50%;
+			margin :-50px 0 0 -50px;
+	}
+
+	.back-color{
+
+		background-color: #f6f7fb;
+	}
+
+  </style>
 </head>
-<body class="bg-primary">
-
+<body class="bg-dark">
+<!-- bg-dark -->
 <div id="layoutAuthentication">
   <div id="layoutAuthentication_content">
     <main>
@@ -22,7 +50,11 @@
         <div class="row justify-content-center">
           <div class="col-lg-5">
             <div class="card shadow-lg border-0 rounded-lg mt-5">
-              <div class="card-header"><h3 class="text-center font-weight-light my-4">Coin SaBu ( CSB )</h3></div>
+              <div class="card-header">
+
+
+              	<h3 class="text-center font-weight-light my-4"><img src="Bitcoin_Cash.png" alt="예제 이미지" width="50" height="50">Coin SaBu(CSB)<img src="bitcoin.jpg" alt="예제 이미지" width="50" height="50"></h3>
+              	</div>
               <div class="card-body">
                 <form method="POST" action="/login-process">
                   <div class="form-floating mb-3">
@@ -43,7 +75,7 @@
                   </div>
                   <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
                     <!--<a class="small" href="password.html">Forgot Password?</a>-->
-                  <div class="row-cols-md-12">
+                  <div class="row-cols-md-12 div-center-inner2">
                     <button type="submit" id="login_btn" class="btn btn-success">로그인</button>
                   </div>
                     <!--<a class="btn btn-primary"  href="index.html">Login</a>-->
@@ -51,7 +83,7 @@
                 </form>
               </div>
               <div class="card-footer text-center py-3">
-                <div class="small"><a href="register.html">Need an account? Sign up!</a></div>
+                <!-- <div class="small"><a href="register.html">Need an account? Sign up!</a></div> -->
               </div>
             </div>
           </div>
