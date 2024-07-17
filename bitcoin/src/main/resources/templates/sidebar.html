@@ -13,8 +13,20 @@
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
             crossorigin="anonymous"></script>
     <script src="/js/datatables-simple-demo.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+    	.noto-sans-kr-font {
+            font-family: "Noto Sans KR", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+    </style>
+
 </head>
-<body>
+<body class="noto-sans-kr-font">
 <div id="layoutSidenav_nav">
     <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
         <div class="sb-sidenav-menu">
@@ -66,14 +78,14 @@
                     건의 하기
                 </a>
 
-                <div class="sb-sidenav-menu-heading">관리 페이지</div>
-                <a class="nav-link" href="/question">
-                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                    모니터링
+                <div class="sb-sidenav-menu-heading" id="admin"></div>
+                <a class="nav-link" href="monitoring" id="moniter">
+                <!--     <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    모니터링 -->
                 </a>
-                <a class="nav-link" href="/memberManage">
-                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                    회원 관리
+                <a class="nav-link" href="/memberManage" id="manager">
+                  <!--   <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    회원 관리 -->
                 </a>
 
 
@@ -135,10 +147,38 @@
             </div>-->
         </div>
         <div class="sb-sidenav-footer">
-            <div class="small">Logged in as:</div>
-            Start Bootstrap
+            <div class="small">코인사부</div>
+            코인사부입니다.
         </div>
     </nav>
 </div>
+
+<script>
+	var username = '[[${user}]]';
+
+	console.log(username);
+
+	if(username == 'goo'){
+		$('#admin').append('회원 관리');
+		$('#moniter').append('<div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>모니터링');
+		$('#manager').append(' <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>회원 관리');
+	}
+
+
+	/* 	$('#admin')
+
+		$('<div class="sb-sidenav-menu-heading">관리 페이지</div>').append()
+
+		$('<a class="nav-link" href="monitoring">').append()
+		  <div class="sb-sidenav-menu-heading">관리 페이지</div>
+          <a class="nav-link" href="monitoring">
+              <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+              모니터링
+          </a>
+          <a class="nav-link" href="/memberManage">
+              <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+              회원 관리
+          </a> */
+              </script>
 </body>
 </html>

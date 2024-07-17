@@ -19,11 +19,78 @@
             text-align: center;
 
         }
+
+        .input-size {
+
+        	width:50px;
+
+        }
+
+        .button-right{
+
+        	float:right;
+        	margin-bottom:10px;
+        	margin-top:10px;
+
+        }
+
+        .button-center{
+
+        	position:relative;
+        	left:50%;
+        	right:50%;
+        	margin-right:5px;
+        	margin-top:10px;
+
+        }
+
+        .button-center2{
+
+        	position:relative;
+        	left:40%;
+        	right:60%;
+        	margin-right:5px;
+        	margin-top:10px;
+
+        }
+
+
+        .button-center3{
+
+        	position:relative;
+        	left:50%;
+        	right:50%;
+        	margin-right:5px;
+        	margin-top:10px;
+
+        }
+
+        .button-center4{
+
+        	position:relative;
+        	left:30%;
+        	right:70%;
+        	margin-right:5px;
+        	margin-top:10px;
+
+        }
+
+		.margin-top10{
+
+			margin-top:10px;
+
+		}
+
+		.margin-bottom10{
+
+			margin-bottom:10px;
+
+		}
     </style>
 </head>
 
 
-<body class="sb-nav-fixed">
+<body class="sb-nav-fixed noto-sans-kr-font">
 
 <nav id="nav"></nav>
 
@@ -50,8 +117,8 @@
                         <label for="content" class="text-bold">내용</label><br/><br/>
                         <textarea id="content" class="form-control" cols="60" rows="10"
                                   placeholder="여기에다가 글 남겨주세요!!"></textarea>
-                        <div id="update">
-                            <button id="prev" type="button" class="btn btn-secondary">이전</button>
+                        <div id="update" >
+                            <button id="prev" type="button" class="btn btn-secondary button-center4">이전</button>
                         </div>
                     </div>
                         </div>
@@ -64,9 +131,10 @@
                             </div>
                             <div class="card-body">
 
-                                <label for="commentText">내용</label>
-                                <input id="commentText" class="text-bold" type="text">
-                                <button id="insertBtn" class="btn btn-success" type="button">등록</button>
+                                <label for="commentText" class="text-bold margin-bottom10">댓글 내용</label>
+                                <input id="commentText" class="form-control text-bold input-size" type="text">
+								<button id="insertBtn" class="btn btn-success button-right" type="button">등록</button>
+
                                 <table class="table table-hover text-center">
                                     <thead>
                                     <th>번호</th>
@@ -125,8 +193,8 @@
                 console.log(username)
                 console.log(result[0].writer)
 
-                var btn = $('<button type="button" id="updateBtn" class="btn btn-success">').text('수정')
-                var btn2 = $('<button type="button" id="deleteBtn" class="btn btn-warning">').text('삭제')
+                var btn = $('<button type="button" id="updateBtn" class="btn btn-success button-center2">').text('수정')
+                var btn2 = $('<button type="button" id="deleteBtn" class="btn btn-danger button-center3">').text('삭제')
                 $('#update').append(btn);
                 $('#update').append(btn2);
 

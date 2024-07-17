@@ -13,35 +13,67 @@
 
 		}
 
+		.button-right{
+
+			float:right;
+			margin-bottom:10px;
+
+		}
+
     </style>
 </head>
-<body id="wrap-question">
+<body class="sb-nav-fixed noto-sans-kr-font">
 
-<div id="header"></div>
-<h1 >건의하기</h1>
-<div id="write" >
-	<button id="writeBtn" type="button" >글쓰기</button>
-    <table >
-        <thead >
-        <tr >
-            <th>번호</th>
-            <th>제목</th>
-            <th>글쓴이</th>
-            <th>일시</th>
+<nav id="nav"></nav>
 
-        </tr>
-        </thead>
-        <tbody id="Tb" >
 
-        </tbody>
-    </table>
+<div id="layoutSidenav">
+    <div id="sidebar"></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h3 class="mt-4">건의하기</h3>
+                <ol class="breadcrumb mb-4">
+                    <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                   <li class="breadcrumb-item active">Tables</li> -->
+                </ol>
 
+                <div class="card mb-4 col-md-6">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        건의 및 요청 사항 게시판
+                    </div>
+                    <div class="card-body">
+						<button id="writeBtn" type="button" class="btn btn-success button-right" >글쓰기</button>
+					    <table class="table table-hover table-bordered text-center">
+					        <thead class="table-secondary border">
+					        <tr >
+					            <th>번호</th>
+					            <th>제목</th>
+					            <th>글쓴이</th>
+					            <th>일시</th>
+
+					        </tr>
+					        </thead>
+					        <tbody id="Tb" >
+
+					        </tbody>
+					    </table>
+					</div>
+				</div>
+			          </div>
+        </main>
+
+    </div>
 </div>
+
+
 <div id="footer"></div>
 
 <script>
 
-    $('#header').load('header.html');
+    $('#nav').load('header.html');
+    $('#sidebar').load('sidebar.html');
     $('#footer').load('footer.html');
 
     function question(seq, title, writer, writeDate) {

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>나의 정보</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <style>
 
         #wrap-myContents {
@@ -16,9 +17,16 @@
 
         }
 
+		.button-right{
+
+			float: right;
+
+		}
+
+
     </style>
 </head>
-<body class="sb-nav-fixed">
+<body class="sb-nav-fixed noto-sans-kr-font">
 
 <nav id="nav"></nav>
 <div id="layoutSidenav">
@@ -40,6 +48,7 @@
                     <div class="card-body">
 
                         <label for="id" class="text-bold">아이디</label><br/><br/>
+
                         <input id="id" type="text" class="form-control" readonly><br/><br/>
                         <label for="pw" class="text-bold">비밀번호</label><br/><br/>
                         <input id="pw" type="text" class="form-control"><br/><br/>
@@ -47,7 +56,7 @@
                         <input id="access" type="text" class="form-control"><br/><br/>
                         <label for="secret" class="text-bold">시크릿 코드</label><br/><br/>
                         <input id="secret" type="text" class="form-control"><br/><br/>
-                        <button type="button" class="btn btn-success text-bold" id="saveBtn">수정</button>
+						<button type="button" class="btn btn-success text-bold" id="saveBtn">수정</button>
 
                     </div>
                 </div>

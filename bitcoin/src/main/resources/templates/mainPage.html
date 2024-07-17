@@ -56,11 +56,16 @@
         .button-Height {
             height: 35px;
         }
+
+         #header, #sidebar, #footer {
+            display: none;
+        }
+
     </style>
 
 </head>
 
-<body class="sb-nav-fixed">
+<body class="sb-nav-fixed noto-sans-kr-font">
 
 <nav id="nav"></nav>
 
@@ -129,9 +134,23 @@
 <footer id="footer"></footer>
 <script>
 
-    $('#nav').load('header.html')
+$(document).ready(function () {
+
+
+   $("#nav").load("header.html", function() {
+        $("#nav").fadeIn();
+    });
+    $("#sidebar").load("sidebar.html", function() {
+        $("#sidebar").fadeIn();
+    });
+    $("#footer").load("footer.html", function() {
+        $("#footer").fadeIn();
+    });
+});
+
+   /* $('#nav').load('header.html')
     $('#footer').load('footer.html')
-    $('#sidebar').load('sidebar.html')
+    $('#sidebar').load('sidebar.html')*/
 
     /*$('a').click(function (event) {
         event.preventDefault();

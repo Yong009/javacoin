@@ -10,40 +10,109 @@
 
 		}
 
+		 .text-center {
+            text-align: center;
+
+        }
+
+        .button-right{
+
+        	float:right;
+			margin-right:10px;
+        }
+
+        .text-bold{
+
+        	font-weight:bold;
+
+        }
+
+        .text-red{
+
+        	color:red;
+
+        }
+
+        .text-blue{
+
+        	color:blue;
+
+        }
+
+		.text-black{
+
+			color:black;
+
+		}
+
+		.back-color-white{
+
+			background-color:white;
+		}
+
+		.back-color-yellow{
+
+			background-color:yellow;
+
+		}
+
 
     </style>
 </head>
 
-<body id="wrap-chart">
+<body class="sb-nav-fixed noto-sans-kr-font">
 
-<div id="header"></div>
+<nav id="nav"></nav>
 
-<div >
-   <!--   <h1 style=" text-align: center; margin-bottom:100px;">차트</h1>-->
-    <h2 >차트(업비트)</h2>
+<div id="layoutSidenav">
+    <div id="sidebar"></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h3 class="mt-4">차트(업비트) 및 검색</h3>
+                <ol class="breadcrumb mb-4">
+                    <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                   <li class="breadcrumb-item active">Tables</li> -->
+                </ol>
+                <div class="card mb-4 col-md-6">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        차트(업비트)
+                    </div>
+                    <div class="card-body">
 
-    <label for="coins" >코인 검색 <span >(검색시 은색으로 표시됩니다.)</span> </label><br/><br/>
-    <select id="coins" ></select>
-    <button type="button" id="seachCoin"  >검색</button>
-    <button type="button" id="reset"  >초기화</button>
-    <table >
-        <thead>
-        <tr id="Tr">
-            <th >코인</th>
-            <th >현재가</th>
-            <th >변화</th>
-        </tr>
-        </thead>
-        <tbody id="Tb">
+					    <label for="coins" >코인 검색 <span >(검색시 은색으로 표시됩니다.)</span> </label>
+					    <button type="button" id="reset" class="btn btn-secondary button-right" >초기화</button>
+					    <button type="button" id="seachCoin" class="btn btn-success button-right"  >검색</button><br/><br/>
 
-        </tbody>
-    </table>
+					    <select id="coins" class="form-select form-select-sm" aria-label=".form-select-sm example"></select>
+
+					    <table class="table table-hover table-bordered text-center">
+					        <thead>
+					        <tr id="Tr" class="table-secondary border">
+					            <th >코인</th>
+					            <th >현재가</th>
+					            <th >변화</th>
+					        </tr>
+					        </thead>
+					        <tbody id="Tb">
+
+					        </tbody>
+					    </table>
+					</div>
+            </div>
+        </main>
+
+    </div>
 </div>
+
+<div id="footer"></div>
 
 <script>
 
-    $('#header').load('header.html')
-
+    $('#nav').load('header.html')
+    $('#sidebar').load('sidebar.html')
+	$('#footer').load('footer.html')
 
     $.ajax({
         url: "/market7",
@@ -104,17 +173,17 @@
 
                                 var row = $('<tr>');
 
-                                var td1 = $('<td style="font-weight: bold;" id=' + result[index].korean_name + ' >').text(result[index].korean_name + "[" + result[index].market + "]"); //+ "[" + result[index].market + "]"
+                                var td1 = $('<td id=' + result[index].korean_name + ' >').text(result[index].korean_name + "[" + result[index].market + "]"); //+ "[" + result[index].market + "]"
                                 tablecheck++;
                                 row.append(td1);
-                                var td2 = $('<td style="font-weight: bold;" id=' + tablecheck + '>').text(result2[index2].trade_price + "원");
+                                var td2 = $('<td id=' + tablecheck + '>').text(result2[index2].trade_price + "원");
                                 tablecheck++;
                                 row.append(td2);
 
 
                                 if (result2[index2].opening_price > result2[index2].trade_price) {
 
-                                    var td3 = $('<td style="color:blue; font-weight:bold;" id=' + tablecheck + '>').text("-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+                                    var td3 = $('<td  class="text-blue text-bold"  id=' + tablecheck + '>').text("-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
                                     row.append(td3);
                                     tbody.append(row);
 
@@ -122,7 +191,7 @@
                                 } else if (result2[index2].trade_price > result2[index2].opening_price) {
 
 
-                                    var td3 = $('<td style="color:red; font-weight:bold;" id=' + tablecheck + '>').text("+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+                                    var td3 = $('<td class="text-red text-bold"  id=' + tablecheck + '>').text("+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
                                     row.append(td3);
                                     tbody.append(row);
 
@@ -130,7 +199,7 @@
                                 } else if (result2[index2].opening_price = result2[index2].trade_price) {
 
 
-                                    var td3 = $('<td class="table-primary" style="color:black; font-weight:bold;" id=' + tablecheck + '>').text("0.0%");
+                                    var td3 = $('<td class="table-primary text-bold text-black"  id=' + tablecheck + '>').text("0.0%");
                                     row.append(td3);
                                     tbody.append(row);
 
@@ -203,10 +272,35 @@
                                             if ($('#' + tablecheck).text() != "-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%") {
 
                                                 $('#' + tablecheck).text("-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+
                                                 $('#' + tablecheck).css("background-color", "yellow");
+
+                                                /* if($('#' + tablecheck).hasClass('back-color-white')){
+	                                              	$('#' + tablecheck).removeClass('back-color-white')
+
+                                                }else if($('#' + tablecheck).hasClass('back-color-yellow')){
+                                                	$('#' + tablecheck).removeClass('back-color-yellow')
+                                                }else{
+												} */
+
+                                                //$('#' + tablecheck).addClass("back-color-yellow");
+
                                             } else {
                                                 $('#' + tablecheck).text("-" + ((result2[index2].opening_price - result2[index2].trade_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+
                                                 $('#' + tablecheck).css("background-color", "white");
+
+
+                                               /*  if($('#' + tablecheck).hasClass('back-color-white')){
+	                                              	$('#' + tablecheck).removeClass('back-color-white')
+
+                                                }else if($('#' + tablecheck).hasClass('back-color-yellow')){
+                                                	$('#' + tablecheck).removeClass('back-color-yellow')
+                                                }else{
+												}
+ */
+                                                //$('#' + tablecheck).addClass("back-color-white");
+
                                             }
 
 
@@ -216,10 +310,32 @@
                                             if ($('#' + tablecheck).text() != "+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%") {
 
                                                 $('#' + tablecheck).text("+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+
                                                 $('#' + tablecheck).css("background-color", "yellow");
+                                               /*  if($('#' + tablecheck).hasClass('back-color-white')){
+	                                              	$('#' + tablecheck).removeClass('back-color-white')
+
+                                                }else if($('#' + tablecheck).hasClass('back-color-yellow')){
+                                                	$('#' + tablecheck).removeClass('back-color-yellow')
+                                                }else{
+												} */
+
+                                                //$('#' + tablecheck).addClass("back-color-yellow");
+
                                             } else {
                                                 $('#' + tablecheck).text("+" + ((result2[index2].trade_price - result2[index2].opening_price) / result2[index2].opening_price * 100).toFixed(2) + "%");
+
                                                 $('#' + tablecheck).css("background-color", "white");
+                                             /*    if($('#' + tablecheck).hasClass('back-color-white')){
+	                                              	$('#' + tablecheck).removeClass('back-color-white')
+
+                                                }else if($('#' + tablecheck).hasClass('back-color-yellow')){
+                                                	$('#' + tablecheck).removeClass('back-color-yellow')
+                                                }else{
+												} */
+
+                                                //$('#' + tablecheck).addClass("back-color-white");
+
                                             }
 
 

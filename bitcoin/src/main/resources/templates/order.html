@@ -10,37 +10,66 @@
 
 		}
 
+		.button-right{
 
+			float:right;
+			margin-top:10px;
+		}
+
+		.text-bold{
+
+			font-weight:bold;
+		}
     </style>
 </head>
-<body id="wrap-order">
-<div id="header" ></div>
-<div >
-    <h2 >주문하기</h2>
+<body class="sb-nav-fixed noto-sans-kr-font">
+<nav id="nav" ></nav>
 
-    <!--  <button type="button" id="accountSaveBtn" class="btn-gradient blue" style="float:right; margin-bottom:30px;"><span class="noto-sans-kr-font">저장</span>-->
-    </button>
-    <br/><br/>
-    <label for="access" >access키</label><br/><br/>
-    <input id="access" type="text" class="noto-sans-kr-font" style="width:300px;"/><br/><br/>
-    <label for="secret" >secret키</label><br/><br/>
-    <input id="secret" type="text" /><br/>
-</div>
-<div >
-    <button id="orderBtn" type="button" >매수</span></button>
-    <br/><br/>
-    <label for="coins" >코인</label><br/><br/>
-    <select id="coins" ></select><br/><br/>
-    <label for="price" id="account3" >금액(원)</label><br/><br/>
-    <input id="price" type="text" />
+<div id="layoutSidenav">
+    <div id="sidebar"></div>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h3 class="mt-4">주문하기</h3>
+                <ol class="breadcrumb mb-4">
+                    <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                   <li class="breadcrumb-item active">Tables</li> -->
+                </ol>
+
+                <div class="card mb-4 col-md-6">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        코인 선택 및 매수하기
+                    </div>
+                    <div class="card-body">
+
+					    <label for="access" class="text-bold" >access키</label><br/><br/>
+					    <input id="access" type="text" class="form-control" /><br/><br/>
+					    <label for="secret" class="text-bold">secret키</label><br/><br/>
+					    <input id="secret" type="text" class="form-control" /><br/>
+
+  						 <button id="orderBtn" type="button" class="btn btn-success button-right">매수</span></button><br/><br/>
+
+						<label for="coins" class="text-bold" >코인</label><br/><br/>
+    					<select id="coins" class="form-select form-select-sm" aria-label=".form-select-sm example"></select><br/><br/>
+    					<label for="price" id="account3" class="text-bold">금액(원)</label><br/><br/>
+    					<input id="price" type="text" class="form-control"/>
+				</div>
+			</div>
+		  </div>
+        </main>
+
+    </div>
 </div>
 <div id="footer" ></div>
 
 <script>
-    $('#header').load('header.html')
-    $('#footer').load('footer.html')
-    var username = '[[${user}]]';
 
+    $('#nav').load('header.html');
+    $('#sidebar').load('sidebar.html');
+    $('#footer').load('footer.html');
+
+    var username = '[[${user}]]';
 
     var userid = {
         id: username
