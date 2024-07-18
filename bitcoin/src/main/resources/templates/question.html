@@ -20,6 +20,16 @@
 
 		}
 
+		body{
+
+			display:none;
+		}
+
+		#nav, #sidebar, #footer{
+
+			display:none;
+		}
+
     </style>
 </head>
 <body class="sb-nav-fixed noto-sans-kr-font">
@@ -72,9 +82,21 @@
 
 <script>
 
-    $('#nav').load('header.html');
-    $('#sidebar').load('sidebar.html');
-    $('#footer').load('footer.html');
+ $(document).ready(function () {
+
+
+	   $("#nav").load("header.html", function() {
+	        $("#nav").fadeIn();
+	    });
+	    $("#sidebar").load("sidebar.html", function() {
+	        $("#sidebar").fadeIn();
+	    });
+	    $("#footer").load("footer.html", function() {
+	        $("#footer").fadeIn();
+			$('body').fadeIn();
+	    });
+
+ });
 
     function question(seq, title, writer, writeDate) {
         this.seq = seq;

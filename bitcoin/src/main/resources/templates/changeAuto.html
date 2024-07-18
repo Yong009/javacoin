@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>변동성 돌파 자동매매</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
 
 		#wrap-changeAuto{
@@ -20,6 +21,17 @@
 
 			font-weight:bold
 		}
+
+		body{
+
+			display:none;
+		}
+
+		#nav, #sidebar, #footer{
+
+			display:none;
+		}
+
 
     </style>
 </head>
@@ -62,10 +74,22 @@
 
 
 <script>
-    $('#nav').load('header.html')
-    $('#sidebar').load('sidebar.html')
-    $('#footer').load('footer.html')
 
+ $(document).ready(function () {
+
+
+	   $("#nav").load("header.html", function() {
+	        $("#nav").fadeIn();
+	    });
+	    $("#sidebar").load("sidebar.html", function() {
+	        $("#sidebar").fadeIn();
+	    });
+	    $("#footer").load("footer.html", function() {
+	        $("#footer").fadeIn();
+			$('body').fadeIn();
+	    });
+
+ });
     var username = '[[${user}]]';
     console.log(username);
 
@@ -204,7 +228,21 @@
             }
         })
 
-		alert("자동매매를 시작하겠습니다.")
+        const Toast = Swal.mixin({
+			  toast: true,
+			  position: "top-end",
+			  showConfirmButton: false,
+			  timer: 3000,
+			  timerProgressBar: true,
+			  didOpen: (toast) => {
+			    toast.onmouseenter = Swal.stopTimer;
+			    toast.onmouseleave = Swal.resumeTimer;
+			  }
+			});
+			Toast.fire({
+			  icon: "success",
+			  title: "자동매매를 시작하였습니다."
+			});
     })
 
     $('#stopTrading').on('click', function () {
@@ -232,6 +270,22 @@
                 }
 
 
+                const Toast = Swal.mixin({
+					  toast: true,
+					  position: "top-end",
+					  showConfirmButton: false,
+					  timer: 3000,
+					  timerProgressBar: true,
+					  didOpen: (toast) => {
+					    toast.onmouseenter = Swal.stopTimer;
+					    toast.onmouseleave = Swal.resumeTimer;
+					  }
+					});
+					Toast.fire({
+					  icon: "warning",
+					  title: "자동매매를 정지하였습니다."
+					});
+
             }
         })
 
@@ -249,11 +303,11 @@
             data: JSON.stringify(member),
             contentType: "application/json",
             success: function (userid) {
-                alert("자동매매 끄기 성공!!!")
+
             }
         })
 
-		alert("자동매매를 종료하겠습니다.")
+
     })
 
     $.ajax({

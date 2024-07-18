@@ -37,6 +37,16 @@
 
         }
 
+		body{
+
+			display:none;
+		}
+
+		#nav, #sidebar, #footer{
+
+			display:none;
+		}
+
     </style>
 </head>
 <body class="sb-nav-fixed noto-sans-kr-font">
@@ -83,9 +93,22 @@
 
   <div id="footer"></div>
   <script>
-    $('#nav').load('header.html');
-    $('#sidebar').load('sidebar.html');
-   $('#footer').load('footer.html');
+
+   $(document).ready(function () {
+
+
+  	   $("#nav").load("header.html", function() {
+  	        $("#nav").fadeIn();
+  	    });
+  	    $("#sidebar").load("sidebar.html", function() {
+  	        $("#sidebar").fadeIn();
+  	    });
+  	    $("#footer").load("footer.html", function() {
+  	        $("#footer").fadeIn();
+  			$('body').fadeIn();
+  	    });
+
+   });
 
     $.ajax({
         url:"/memberAll",

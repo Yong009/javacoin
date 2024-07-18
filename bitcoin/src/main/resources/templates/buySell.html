@@ -9,6 +9,16 @@
 
 		}
 
+		body{
+
+			display:none;
+		}
+
+		#nav, #sidebar, #footer{
+
+			display:none;
+		}
+
     </style>
 </head>
 
@@ -58,9 +68,21 @@
 
 	<script>
 
-	 $('#nav').load('header.html');
-	 $('#sidebar').load('sidebar.html');
-	 $('#footer').load('footer.html');
+	 $(document).ready(function () {
+
+
+		   $("#nav").load("header.html", function() {
+		        $("#nav").fadeIn();
+		    });
+		    $("#sidebar").load("sidebar.html", function() {
+		        $("#sidebar").fadeIn();
+		    });
+		    $("#footer").load("footer.html", function() {
+		        $("#footer").fadeIn();
+				$('body').fadeIn();
+		    });
+
+	 });
 
 	 var username = '[[${user}]]';
     //console.log(username);

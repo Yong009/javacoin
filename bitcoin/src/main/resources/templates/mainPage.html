@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <title>myPage</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
-
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
 
         #wrap-mainPage {
@@ -57,8 +56,40 @@
             height: 35px;
         }
 
-         #header, #sidebar, #footer {
-            display: none;
+		body{
+
+			display:none;
+		}
+
+		#nav, #sidebar, #footer {
+
+			display:none;
+		}
+
+
+		    #loader {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+            z-index: 9999;
+        }
+
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
     </style>
@@ -66,6 +97,8 @@
 </head>
 
 <body class="sb-nav-fixed noto-sans-kr-font">
+
+<div id="loader"></div>
 
 <nav id="nav"></nav>
 
@@ -134,19 +167,24 @@
 <footer id="footer"></footer>
 <script>
 
-$(document).ready(function () {
 
 
-   $("#nav").load("header.html", function() {
-        $("#nav").fadeIn();
-    });
-    $("#sidebar").load("sidebar.html", function() {
-        $("#sidebar").fadeIn();
-    });
-    $("#footer").load("footer.html", function() {
-        $("#footer").fadeIn();
-    });
-});
+ $(document).ready(function () {
+
+
+	   $("#nav").load("header.html", function() {
+	        $("#nav").fadeIn();
+	    });
+	    $("#sidebar").load("sidebar.html", function() {
+	        $("#sidebar").fadeIn();
+	    });
+	    $("#footer").load("footer.html", function() {
+	        $("#footer").fadeIn();
+	        $('#loader').css("display","none");
+			$('body').fadeIn();
+	    });
+
+ });
 
     var username = '[[${user}]]';
 
@@ -185,7 +223,7 @@ $(document).ready(function () {
 
             if ($('#auto').text() == 'on    ') {
 
-                // $('#auto').css("color","red")
+                 //$('#auto').css("color","red")
                 $('#auto').removeClass("text-red")
                 $('#auto').removeClass("text-blue")
                 $('#auto').addClass("text-red")
@@ -458,7 +496,7 @@ $(document).ready(function () {
                         row.append(td1);
                         var td2 = $('<td class="center">').text(item.balance);
                         row.append(td2);
-                        var sell = $('<input type="button" id="sellBtn" class="btn-gradient blue" style="width:50px;" text-align: center;>').text('매도');
+                        var sell = $('<input type="button" id="sellBtn" class="btn btn-primary" style="width:50px;" text-align: center;>').text('매도');
                         var td3 = $('<td class="center">').append(sell);
                         row.append(td3);
                         tbody.append(row);
@@ -573,15 +611,15 @@ $(document).ready(function () {
                                                                 $('#profit').text((((nowPrice - orderPrice) / orderPrice) * 100).toFixed(2) + "%");
                                                                 //$('#profit').css("color","red");
 
-                                                                $('#auto').removeClass("text-blue")
-                                                                $('#auto').removeClass("text-red")
-                                                                $('#auto').addClass("text-red")
+                                                                $('#profit').removeClass("text-blue")
+                                                                $('#profit').removeClass("text-red")
+                                                                $('#profit').addClass("text-red")
                                                             } else {
                                                                 $('#profit').text((((orderPrice - nowPrice) / orderPrice) * 100).toFixed(2) + "%");
                                                                 //$('#profit').css("color","blue");
-                                                                $('#auto').removeClass("text-blue")
-                                                                $('#auto').removeClass("text-red")
-                                                                $('#auto').addClass("text-blue")
+                                                                $('#profit').removeClass("text-blue")
+                                                                $('#profit').removeClass("text-red")
+                                                                $('#profit').addClass("text-blue")
                                                             }
 
 
@@ -716,12 +754,33 @@ $(document).ready(function () {
                     }
                 })
 
+                const Toast = Swal.mixin({
+							  toast: true,
+							  position: "top-end",
+							  showConfirmButton: false,
+							  timer: 3000,
+							  timerProgressBar: true,
+							  didOpen: (toast) => {
+							    toast.onmouseenter = Swal.stopTimer;
+							    toast.onmouseleave = Swal.resumeTimer;
+							  }
+							});
+							Toast.fire({
+							  icon: "success",
+							  title: "잔고가 조회되었습니다."
+							});
 
+/*                swal({
+          		  title: "조회 성공",
+          		  text: "잔고가 조회되었습니다.",
+          		  icon: "success",
+          		  button: "확인",
+          		});*/
             }
 
 
         })
-        alert("잔고를 조회하였습니다.")
+        //alert("잔고를 조회하였습니다.")
     })
 
     function refreshTable(account2) {
@@ -758,6 +817,22 @@ $(document).ready(function () {
             contentType: "application/json",
             success: function (result) {
 
+            	   const Toast = Swal.mixin({
+						  toast: true,
+						  position: "top-end",
+						  showConfirmButton: false,
+						  timer: 3000,
+						  timerProgressBar: true,
+						  didOpen: (toast) => {
+						    toast.onmouseenter = Swal.stopTimer;
+						    toast.onmouseleave = Swal.resumeTimer;
+						  }
+						});
+						Toast.fire({
+						  icon: "success",
+						  title: "코드가 저장되었습니다."
+						});
+
                 /* if (result) {
                     alert('저장 성공!!')
                 } else {
@@ -766,7 +841,7 @@ $(document).ready(function () {
             }
 
         })
-        alert("코드를 저장하였습니다.")
+        //alert("코드를 저장하였습니다.")
     })
 
 
