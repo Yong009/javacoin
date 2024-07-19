@@ -55,6 +55,7 @@ import com.example.bitcoin.dto.Body;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.IndexData;
 import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.dto.NoticeVO;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.PriceVO;
@@ -95,7 +96,7 @@ public class GetAccounts {
 	// 시작 시 첫 페이지
 	@GetMapping("/")
 	public String loginPage2() {
-		return "chart2";
+		return "login";
 	}
 
 	// 로그인 페이지
@@ -105,20 +106,7 @@ public class GetAccounts {
 		return "login";
 	}
 
-//	// 로그인 페이지
-//	@GetMapping("/jsp")
-//	public String loginPage3() {
-//
-//			return "login";
-//		}
-//
-//
-//	// 로그인 후 첫 페이지 ( 로그인 정보 가져옴 )
-//	@GetMapping("/mainPage5")
-//	public String getUserInfo5(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-//		model.addAttribute("user", userDetails.getUsername());
-//		return "mainPage5.jsp";
-//	}
+
 
 	@GetMapping("/error")
 	public String error() {
@@ -146,6 +134,29 @@ public class GetAccounts {
 		return "chart2";
 
 	}
+
+	//대시보드
+	@GetMapping("/dashboard")
+	public String dashboard(Model model) {
+
+		List<NoticeVO> vo = coinservice2.getNotice();
+		model.addAttribute("vo",vo);
+		return "dashboard";
+	}
+
+	@ResponseBody
+	@PostMapping("/notice")
+	public List<NoticeVO> getNotice(@AuthenticationPrincipal UserDetails userDetails,  Model model, Model model2){
+
+		List<NoticeVO> vo = coinservice2.getNotice();
+		model.addAttribute("vo", vo);
+		model2.addAttribute("user", userDetails.getUsername());
+		return vo;
+
+	}
+
+
+
 
 	@ResponseBody
 	@PostMapping("/memberAll")
@@ -694,24 +705,6 @@ public class GetAccounts {
 			boolean hasKrwBtc = false;
 
 
-
-
-//			String market10;
-//			BigDecimal nowPrice10;
-//
-//				for (int pm = 0; pm < jsonArray2.length(); pm++) {
-//
-//					JSONObject jsonObject10 = jsonArray2.getJSONObject(pm);
-//					market10 = jsonObject10.getString("market");
-//					if(market10.equals("KRW-BTC")) {
-//						nowPrice10 = jsonObject10.getBigDecimal("trade_price");
-//						List<MemberVO> list10 = coinservice2.getCode(userId);
-//						list10.get(0).getOrderPrice();
-//						list10.get(0).getSellPrice();
-//					}
-//
-//				}
-
 			for (j = 0; j < jsonArray3.length(); j++) {
 				JSONObject jsonObject3 = jsonArray3.getJSONObject(j);
 				currency = jsonObject3.getString("currency");
@@ -736,17 +729,11 @@ public class GetAccounts {
 
 						try {
 							coinservice2.sell7(vo3);
-							ProfitVO vo11 = new ProfitVO();
-							vo11.setId(userId);
-							coinservice2.saveProfit(vo11);
-//							for (int pm = 0; pm < jsonArray2.length(); pm++) {
-//
-//								JSONObject jsonObject10 = jsonArray2.getJSONObject(pm);
-//								market10 = jsonObject10.getString("market");
-//								if(market10.equals("KRW-BTC")) {
-//									nowPrice10 = jsonObject10.getBigDecimal("trade_price");
-//								}
-//							}
+							/*
+							 * ProfitVO vo11 = new ProfitVO(); vo11.setId(userId);
+							 * coinservice2.saveProfit(vo11);
+							 */
+
 
 						} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
 							logger.error("사용자 {}의 매도 주문 실행 중 오류 발생: {}", userId, e.getMessage());
@@ -1110,9 +1097,6 @@ public class GetAccounts {
 //	    		BigDecimal price = jsonObject.getBigDecimal("acc_trade_price_24h");
 //	    		System.out.println(price);
 //	    	}
-
-
-
 
 
 	    	return "test";

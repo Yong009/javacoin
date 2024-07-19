@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.dto.NoticeVO;
 import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.PriceVO;
 import com.example.bitcoin.dto.ProfitVO;
@@ -91,4 +92,6 @@ public interface coinmapper {
    public void saveProfit(ProfitVO vo);
    // 수익률 불러오기
    public List<ProfitVO> getProfitList(ProfitVO vo);
+   // 공지사항 게사판
+   public List<NoticeVO> getNotice();
 }

@@ -28,7 +28,7 @@ public class SpringSecurityConfig{
 		.authorizeHttpRequests(request -> request
 
 				.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-				.requestMatchers("/assets/**", "/js/**","/css/**","/login","/jsp","/boardListAjax2","/rsi","/rsi14","/boardDetail2","/boardDetailAjax","/boardListAjax","/board2","/logout","/login","/static/**","/**.jpg","/**.png","/","/logout","/header.html","/footer.html","/market7","/currentPrice7","/chart2","/header2.html","/error","index2","/koreaPrice","/indices","/equities/**").permitAll()
+				.requestMatchers("/assets/demo/**","/assets/**", "/js/**","/css/**","/login","/jsp","/boardListAjax2","/rsi","/rsi14","/boardDetail2","/boardDetailAjax","/boardListAjax","/board2","/logout","/login","/static/**","/**.jpg","/**.png","/","/logout","/header.html","/footer.html","/market7","/currentPrice7","/chart2","/header2.html","/error","index2","/koreaPrice","/indices","/equities/**").permitAll()
 				.anyRequest().authenticated()
 
 				).formLogin(login -> login
@@ -37,7 +37,7 @@ public class SpringSecurityConfig{
 						.loginProcessingUrl("/login-process")
 						.usernameParameter("userid")
                         .passwordParameter("pw")
-						.defaultSuccessUrl("/mainPage",true)
+						.defaultSuccessUrl("/dashboard",true)
 
 						.permitAll()
 

@@ -34,6 +34,7 @@ import com.example.bitcoin.dto.BoardVO;
 import com.example.bitcoin.dto.CommentVO;
 import com.example.bitcoin.dto.MarketVO;
 import com.example.bitcoin.dto.MemberVO;
+import com.example.bitcoin.dto.NoticeVO;
 import com.example.bitcoin.dto.OrderVO;
 import com.example.bitcoin.dto.PagingVO;
 import com.example.bitcoin.dto.PriceVO;
@@ -631,6 +632,12 @@ public class coinserviceimpl implements coinservice {
 	public List<ProfitVO> getProfitList(ProfitVO vo) {
 
 		return coinmappers.getProfitList(vo);
+	}
+
+	@Override
+	public List<NoticeVO> getNotice() {
+
+		return coinmappers.getNotice();
 	}
 
 }

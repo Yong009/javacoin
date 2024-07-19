@@ -36,10 +36,10 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-			<dependency>
+	<!--		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -100,17 +100,12 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 		</dependency>
-		<dependency>
+	<!--	<dependency>
 			<groupId>nz.net.ultraq.thymeleaf</groupId>
 			<artifactId>thymeleaf-layout-dialect</artifactId>
-		</dependency>
+		</dependency>-->
 
-        <dependency>
-    <groupId>javax.servlet</groupId>
-    <artifactId>javax.servlet-api</artifactId>
-    <version>4.0.1</version>
-    <scope>provided</scope>
-</dependency>
+
 	<dependency>
 	    <groupId>org.springframework.boot</groupId>
 	    <artifactId>spring-boot-starter-websocket</artifactId>
@@ -141,15 +136,25 @@
 			<artifactId>tomcat-embed-jasper</artifactId>
 	</dependency>
 
+<dependency>
+	<groupId>jakarta.servlet.jsp.jstl</groupId>
+	<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+	<version>3.0.0</version>
+</dependency>
 	<dependency>
-		<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-			</dependency>
-
-
+	<groupId>jakarta.servlet</groupId>
+	<artifactId>jakarta.servlet-api</artifactId>
+	<version>6.0.0</version>
+	<scope>provided</scope>
+</dependency>
+	<dependency>
+	<groupId>org.glassfish.web</groupId>
+	<artifactId>jakarta.servlet.jsp.jstl</artifactId>
+	<version>3.0.1</version>
+</dependency>
 
 	</dependencies>
+
 
 	<build>
 		<plugins>

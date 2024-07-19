@@ -1,231 +1,145 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>코인사부(aks)</title>
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <style>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>코인사부(CSB)</title>
+  <script type="text/javascript" src="/js/scripts.js"></script>
 
-		#wrap-login{
+  <link type="text/css" href="/css/styles.css" rel="stylesheet" />
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 
-		}
+  <style>
+
+	 .noto-sans-kr-font {
+            font-family: "Noto Sans KR", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 400;
+            font-style: normal;
+        }
+
+  	.div-center-outer{
+
+  		position: relative;
+  	}
+
+	.div-center-inner{
+
+		position: relative;
+		  	 top: 50%;
+		  	left: 50%;
+
+	}
+
+	.div-center- innner2{
+
+		position: absolute;
+			top:100%;
+			left:50%;
+			margin :-50px 0 0 -50px;
+	}
+
+	.back-color{
+
+		background-color: #f6f7fb;
+	}
+
+	.img-size{
+
+		width:50px;
+		height:50px;
+	}
+
+	.button-center{
+
+		position: relative;
+		  	 top: 50%;
+		  	left: 40%;
+		  	right: 60%;
+
+	}
+
+	.text-bold{
+
+		font-weight:bold;
+	}
 
 
 
-    </style>
+  </style>
 </head>
+<body class="bg-dark noto-sans-kr-font">
+<!-- bg-dark -->
+<div id="layoutAuthentication">
+  <div id="layoutAuthentication_content">
+    <main>
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-5">
+            <div class="card shadow-lg border-0 rounded-lg mt-5">
+              <div class="card-header">
 
-<body id ="wrap-login">
-<div id="container" >
-    <!-- FORM SECTION -->
-    <div >
-        <!-- SIGN UP -->
-        <div >
-            <img src="Bitcoin_Cash.png" alt="예제 이미지" width="300" height="250">
-            <div >
+              	<h3 class="text-center font-weight-light my-4"><img src="Bitcoin_Cash.png" class="img-size" alt="예제 이미지" >  Coin SaBu(CSB)  <img src="bitcoin.jpg" alt="예제 이미지" class="img-size"></h3>
+              	</div>
+              <div class="card-body">
+                <form method="POST" action="/login-process">
+                  <div class="form-floating mb-3">
 
-                <div >
-                    <div >
-                        <i class='bx bxs-user'></i>
-                        <img src="bitcoin.jpg" alt="예제 이미지" width="75" height="75">
-                        <input type="text" id="newId" placeholder="아이디">
+                    <input class="form-control" id="username" name="userid" type="text" placeholder="아이디" />
+                    <label for="username">아이디</label>
 
-                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
 
-                  <!--  <div class="input-group">
-                        <i class='bx bxs-lock-alt'></i>
-                        <input type="password" id="newPw" placeholder="비밀번호">
-                    </div> -->
-                    <div >
-                        <i ></i>
-                        <!--<button type="submit" id="checkId">중복체크</button>-->
-                        </div>
-                        <button type="submit" id="newMemberBtn">회원가입</button>
-                        <p>
-                  <span>
-                    이미 회원이 있으시다구요?
-                  </span>
-                            <b onclick="toggle()" >
-                                로그인
-                            </b>
-                        </p>
-                    </div>
-                </div>
+                    <input class="form-control" id="password" name="pw" type="password" placeholder="비밀번호" />
+                    <label for="password">비밀번호</label>
 
+                  </div>
+                  <div class="form-check mb-3">
+                    <!--<input class="form-check-input" id="inputRememberPassword" type="checkbox" value="" />-->
+                    <!--<label class="form-check-label" for="inputRememberPassword">Remember Password</label>-->
+                  </div>
+                  <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                    <!--<a class="small" href="password.html">Forgot Password?</a>-->
+
+                    <button type="submit" id="login_btn" class="btn btn-success button-center">로그인</button>
+
+                    <!--<a class="btn btn-primary"  href="index.html">Login</a>-->
+                  </div>
+                </form>
+              </div>
+              <div class="card-footer text-center py-3">
+                <!-- <div class="small"><a href="register.html">Need an account? Sign up!</a></div> -->
+              </div>
             </div>
-            <!-- END SIGN UP -->
-        <!-- SIGN IN -->
-        <div >
-            <img src="Bitcoin_Cash.png" alt="예제 이미지" width="300" height="250">
-            <div >
-                <div >
-                    <div>
-                        <i></i>
-                        <img src="bitcoin.jpg" alt="예제 이미지" width="75" height="75">
-                        <form  method="POST" action="/login-process">
-                            <input type="text" placeholder="아이디" id="username" name="userid">
-                    </div>
-                    <div >
-                        <i ></i>
-                        <input type="password" placeholder="비밀번호" id="password" name="pw">
-                    </div>
-
-                    <button type="submit" id="login_btn">
-                        로그인
-                    </button>
-                    </form>
-                    <p>
-                        <b>
-                            <a href="/chart2">비회원용 코인 차트 보기</a>
-                        </b>
-                        <b>
-                            <a href="/board2">게시판 보러 가기</a>
-                        </b>
-
-                    </p>
-                    <p>
-              <span>
-                계정이 없으신가요?
-              </span>
-                     <!--   <b onclick="toggle()" class="pointer">
-                            회원가입
-                        </b>-->
-                    </p>
-                </div>
-            </div>
-            <div >
-
-            </div>
+          </div>
         </div>
-        <!-- END SIGN IN -->
-    </div>
-    <!-- END FORM SECTION -->
-    <!-- CONTENT SECTION -->
-    <div >
-        <!-- SIGN IN CONTENT -->
-        <div >
-            <div>
-                <h2>
-                    환영합니다.
-                </h2>
+      </div>
+    </main>
+  </div>
+  <div id="layoutAuthentication_footer">
+    <footer class="py-4 bg-light mt-auto">
+      <div class="container-fluid px-4">
+        <div class="d-flex align-items-center justify-content-between small">
 
-            </div>
-            <div>
+          <div >
+            <a href="https://www.instagram.com/codesabu?igsh=MjJxNHlsYW9yYmZj&utm_source=qr">인스타&emsp;</a>
+            <a href="https://kmong.com/gig/554066">크몽</a>
+            <p>홈페이지를 사용하고 싶으시거나, 회원가입하고 싶으신 분은 관리자( 인스타 : codesabu / 크몽 : 코딩사랑 )  요쪽으로 문의 주시면 됩니다.<p>
 
-            </div>
+          </div>
         </div>
-        <!-- END SIGN IN CONTENT -->
-        <!-- SIGN UP CONTENT -->
-        <div >
-            <div>
-
-            </div>
-            <div>
-                <h2>
-                    가입을 환영합니다.
-                </h2>
-
-            </div>
-        </div>
-        <!-- END SIGN UP CONTENT -->
-    </div>
-    <!-- END CONTENT SECTION -->
+      </div>
+    </footer>
+  </div>
 </div>
 
-	<div id="footer"></div>
 </body>
-
-<script>
-    let container = document.getElementById('container')
-
-     $('#footer').load('footer.html');
-
-    localStorage.setItem('id', $('#username').val())
-    toggle = () => {
-       //window.location.href = "/memberJoin";
-
-        container.classList.toggle('sign-in')
-        container.classList.toggle('sign-up')
-    }
-
-    setTimeout(() => {
-        container.classList.add('sign-in')
-    }, 200)
-
-    $('#newMemberBtn').on('click', function () {
-
-        var id = $('#newId').val();
-        //var password = $('#newPw').val();
-
-
-
-        if (id == '') {
-            alert('아이디를 입력해주세요');
-            return
-        }
-
-        if (password = '') {
-            alert('비밀번호를 입력해주세요');
-            return
-        }
-
-
-        var member = {
-            id: id
-        }
-
-
-        $.ajax({
-            url: "/join",
-            type: "GET",
-            data: member,
-            contentType: "application/json",
-            dataType: "json",
-            success: function (result) {
-
-
-            },
-            error: function (xhr, status, error) {
-
-            }
-
-
-        })
-
-    })
-
-    $('#checkId').on('click',function(){
-        var id2 = $('#newId').val();
-        var member2 = {
-            id : id2
-        }
-
-        if (id2 == '') {
-            alert('아이디를 입력해주세요');
-            return
-        }
-
-        $.ajax({
-            url:"/check",
-            type:"GET",
-            data:member2,
-            dataType: "json",
-            contentType: "application/json",
-            success:function (result){
-
-                if(result ==0){
-                    alert('사용 가능한 아이디입니다.')
-                }else{
-                    alert('이미 존재하는 아이디 입니다.')
-                }
-            }
-        })
-
-    })
-
-
-</script>
-
 </html>

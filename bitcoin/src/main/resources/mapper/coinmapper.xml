@@ -285,4 +285,12 @@
 		  FROM profit
 
 	</select>
+
+	<!-- 공지시항 게시판 불러오기 -->
+	<select id="getNotice" resultType="com.example.bitcoin.dto.NoticeVO">
+
+		SELECT *
+		  FROM notice
+
+	</select>
 </mapper>
