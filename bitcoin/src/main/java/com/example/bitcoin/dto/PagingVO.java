@@ -8,7 +8,14 @@ public class PagingVO {
 	int page;
 	int pageSize;
 	int offSet;
+	String writer;
 
+	public String getWriter() {
+		return writer;
+	}
+	public void setWriter(String writer) {
+		this.writer = writer;
+	}
 	public int getPage() {
 		return page;
 	}
@@ -20,8 +27,7 @@ public class PagingVO {
 	}
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
-	}
-
+}
 
 	public int getOffSet() {
 		return offSet;

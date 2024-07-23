@@ -640,4 +640,58 @@ public class coinserviceimpl implements coinservice {
 		return coinmappers.getNotice();
 	}
 
+	@Override
+	public int getQuestionMax() {
+
+		return coinmappers.getQuestionMax();
+	}
+
+	@Override
+	public int autoOnMax() {
+
+		return coinmappers.autoOnMax();
+	}
+
+	@Override
+	public int autoOffMax() {
+
+		return coinmappers.autoOffMax();
+	}
+
+	@Override
+	public List<MemberVO> getMoniterOn(PagingVO vo) {
+		int page = (vo.getPage() - 1) * 10;
+		vo.setPage(page);
+		return coinmappers.getMoniterOn(vo);
+
+	}
+
+	@Override
+	public List<MemberVO> getMoniterOff(PagingVO vo) {
+		int page = (vo.getPage() - 1) * 10;
+		vo.setPage(page);
+		return coinmappers.getMoniterOff(vo);
+	}
+
+	@Override
+	public int noticeMax() {
+
+		return coinmappers.noticeMax();
+	}
+
+	@Override
+	public List<QuestionVO> questionList2(PagingVO vo) {
+		int page = (vo.getPage() - 1) * 10;
+		vo.setPage(page);
+		return coinmappers.questionList2(vo);
+
+	}
+
+	@Override
+	public List<QuestionVO> questionList3(PagingVO vo) {
+		int page = (vo.getPage() - 1) * 10;
+		vo.setPage(page);
+		return coinmappers.questionList3(vo);
+	}
+
 }

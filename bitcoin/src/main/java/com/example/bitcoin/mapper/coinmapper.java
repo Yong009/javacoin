@@ -94,4 +94,24 @@ public interface coinmapper {
    public List<ProfitVO> getProfitList(ProfitVO vo);
    // 공지사항 게사판
    public List<NoticeVO> getNotice();
+
+   // 건의 게시판 총 수
+   public int getQuestionMax();
+   // 자동매매 돌리는 사람 수
+   public int autoOnMax();
+   // 자동매매 안돌리는 사람 수
+   public int autoOffMax();
+   // 모니터 페이징1
+   public List<MemberVO> getMoniterOn(PagingVO vo);
+
+   // 모니터 페이징2
+   public List<MemberVO> getMoniterOff(PagingVO vo);
+
+   // 공지사항 게시판 수
+   public int noticeMax();
+
+   // 건의 사항 페이징
+   public List<QuestionVO> questionList2(PagingVO vo);
+   // 건의 사항 그 사람 페이징
+   public List<QuestionVO> questionList3(PagingVO vo);
 }

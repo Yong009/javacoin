@@ -106,8 +106,6 @@ public class GetAccounts {
 		return "login";
 	}
 
-
-
 	@GetMapping("/error")
 	public String error() {
 
@@ -137,13 +135,15 @@ public class GetAccounts {
 
 	//대시보드
 	@GetMapping("/dashboard")
-	public String dashboard(Model model) {
+	public String dashboard(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 
 		List<NoticeVO> vo = coinservice2.getNotice();
 		model.addAttribute("vo",vo);
+		model.addAttribute("user", userDetails.getUsername());
 		return "dashboard";
 	}
 
+	//대시보드 리스트
 	@ResponseBody
 	@PostMapping("/notice")
 	public List<NoticeVO> getNotice(@AuthenticationPrincipal UserDetails userDetails,  Model model, Model model2){
@@ -155,6 +155,13 @@ public class GetAccounts {
 
 	}
 
+	// 공지사항 게시판 수
+	@ResponseBody
+	@GetMapping("/noticeMax")
+	public int noticeMax() {
+
+		return coinservice2.noticeMax();
+	}
 
 
 
@@ -176,7 +183,6 @@ public class GetAccounts {
 	}
 
 	// 회원가입
-
 	@GetMapping("/join")
 	public void registerMember(MemberVO member) {
 
@@ -300,6 +306,48 @@ public class GetAccounts {
 		return "board2";
 	}
 
+
+	// 자동매매 돌리는 총 수
+
+	@ResponseBody
+	@GetMapping("/autoOnMax")
+	public int autoOnMax() {
+
+		return coinservice2.autoOnMax();
+	}
+
+
+
+	// 자동매매 안돌리는 총 수
+
+	@ResponseBody
+	@GetMapping("/autoOffMax")
+	public int autoOffMax() {
+
+		return coinservice2.autoOffMax();
+	}
+
+	// 모니터링 페이징1
+	@ResponseBody
+	@PostMapping("/moniterAjax")
+	public List<MemberVO> moniterAjax(@RequestBody PagingVO vo) {
+
+		List<MemberVO> list = coinservice2.getMoniterOn(vo);
+
+		return list;
+	}
+
+	// 모니터링 페이징2
+	@ResponseBody
+	@PostMapping("/moniterAjax2")
+	public List<MemberVO> moniterAjax2(@RequestBody PagingVO vo) {
+
+		List<MemberVO> list = coinservice2.getMoniterOff(vo);
+
+		return list;
+	}
+
+
 	// 게시판 상세 페이지 이동 ( 비회원용 )
 	@GetMapping("/boardDetail2")
 	public String boardDetail2() {
@@ -341,6 +389,14 @@ public class GetAccounts {
 	}
 
 
+	// 건의 게시판 전체 개수
+	@ResponseBody
+	@GetMapping("/questionMax")
+	public int questionMax() {
+
+		return coinservice2.getQuestionMax();
+	}
+
 	  // 회원 총 수
 
 	  @ResponseBody
@@ -367,9 +423,32 @@ public class GetAccounts {
 	public List<BoardVO> boardListAjax2(@RequestBody PagingVO vo) {
 
 		List<BoardVO> list = coinservice2.getLists(vo);
+		System.out.println(list);
+		return list;
+	}
+
+	// 건의사항 전체 페이징
+	@ResponseBody
+	@PostMapping("/questionListAjax2")
+	public List<QuestionVO> questionListAjax2(@RequestBody PagingVO vo) {
+		System.out.println(vo.getPage());
+
+		List<QuestionVO> list = coinservice2.questionList2(vo);
 
 		return list;
 	}
+
+	// 건의사항 그 사람만 페이징
+	@ResponseBody
+	@GetMapping("/questionListAjax3")
+	public List<QuestionVO> questionListAjax3(@RequestBody PagingVO vo) {
+		System.out.println(vo.getPage());
+		System.out.println(vo.getWriter());
+		List<QuestionVO> list = coinservice2.questionList3(vo);
+
+		return list;
+	}
+
 
 	// 게시판 상세 페이지
 	@GetMapping("/boardDetail")
@@ -438,7 +517,7 @@ public class GetAccounts {
 		coinservice2.deleteComment(vo);
 	}
 
-	// 건의 사항 페에지
+	// 건의 사항 페이지
 	@GetMapping("/question")
 	public String questionPage(@AuthenticationPrincipal UserDetails userDetails, Model model) {
 		model.addAttribute("user", userDetails.getUsername());
@@ -491,7 +570,7 @@ public class GetAccounts {
 	}
 
 	// 헤더2 호출
-	@GetMapping("/header2.html")
+	@GetMapping("/header")
 	public String header2() {
 
 		return "header2";
@@ -828,240 +907,256 @@ public class GetAccounts {
 		}
 	}
 
-	// 이건 rsi 9랑 값이 같다!!! ( 업비트 rsi 방식 )
+
 	 	@ResponseBody
-	    @GetMapping("/upbitRsi")
-	    public double getCurrentRsi() {
-	        String bitcoinSymbol = "bitcoin";
-	        int period = 14;
-	        List<Double> closes = new ArrayList<>();
-
-	        try {
-	            // CoinGecko API를 통해 비트코인의 최근 14일 가격 데이터 가져오기
-	            String apiUrl = "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
-	            String params = "?vs_currency=usd&days=14&interval=daily";
-	            URL url = new URL(apiUrl + params);
-	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	            conn.setRequestMethod("GET");
-
-	            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	            StringBuilder response = new StringBuilder();
-	            String line;
-	            while ((line = reader.readLine()) != null) {
-	                response.append(line);
-	            }
-	            reader.close();
-
-	            // JSON 데이터 파싱
-	            JSONArray pricesArray = new JSONObject(response.toString()).getJSONArray("prices");
-	            for (int i = 0; i < pricesArray.length(); i++) {
-	                JSONArray priceData = pricesArray.getJSONArray(i);
-	                double closePrice = priceData.getDouble(1); // 종가는 배열의 두 번째 요소입니다.
-	                closes.add(closePrice);
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            return -1; // 오류 발생 시 -1 반환
-	        }
-
-	        // 데이터가 부족한 경우 처리
-	        if (closes.size() < period + 1) {
-	            return -1; // 데이터가 부족한 경우 -1 반환
-	        }
-
-	        // RSI 계산
-	        double sumGain = 0.0;
-	        double sumLoss = 0.0;
-
-	        // 초기 SMA (Simple Moving Average) 계산
-	        for (int i = 1; i <= period; i++) {
-	            double change = closes.get(i) - closes.get(i - 1);
-	            if (change >= 0) {
-	                sumGain += change;
-	            } else {
-	                sumLoss -= change;
-	            }
-	        }
-	        double avgGain = sumGain / period;
-	        double avgLoss = sumLoss / period;
-
-	        // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
-	        for (int i = period; i < closes.size(); i++) {
-	            double change = closes.get(i) - closes.get(i - 1);
-	            double gain = (change >= 0) ? change : 0;
-	            double loss = (change < 0) ? -change : 0;
-
-	            avgGain = (avgGain * (period - 1) + gain) / period;
-	            avgLoss = (avgLoss * (period - 1) + loss) / period;
-	        }
-
-	        double rs = avgGain / avgLoss;
-	        double rsi = 100 - (100 / (1 + rs));
-
-	        return rsi;
-	    }
-
-
-
-
-	 	//일반 rsi ( 업비트 rsi 14랑 흡사 )
-	 	@ResponseBody
-	    @GetMapping("/rsi")
-	    public double getCurrentRsi2() {
-	        String bitcoinSymbol = "bitcoin";
-	        int period = 14;
-	        List<Double> closes = new ArrayList<>();
-
-	        try {
-	            // CoinGecko API를 통해 비트코인의 최근 15일 가격 데이터 가져오기
-	            String apiUrl = "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
-	            String params = "?vs_currency=usd&days=15&interval=daily"; // 15일을 가져와서 14일 간의 변화를 계산
-	            URL url = new URL(apiUrl + params);
-	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	            conn.setRequestMethod("GET");
-
-	            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	            StringBuilder response = new StringBuilder();
-	            String line;
-	            while ((line = reader.readLine()) != null) {
-	                response.append(line);
-	            }
-	            reader.close();
-
-	            // JSON 데이터 파싱
-	            JSONArray pricesArray = new JSONObject(response.toString()).getJSONArray("prices");
-	            for (int i = 0; i < pricesArray.length(); i++) {
-	                JSONArray priceData = pricesArray.getJSONArray(i);
-	                double closePrice = priceData.getDouble(1); // 종가는 배열의 두 번째 요소입니다.
-	                closes.add(closePrice);
-	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	            return -1; // 오류 발생 시 -1 반환
-	        }
-
-	        // 데이터가 부족한 경우 처리
-	        if (closes.size() < period + 1) {
-	            return -1; // 데이터가 부족한 경우 -1 반환
-	        }
-
-	        // RSI 계산
-	        double[] rsiValues = calculateRsi(closes, period);
-
-	        return rsiValues[rsiValues.length - 1]; // 최신 RSI 값 반환
-	    }
-
-	    private double[] calculateRsi(List<Double> closes, int period) {
-	        double[] rsiValues = new double[closes.size()];
-	        double sumGain = 0.0;
-	        double sumLoss = 0.0;
-
-	        // 초기 SMA (Simple Moving Average) 계산
-	        for (int i = 1; i <= period; i++) {
-	            double change = closes.get(i) - closes.get(i - 1);
-	            if (change >= 0) {
-	                sumGain += change;
-	            } else {
-	                sumLoss -= change;
-	            }
-	        }
-	        double avgGain = sumGain / period;
-	        double avgLoss = sumLoss / period;
-
-	        // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
-	        for (int i = period; i < closes.size(); i++) {
-	            double change = closes.get(i) - closes.get(i - 1);
-	            double gain = (change >= 0) ? change : 0;
-	            double loss = (change < 0) ? -change : 0;
-
-	            avgGain = (avgGain * (period - 1) + gain) / period;
-	            avgLoss = (avgLoss * (period - 1) + loss) / period;
-
-	            double rs = avgGain / avgLoss;
-	            double rsi = 100 - (100 / (1 + rs));
-	            rsiValues[i] = rsi;
-	        }
-
-	        return rsiValues;
-	    }
-
-	    //업비트 rsi14 적용
-	    @ResponseBody
 	    @GetMapping("/rsi14")
 	    public double getCurrentRsi14() {
-	    	  String market = "KRW-BTC";
-	          int period = 14;
-	          List<BigDecimal> closes = new ArrayList<>();
 
-	          OkHttpClient client = new OkHttpClient();
+		  String API_URL = "https://api.upbit.com/v1/candles/minutes/1";
+		  String MARKET = "KRW-BTC";
+		  int COUNT = 200;
+		  int PERIOD = 14;
 
-	          // Upbit API를 통해 비트코인의 최근 100개의 3분봉 가격 데이터 가져오기
-	          String apiUrl = "https://api.upbit.com/v1/candles/minutes/3?market=" + market + "&count=100";
-	          Request request = new Request.Builder()
-	                  .url(apiUrl)
-	                  .get()
-	                  .build();
+		  try {
+	            String jsonResponse = getApiResponse();
+	            ArrayList<Double> closes = parseCloses(jsonResponse);
+	            ArrayList<Double> rsiValues = calculateRSI(closes, PERIOD);
 
-	          try (Response response = client.newCall(request).execute()) {
-	              if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+	            // 최신 RSI 값 반환
+	            return rsiValues.get(rsiValues.size() - 1);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return -1;  // 에러 발생 시 -1 반환
+	        }
+	    }
 
-	              String responseBody = response.body().string();
+	    private String getApiResponse() throws Exception {
 
-	              // JSON 데이터 파싱
-	              JSONArray candlesArray = new JSONArray(responseBody);
-	              for (int i = 0; i < candlesArray.length(); i++) {
-	                  JSONObject candle = candlesArray.getJSONObject(i);
-	                  BigDecimal closePrice = candle.getBigDecimal("trade_price");
-	                  closes.add(closePrice);
-	              }
-	          } catch (IOException e) {
-	              e.printStackTrace();
-	              return -1; // 오류 발생 시 -1 반환
-	          }
+	    	String API_URL = "https://api.upbit.com/v1/candles/minutes/1";
+			String MARKET = "KRW-BTC";
+			int COUNT = 200;
+			int PERIOD = 14;
+	        URL url = new URL(API_URL + "?market=" + MARKET + "&count=" + COUNT);
+	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+	        conn.setRequestMethod("GET");
 
-	          // 데이터가 부족한 경우 처리
-	          if (closes.size() < period + 1) {
-	              return -1; // 데이터가 부족한 경우 -1 반환
-	          }
+	        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	        String inputLine;
+	        StringBuilder content = new StringBuilder();
+	        while ((inputLine = in.readLine()) != null) {
+	            content.append(inputLine);
+	        }
+	        in.close();
+	        conn.disconnect();
 
-	          // RSI 계산
-	          double rsi = calculateRsi14(closes, period);
+	        return content.toString();
+	    }
 
-	          return rsi; // 최신 RSI 값 반환
-	      }
+	    private ArrayList<Double> parseCloses(String jsonResponse) {
+	        JSONArray jsonArray = new JSONArray(jsonResponse);
+	        ArrayList<Double> closes = new ArrayList<>();
+	        for (int i = jsonArray.length() - 1; i >= 0; i--) {
+	            JSONObject jsonObject = jsonArray.getJSONObject(i);
+	            closes.add(jsonObject.getDouble("trade_price"));
+	        }
+	        return closes;
+	    }
 
-	      private double calculateRsi14(List<BigDecimal> closes, int period) {
-	          BigDecimal sumGain = BigDecimal.ZERO;
-	          BigDecimal sumLoss = BigDecimal.ZERO;
+	    private ArrayList<Double> calculateRSI(ArrayList<Double> closes, int period) {
+	        ArrayList<Double> auList = new ArrayList<>();
+	        ArrayList<Double> adList = new ArrayList<>();
+	        ArrayList<Double> rsiList = new ArrayList<>();
 
-	          // 초기 SMA (Simple Moving Average) 계산
-	          for (int i = 1; i <= period; i++) {
-	              BigDecimal change = closes.get(i).subtract(closes.get(i - 1));
-	              if (change.compareTo(BigDecimal.ZERO) >= 0) {
-	                  sumGain = sumGain.add(change);
-	              } else {
-	                  sumLoss = sumLoss.add(change.abs());
-	              }
-	          }
-	          BigDecimal avgGain = sumGain.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
-	          BigDecimal avgLoss = sumLoss.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+	        for (int i = 1; i < closes.size(); i++) {
+	            double change = closes.get(i) - closes.get(i - 1);
+	            auList.add(Math.max(change, 0));
+	            adList.add(Math.max(-change, 0));
+	        }
 
-	          // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
-	          for (int i = period; i < closes.size(); i++) {
-	              BigDecimal change = closes.get(i).subtract(closes.get(i - 1));
-	              BigDecimal gain = (change.compareTo(BigDecimal.ZERO) >= 0) ? change : BigDecimal.ZERO;
-	              BigDecimal loss = (change.compareTo(BigDecimal.ZERO) < 0) ? change.abs() : BigDecimal.ZERO;
+	        double au = 0, ad = 0;
+	        for (int i = 0; i < period; i++) {
+	            au += auList.get(i);
+	            ad += adList.get(i);
+	        }
+	        au /= period;
+	        ad /= period;
 
-	              avgGain = (avgGain.multiply(BigDecimal.valueOf(period - 1)).add(gain)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
-	              avgLoss = (avgLoss.multiply(BigDecimal.valueOf(period - 1)).add(loss)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+	        rsiList.add(100 - (100 / (1 + au / ad)));
 
-	              double rs = avgGain.divide(avgLoss, 4, RoundingMode.HALF_UP).doubleValue();
-	              double rsi = 100 - (100 / (1 + rs));
-	              return rsi;
-	          }
+	        for (int i = period; i < auList.size(); i++) {
+	            au = (au * (period - 1) + auList.get(i)) / period;
+	            ad = (ad * (period - 1) + adList.get(i)) / period;
+	            rsiList.add(100 - (100 / (1 + au / ad)));
+	        }
 
-	          return -1; // 데이터가 부족한 경우 -1 반환
-	      }
+	        return rsiList;
+	    }
+
+	/*
+	 * // 이건 rsi 9랑 값이 같다!!! ( 업비트 rsi 방식 )
+	 *
+	 * @ResponseBody
+	 *
+	 * @GetMapping("/upbitRsi") public double getCurrentRsi() { String bitcoinSymbol
+	 * = "bitcoin"; int period = 14; List<Double> closes = new ArrayList<>();
+	 *
+	 * try { // CoinGecko API를 통해 비트코인의 최근 14일 가격 데이터 가져오기 String apiUrl =
+	 * "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
+	 * String params = "?vs_currency=usd&days=15&interval=daily"; URL url = new
+	 * URL(apiUrl + params); HttpURLConnection conn = (HttpURLConnection)
+	 * url.openConnection(); conn.setRequestMethod("GET");
+	 *
+	 * BufferedReader reader = new BufferedReader(new
+	 * InputStreamReader(conn.getInputStream())); StringBuilder response = new
+	 * StringBuilder(); String line; while ((line = reader.readLine()) != null) {
+	 * response.append(line); } reader.close();
+	 *
+	 * // JSON 데이터 파싱 JSONArray pricesArray = new
+	 * JSONObject(response.toString()).getJSONArray("prices"); for (int i = 0; i <
+	 * pricesArray.length(); i++) { JSONArray priceData =
+	 * pricesArray.getJSONArray(i); double closePrice = priceData.getDouble(1); //
+	 * 종가는 배열의 두 번째 요소입니다. closes.add(closePrice); } } catch (IOException e) {
+	 * e.printStackTrace(); return -1; // 오류 발생 시 -1 반환 }
+	 *
+	 * // 데이터가 부족한 경우 처리 if (closes.size() < period + 1) { return -1; // 데이터가 부족한 경우
+	 * -1 반환 }
+	 *
+	 * // RSI 계산 double sumGain = 0.0; double sumLoss = 0.0;
+	 *
+	 * // 초기 SMA (Simple Moving Average) 계산 for (int i = 1; i <= period; i++) {
+	 * double change = closes.get(i) - closes.get(i - 1); if (change >= 0) { sumGain
+	 * += change; } else { sumLoss -= change; } } double avgGain = sumGain / period;
+	 * double avgLoss = sumLoss / period;
+	 *
+	 * // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산 for (int i =
+	 * period; i < closes.size(); i++) { double change = closes.get(i) -
+	 * closes.get(i - 1); double gain = (change >= 0) ? change : 0; double loss =
+	 * (change < 0) ? -change : 0;
+	 *
+	 * avgGain = (avgGain * (period - 1) + gain) / period; avgLoss = (avgLoss *
+	 * (period - 1) + loss) / period; }
+	 *
+	 * double rs = avgGain / avgLoss; double rsi = 100 - (100 / (1 + rs));
+	 *
+	 * return rsi; }
+	 *
+	 *
+	 *
+	 *
+	 * //일반 rsi ( 업비트 rsi 14랑 흡사 )
+	 *
+	 * @ResponseBody
+	 *
+	 * @GetMapping("/rsi") public double getCurrentRsi2() { String bitcoinSymbol =
+	 * "bitcoin"; int period = 14; List<Double> closes = new ArrayList<>();
+	 *
+	 * try { // CoinGecko API를 통해 비트코인의 최근 15일 가격 데이터 가져오기 String apiUrl =
+	 * "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
+	 * String params = "?vs_currency=usd&days=15&interval=daily"; // 15일을 가져와서 14일
+	 * 간의 변화를 계산 URL url = new URL(apiUrl + params); HttpURLConnection conn =
+	 * (HttpURLConnection) url.openConnection(); conn.setRequestMethod("GET");
+	 *
+	 * BufferedReader reader = new BufferedReader(new
+	 * InputStreamReader(conn.getInputStream())); StringBuilder response = new
+	 * StringBuilder(); String line; while ((line = reader.readLine()) != null) {
+	 * response.append(line); } reader.close();
+	 *
+	 * // JSON 데이터 파싱 JSONArray pricesArray = new
+	 * JSONObject(response.toString()).getJSONArray("prices"); for (int i = 0; i <
+	 * pricesArray.length(); i++) { JSONArray priceData =
+	 * pricesArray.getJSONArray(i); double closePrice = priceData.getDouble(1); //
+	 * 종가는 배열의 두 번째 요소입니다. closes.add(closePrice); } } catch (IOException e) {
+	 * e.printStackTrace(); return -1; // 오류 발생 시 -1 반환 }
+	 *
+	 * // 데이터가 부족한 경우 처리 if (closes.size() < period + 1) { return -1; // 데이터가 부족한 경우
+	 * -1 반환 }
+	 *
+	 * // RSI 계산 double[] rsiValues = calculateRsi(closes, period);
+	 *
+	 * return rsiValues[rsiValues.length - 1]; // 최신 RSI 값 반환 }
+	 *
+	 * private double[] calculateRsi(List<Double> closes, int period) { double[]
+	 * rsiValues = new double[closes.size()]; double sumGain = 0.0; double sumLoss =
+	 * 0.0;
+	 *
+	 * // 초기 SMA (Simple Moving Average) 계산 for (int i = 1; i <= period; i++) {
+	 * double change = closes.get(i) - closes.get(i - 1); if (change >= 0) { sumGain
+	 * += change; } else { sumLoss -= change; } } double avgGain = sumGain / period;
+	 * double avgLoss = sumLoss / period;
+	 *
+	 * // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산 for (int i =
+	 * period; i < closes.size(); i++) { double change = closes.get(i) -
+	 * closes.get(i - 1); double gain = (change >= 0) ? change : 0; double loss =
+	 * (change < 0) ? -change : 0;
+	 *
+	 * avgGain = (avgGain * (period - 1) + gain) / period; avgLoss = (avgLoss *
+	 * (period - 1) + loss) / period;
+	 *
+	 * double rs = avgGain / avgLoss; double rsi = 100 - (100 / (1 + rs));
+	 * rsiValues[i] = rsi; }
+	 *
+	 * return rsiValues; }
+	 *
+	 * //업비트 rsi14 적용
+	 *
+	 * @ResponseBody
+	 *
+	 * @GetMapping("/rsi14") public double getCurrentRsi14() { String market =
+	 * "KRW-BTC"; int period = 14; List<BigDecimal> closes = new ArrayList<>();
+	 *
+	 * OkHttpClient client = new OkHttpClient();
+	 *
+	 * // Upbit API를 통해 비트코인의 최근 100개의 3분봉 가격 데이터 가져오기 String apiUrl =
+	 * "https://api.upbit.com/v1/candles/minutes/3?market=" + market + "&count=100";
+	 * Request request = new Request.Builder() .url(apiUrl) .get() .build();
+	 *
+	 * try (Response response = client.newCall(request).execute()) { if
+	 * (!response.isSuccessful()) throw new IOException("Unexpected code " +
+	 * response);
+	 *
+	 * String responseBody = response.body().string();
+	 *
+	 * // JSON 데이터 파싱 JSONArray candlesArray = new JSONArray(responseBody); for (int
+	 * i = 0; i < candlesArray.length(); i++) { JSONObject candle =
+	 * candlesArray.getJSONObject(i); BigDecimal closePrice =
+	 * candle.getBigDecimal("trade_price"); closes.add(closePrice); } } catch
+	 * (IOException e) { e.printStackTrace(); return -1; // 오류 발생 시 -1 반환 }
+	 *
+	 * // 데이터가 부족한 경우 처리 if (closes.size() < period + 1) { return -1; // 데이터가 부족한 경우
+	 * -1 반환 }
+	 *
+	 * // RSI 계산 double rsi = calculateRsi14(closes, period);
+	 *
+	 * return rsi; // 최신 RSI 값 반환 }
+	 *
+	 * private double calculateRsi14(List<BigDecimal> closes, int period) {
+	 * BigDecimal sumGain = BigDecimal.ZERO; BigDecimal sumLoss = BigDecimal.ZERO;
+	 *
+	 * // 초기 SMA (Simple Moving Average) 계산 for (int i = 1; i <= period; i++) {
+	 * BigDecimal change = closes.get(i).subtract(closes.get(i - 1)); if
+	 * (change.compareTo(BigDecimal.ZERO) >= 0) { sumGain = sumGain.add(change); }
+	 * else { sumLoss = sumLoss.add(change.abs()); } } BigDecimal avgGain =
+	 * sumGain.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+	 * BigDecimal avgLoss = sumLoss.divide(BigDecimal.valueOf(period), 4,
+	 * RoundingMode.HALF_UP);
+	 *
+	 * // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산 for (int i =
+	 * period; i < closes.size(); i++) { BigDecimal change =
+	 * closes.get(i).subtract(closes.get(i - 1)); BigDecimal gain =
+	 * (change.compareTo(BigDecimal.ZERO) >= 0) ? change : BigDecimal.ZERO;
+	 * BigDecimal loss = (change.compareTo(BigDecimal.ZERO) < 0) ? change.abs() :
+	 * BigDecimal.ZERO;
+	 *
+	 * avgGain = (avgGain.multiply(BigDecimal.valueOf(period -
+	 * 1)).add(gain)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+	 * avgLoss = (avgLoss.multiply(BigDecimal.valueOf(period -
+	 * 1)).add(loss)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
+	 *
+	 * double rs = avgGain.divide(avgLoss, 4, RoundingMode.HALF_UP).doubleValue();
+	 * double rsi = 100 - (100 / (1 + rs)); return rsi; }
+	 *
+	 * return -1; // 데이터가 부족한 경우 -1 반환 }
+	 */
 
 
 
@@ -1106,496 +1201,7 @@ public class GetAccounts {
 
 
 
-//	    //업비트 api 이용 rsi
-//	    @ResponseBody
-//	    @GetMapping("/rsi14")
-//	    public double getRsi14() throws IOException {
-//
-//	    	String MARKET_URL = "https://api.upbit.com/v1/candles/minutes/3";
-//	        String MARKET_PARAM = "?market=KRW-BTC&count=100"; // 최근 100개의 3분봉 데이터를 가져옴
-//
-//	    	String url = MARKET_URL + MARKET_PARAM;
-//
-//	    	okhttp3.Request request = new Request.Builder()
-//	                .url(url)
-//	                .get()
-//	                .build();
-//
-//	    	 OkHttpClient client = new OkHttpClient();
-//	    	 okhttp3.Response response = client.newCall(request).execute();
-//
-//	    	 String responseBody = response.body().string();
-//
-//
-//	        //String responseBody = okhttp3.Request.Get(url).execute().returnContent().asString();
-//
-//	        JSONArray jsonArray = new JSONArray(responseBody);
-//	        List<BigDecimal> closePrices = new ArrayList<>();
-//
-//	        for (int i = 0; i < jsonArray.length(); i++) {
-//	            JSONObject jsonObject = jsonArray.getJSONObject(i);
-//	            BigDecimal closePrice = jsonObject.getBigDecimal("trade_price");
-//	            closePrices.add(closePrice);
-//	        }
-//
-//	        int period = 14; // RSI 기간 설정 (14일 기간)
-//	        double rsi = calculateRSI4(closePrices, period);
-//
-//	        return rsi;
-//
-//	    }
-//
-//	    private double calculateRSI4(List<BigDecimal> closePrices, int period) {
-//	        if (closePrices.size() < period + 1) {
-//	            throw new IllegalArgumentException("Insufficient data points for RSI calculation");
-//	        }
-//
-//	        List<BigDecimal> priceChanges = new ArrayList<>();
-//	        for (int i = 1; i < closePrices.size(); i++) {
-//	            BigDecimal priceChange = closePrices.get(i).subtract(closePrices.get(i - 1));
-//	            priceChanges.add(priceChange);
-//	        }
-//
-//	        List<BigDecimal> gainList = new ArrayList<>();
-//	        List<BigDecimal> lossList = new ArrayList<>();
-//
-//	        for (int i = 0; i < period; i++) {
-//	            BigDecimal priceChange = priceChanges.get(i);
-//	            if (priceChange.compareTo(BigDecimal.ZERO) > 0) {
-//	                gainList.add(priceChange);
-//	                lossList.add(BigDecimal.ZERO);
-//	            } else {
-//	                gainList.add(BigDecimal.ZERO);
-//	                lossList.add(priceChange.abs());
-//	            }
-//	        }
-//
-//	        BigDecimal avgGain = calculateAverage(gainList);
-//	        BigDecimal avgLoss = calculateAverage(lossList);
-//
-//	        double rs = avgGain.divide(avgLoss, 4, RoundingMode.HALF_UP).doubleValue();
-//	        double rsi = 100.0 - (100.0 / (1.0 + rs));
-//
-//	        return rsi;
-//	    }
-//
-//	    private BigDecimal calculateAverage(List<BigDecimal> values) {
-//	        BigDecimal sum = BigDecimal.ZERO;
-//	        for (BigDecimal value : values) {
-//	            sum = sum.add(value);
-//	        }
-//	        System.out.println(sum.divide(BigDecimal.valueOf(values.size()), 4, RoundingMode.HALF_UP));
-//	        return sum.divide(BigDecimal.valueOf(values.size()), 4, RoundingMode.HALF_UP);
-//
-//	    }
-//	    @ResponseBody
-//	    @GetMapping("/rsi14")
-//	    public double getCurrentRsi14() {
-//	        String market = "KRW-BTC";
-//	        int period = 14;
-//	        List<BigDecimal> closes = new ArrayList<>();
-//
-//	        OkHttpClient client = new OkHttpClient();
-//
-//	        // Upbit API를 통해 비트코인의 최근 100개의 3분봉 가격 데이터 가져오기
-//	        String apiUrl = "https://api.upbit.com/v1/candles/minutes/3?market=" + market + "&count=100";
-//	        Request request = new Request.Builder()
-//	                .url(apiUrl)
-//	                .get()
-//	                .build();
-//
-//	        try (Response response = client.newCall(request).execute()) {
-//	            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-//
-//	            String responseBody = response.body().string();
-//
-//	            // JSON 데이터 파싱
-//	            JSONArray candlesArray = new JSONArray(responseBody);
-//	            for (int i = 0; i < candlesArray.length(); i++) {
-//	                JSONObject candle = candlesArray.getJSONObject(i);
-//	                BigDecimal closePrice = candle.getBigDecimal("trade_price");
-//	                closes.add(closePrice);
-//	            }
-//	        } catch (IOException e) {
-//	            e.printStackTrace();
-//	            return -1; // 오류 발생 시 -1 반환
-//	        }
-//
-//	        // 데이터가 부족한 경우 처리
-//	        if (closes.size() < period + 1) {
-//	            return -1; // 데이터가 부족한 경우 -1 반환
-//	        }
-//
-//	        // RSI 계산
-//	        double[] rsiValues = calculateRsi14(closes, period);
-//
-//	        return rsiValues[rsiValues.length - 1]; // 최신 RSI 값 반환
-//	    }
-//
-//	    private double[] calculateRsi14(List<BigDecimal> closes, int period) {
-//	        double[] rsiValues = new double[closes.size()];
-//	        BigDecimal sumGain = BigDecimal.ZERO;
-//	        BigDecimal sumLoss = BigDecimal.ZERO;
-//
-//	        // 초기 SMA (Simple Moving Average) 계산
-//	        for (int i = 1; i <= period; i++) {
-//	            BigDecimal change = closes.get(i).subtract(closes.get(i - 1));
-//	            if (change.compareTo(BigDecimal.ZERO) >= 0) {
-//	                sumGain = sumGain.add(change);
-//	            } else {
-//	                sumLoss = sumLoss.add(change.abs());
-//	            }
-//	        }
-//	        BigDecimal avgGain = sumGain.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
-//	        BigDecimal avgLoss = sumLoss.divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
-//
-//	        // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
-//	        for (int i = period; i < closes.size(); i++) {
-//	            BigDecimal change = closes.get(i).subtract(closes.get(i - 1));
-//	            BigDecimal gain = (change.compareTo(BigDecimal.ZERO) >= 0) ? change : BigDecimal.ZERO;
-//	            BigDecimal loss = (change.compareTo(BigDecimal.ZERO) < 0) ? change.abs() : BigDecimal.ZERO;
-//
-//	            avgGain = (avgGain.multiply(BigDecimal.valueOf(period - 1)).add(gain)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
-//	            avgLoss = (avgLoss.multiply(BigDecimal.valueOf(period - 1)).add(loss)).divide(BigDecimal.valueOf(period), 4, RoundingMode.HALF_UP);
-//
-//	            double rs = avgGain.divide(avgLoss, 4, RoundingMode.HALF_UP).doubleValue();
-//	            double rsi = 100 - (100 / (1 + rs));
-//	            rsiValues[i] = rsi;
-//	        }
-//
-//	        return rsiValues;
-//	    }
 
-	    //
-
-//	    @ResponseBody
-//	    @GetMapping("/rsiSearch")
-//	    public String rsiSearch() {
-//
-//	    	 String MARKET_URL = "https://api.upbit.com/v1/market/all";
-//	    	 String TICKER_URL = "https://api.upbit.com/v1/ticker?markets=";
-//
-//	    	 CloseableHttpClient httpClient = HttpClients.createDefault();
-//
-//	    	 try {
-//	    		  HttpGet request = new HttpGet(MARKET_URL);
-//	              CloseableHttpResponse response = httpClient.execute(request);
-//	              ObjectMapper mapper = new ObjectMapper();
-//
-//	              if (response.getCode() == 200) {
-//	                  List<Market> markets = mapper.readValue(response.getEntity().getContent(),
-//	                          new ObjectMapper().getTypeFactory().constructCollectionType(List.class, Market.class));
-//
-//	                  // Filter KRW markets
-//	                  List<String> krwMarkets = markets.stream()
-//	                          .filter(market -> market.getMarket().startsWith("KRW"))
-//	                          .map(Market::getMarket)
-//	                          .collect(Collectors.toList());
-//
-//	                  String marketsParam = String.join(",", krwMarkets);
-//	                  HttpGet tickerRequest = new HttpGet(TICKER_URL + marketsParam);
-//	                  CloseableHttpResponse tickerResponse = httpClient.execute(tickerRequest);
-//
-//	                  if (tickerResponse.getCode() == 200) {
-//	                      List<Ticker> tickers = mapper.readValue(tickerResponse.getEntity().getContent(),
-//	                              new ObjectMapper().getTypeFactory().constructCollectionType(List.class, Ticker.class));
-//
-//	                      // Step 3: Sort tickers by 24h trade price in descending order
-//	                      tickers.sort((t1, t2) -> Double.compare(t2.getAcc_trade_price_24h(), t1.getAcc_trade_price_24h()));
-//
-//	                      // Step 4: Print top 50 KRW markets by 24h trade price
-//	                      System.out.println("Top 50 KRW Markets by 24h Trade Price:");
-//	                      for (int i = 0; i < 50 && i < tickers.size(); i++) {
-//	                          System.out.println((i + 1) + ". " + tickers.get(i).getMarket() + ": " + tickers.get(i).getAcc_trade_price_24h());
-//	                      }
-//	                  } else {
-//	                      System.err.println("Failed to fetch ticker data: " + tickerResponse.getCode());
-//	                  }
-//	              } else {
-//	                  System.err.println("Failed to fetch market data: " + response.getCode());
-//	              }
-//
-//	          } catch (IOException e) {
-//	              e.printStackTrace();
-//	          } finally {
-//	              try {
-//	                  httpClient.close();
-//	              } catch (IOException e) {
-//	                  e.printStackTrace();
-//	              }
-//	          }
-//	      }
-//	    	 }
-//
-//		class Market {
-//		    private String market;
-//
-//		    public String getMarket() {
-//		        return market;
-//		    }
-//
-//		    public void setMarket(String market) {
-//		        this.market = market;
-//		    }
-//		}
-//
-//		class Ticker {
-//		    private String market;
-//		    private double acc_trade_price_24h;
-//
-//		    public String getMarket() {
-//		        return market;
-//		    }
-//
-//		    public void setMarket(String market) {
-//		        this.market = market;
-//		    }
-//
-//		    public double getAcc_trade_price_24h() {
-//		        return acc_trade_price_24h;
-//		    }
-//
-//		    public void setAcc_trade_price_24h(double acc_trade_price_24h) {
-//		        this.acc_trade_price_24h = acc_trade_price_24h;
-//		    }
-//		}
-
-		//}
-
-//	    RestTemplate restTemplate;
-// 	    ObjectMapper objectMapper;
-//
-// 	    public GetAccounts(RestTemplate restTemplate, ObjectMapper objectMapper) {
-// 	        this.restTemplate = restTemplate;
-// 	        this.objectMapper = objectMapper;
-// 	    }
-
-//	    @ResponseBody
-//	    @GetMapping("/rsiSearch")
-//	    public String rsiSearch() throws IOException {
-//
-//	    	String MARKET_URL = "https://api.upbit.com/v1/market/all";
-//	    	String TICKER_URL = "https://api.upbit.com/v1/ticker?markets=";
-//
-//	    	String marketResponse = restTemplate.getForObject(MARKET_URL, String.class);
-//	        List<Market> markets = objectMapper.readValue(marketResponse, new TypeReference<List<Market>>() {});
-//
-//
-//
-//	    	List<String> krwMarkets = markets.stream()
-//	    				.filter(market -> market.getMarket().startsWith("KRW"))
-//	    				.map(Market::getMarket)
-//	    				.collect(Collectors.toList());
-//
-//	    	String marketsParam = String.join(",", krwMarkets);
-//	        String tickerResponse = restTemplate.getForObject(TICKER_URL + marketsParam, String.class);
-//	        List<Ticker> tickers = objectMapper.readValue(tickerResponse, new TypeReference<List<Ticker>>() {});
-//
-//	    	tickers.sort((ticker1, ticker2) -> Double.compare(ticker2.getAcc_trade_price_24h(), ticker1.getAcc_trade_price_24h()));
-//
-//	    	StringBuilder result = new StringBuilder();
-//	        result.append("Top 50 KRW Markets by 24h Trade Price:\n");
-//	        for (int i = 0; i < 50 && i < tickers.size(); i++) {
-//	            Ticker ticker = tickers.get(i);
-//	            result.append((i + 1)).append(". ").append(ticker.getMarket()).append(": ").append(ticker.getAcc_trade_price_24h()).append("\n");
-//	         }
-//
-//	         return result.toString();
-//	    }
-//
-//	    static class Market {
-//            private String market;
-//            private String korean_name;
-//            private String english_name;
-//
-//            public String getMarket() {
-//                return market;
-//            }
-//
-//            public void setMarket(String market) {
-//                this.market = market;
-//            }
-//
-//            public String getKorean_name() {
-//                return korean_name;
-//            }
-//
-//            public void setKorean_name(String korean_name) {
-//                this.korean_name = korean_name;
-//            }
-//
-//            public String getEnglish_name() {
-//                return english_name;
-//            }
-//
-//            public void setEnglish_name(String english_name) {
-//                this.english_name = english_name;
-//            }
-//        }
-//
-//        static class Ticker {
-//            private String market;
-//            private double acc_trade_price_24h;
-//
-//            public String getMarket() {
-//                return market;
-//            }
-//
-//            public void setMarket(String market) {
-//                this.market = market;
-//            }
-//
-//            public double getAcc_trade_price_24h() {
-//                return acc_trade_price_24h;
-//            }
-//
-//            public void setAcc_trade_price_24h(double acc_trade_price_24h) {
-//                this.acc_trade_price_24h = acc_trade_price_24h;
-//            }
-//        }
-
-//		  @ResponseBody
-//	    @GetMapping("/rsi")
-//	    public double getCurrentRsi() {
-//	        String bitcoinSymbol = "bitcoin";
-//	        int period = 14;
-//	        List<Double> closes = new ArrayList<>();
-//
-//	        try {
-//	            // CoinGecko API를 통해 비트코인의 최근 14일 가격 데이터 가져오기
-//	            String apiUrl = "https://api.coingecko.com/api/v3/coins/" + bitcoinSymbol + "/market_chart";
-//	            String params = "?vs_currency=usd&days=15&interval=daily"; // 15일을 가져와서 14일 간의 변화를 계산
-//	            URL url = new URL(apiUrl + params);
-//	            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//	            conn.setRequestMethod("GET");
-//
-//	            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-//	            StringBuilder response = new StringBuilder();
-//	            String line;
-//	            while ((line = reader.readLine()) != null) {
-//	                response.append(line);
-//	            }
-//	            reader.close();
-//
-//	            // JSON 데이터 파싱
-//	            JSONArray pricesArray = new JSONObject(response.toString()).getJSONArray("prices");
-//	            for (int i = 0; i < pricesArray.length(); i++) {
-//	                JSONArray priceData = pricesArray.getJSONArray(i);
-//	                double closePrice = priceData.getDouble(1); // 종가는 배열의 두 번째 요소입니다.
-//	                closes.add(closePrice);
-//	            }
-//	        } catch (IOException e) {
-//	            e.printStackTrace();
-//	            return -1; // 오류 발생 시 -1 반환
-//	        }
-//
-//	        // 데이터가 부족한 경우 처리
-//	        if (closes.size() < period + 1) {
-//	            return -1; // 데이터가 부족한 경우 -1 반환
-//	        }
-//
-//	        // RSI 계산
-//	        double[] rsiValues = new double[closes.size()];
-//	        double sumGain = 0.0;
-//	        double sumLoss = 0.0;
-//
-//	        // 초기 SMA (Simple Moving Average) 계산
-//	        for (int i = 1; i <= period; i++) {
-//	            double change = closes.get(i) - closes.get(i - 1);
-//	            if (change >= 0) {
-//	                sumGain += change;
-//	            } else {
-//	                sumLoss -= change;
-//	            }
-//	        }
-//	        double avgGain = sumGain / period;
-//	        double avgLoss = sumLoss / period;
-//
-//	        // 초기 RS (Relative Strength) 및 RSI (Relative Strength Index) 계산
-//	        for (int i = period; i < closes.size(); i++) {
-//	            double change = closes.get(i) - closes.get(i - 1);
-//	            double gain = (change >= 0) ? change : 0;
-//	            double loss = (change < 0) ? -change : 0;
-//
-//	            avgGain = (avgGain * (period - 1) + gain) / period;
-//	            avgLoss = (avgLoss * (period - 1) + loss) / period;
-//
-//	            double rs = avgGain / avgLoss;
-//	            double rsi = 100 - (100 / (1 + rs));
-//	            rsiValues[i] = rsi;
-//	        }
-//
-//	        return rsiValues[rsiValues.length - 1]; // 최신 RSI 값 반환
-//	    }
-
-
-//	 	@ResponseBody
-//	 	public Double getRsiByMinutes() {
-//	 	    final int minutes = 30;
-//	 	    final String market = "KRW-BTC";
-//	 	    final int maxCount = 200;
-//	 	    // 업비트 캔들 API 호출 (Docs: https://docs.upbit.com/reference/%EB%B6%84minute-%EC%BA%94%EB%93%A4-1)
-//	 	    List<MinuteCandleRes> candleResList = marketPriceReaderService.getCandleMinutes(minutes, market, maxCount);
-//	 	    if (CollectionUtils.isEmpty(candleResList)) {
-//	 	        return null;
-//	 	    }
-//
-//	 	    // 지수 이동 평균은 과거 데이터부터 구해주어야 합니다.
-//	 	    candleResList = candleResList.stream()
-//	 	            .sorted(Comparator.comparing(CandleRes::getTimestamp))  // 오름차순 (과거 순)
-//	 	            .collect(Collectors.toList());  // Sort
-//
-//	 	    double zero = 0;
-//	 	    List<Double> upList = new ArrayList<>();  // 상승 리스트
-//	 	    List<Double> downList = new ArrayList<>();  // 하락 리스트
-//	 	    for (int i = 0; i < candleResList.size() - 1; i++) {
-//	 	        // 최근 종가 - 전일 종가 = gap 값이 양수일 경우 상승했다는 뜻 / 음수일 경우 하락이라는 뜻
-//	 	        double gapByTradePrice = candleResList.get(i + 1).getTradePrice().doubleValue() - candleResList.get(i).getTradePrice().doubleValue();
-//	 	        if (gapByTradePrice > 0) {  // 종가가 전일 종가보다 상승일 경우
-//	 	            upList.add(gapByTradePrice);
-//	 	            downList.add(zero);
-//	 	        } else if (gapByTradePrice < 0) {  // 종가가 전일 종가보다 하락일 경우
-//	 	            downList.add(gapByTradePrice * -1);  // 음수를 양수로 변환해준다.
-//	 	            upList.add(zero);
-//	 	        } else {  // 상승, 하락이 없을 경우 종가 - 전일 종가 = gap은 0이므로 0값을 넣어줍니다.
-//	 	            upList.add(zero);
-//	 	            downList.add(zero);
-//	 	        }
-//	 	    }
-//
-//	 	    double day = 14;  // 가중치를 위한 기준 일자 (보통 14일 기준)
-//	 	    double a = (double) 1 / (1 + (day - 1));  // 지수 이동 평균의 정식 공식은 a = 2 / 1 + day 이지만 업비트에서 사용하는 수식은 a = 1 / (1 + (day - 1))
-//
-//	 	    // AU값 구하기
-//	 	    double upEma = 0;  // 상승 값의 지수이동평균
-//	 	    if (CollectionUtils.isNotEmpty(upList)) {
-//	 	        upEma = upList.get(0).doubleValue();
-//	 	        if (upList.size() > 1) {
-//	 	            for (int i = 1 ; i < upList.size(); i++) {
-//	 	                upEma = (upList.get(i).doubleValue() * a) + (upEma * (1 - a));
-//	 	            }
-//	 	        }
-//	 	    }
-//
-//	 	    // AD값 구하기
-//	 	    double downEma = 0;  // 하락 값의 지수이동평균
-//	 	    if (CollectionUtils.isNotEmpty(downList)) {
-//	 	        downEma = downList.get(0).doubleValue();
-//	 	        if (downList.size() > 1) {
-//	 	            for (int i = 1; i < downList.size(); i++) {
-//	 	                downEma = (downList.get(i).doubleValue() * a) + (downEma * (1 - a));
-//	 	            }
-//	 	        }
-//	 	    }
-//
-//	 	    // rsi 계산
-//	 	    double au = upEma;
-//	 	    double ad = downEma;
-//	 	    double rs = au / ad;
-//	 	    double rsi = 100 - (100 / (1 + rs));
-//
-//	 	    return rsi;
-//	 	}
 
 
 	// 수익률 저장
@@ -2069,323 +1675,5 @@ public class GetAccounts {
 
 
 
-//	//바이낸스
-//	@ResponseBody
-//	@GetMapping("/binance")
-//	public static String getStringFormUrl(String url) throws Throwable{
-//
-//		HttpURLConnection huc = (HttpURLConnection) new URL(url).openConnection();
-//		 huc.setRequestMethod("GET");
-//	        huc.addRequestProperty("User-Agent",
-//	                "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20100101 Firefox/25.0");
-//	        huc.setRequestProperty("Accept", "application/json, text/javascript, */*; q=0.01");
-//	        huc.connect();
-//	        InputStream in = null;
-//	        if( huc.getResponseCode() != 200 ){
-//	            in = huc.getErrorStream();
-//	        }else{
-//	            in = huc.getInputStream();
-//	        }
-//	        BufferedReader br = new BufferedReader(new InputStreamReader(in , "UTF-8"));
-//	        String line = null;
-//	        StringBuilder sb = new StringBuilder();
-//	        while ((line = br.readLine()) != null) {
-//	            sb.append(line);
-//	        }
-//	        br.close();
-//	        System.out.println(sb.toString());
-//
-//
-//
-//	        return sb.toString();
-//
-//	}
-//
-//	//바이낸스
-//	@ResponseBody
-//	@GetMapping("/binance2")
-//	public static void printTicker() throws Throwable{
-//
-//
-//		 String json_str = URLUtil.getStringFromUrl("https://api.binance.com/api/v1/ticker/24hr");
-//	     Gson gson = new Gson();
-//	     JsonArray ja = gson.fromJson(json_str, JsonElement.class).getAsJsonArray();
-//	     for(int i = 0; i < ja.size();i++){
-//	         JsonObject market = ja.get(i).getAsJsonObject();
-//	         System.out.println(market.get("symbol") + " : " + market);
-//	     }
-//
-//
-//	}
-/*
- * public static void main2(String[] args) {
- *
- * String accessKey = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";
- * System.getenv("EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8"); // access 코드
- * String secretKey = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";
- * System.getenv("1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG"); // secret 코드
- * String serverUrl = "https://api.upbit.com";
- *
- * Algorithm algorithm = Algorithm.HMAC256(secretKey); String jwtToken =
- * JWT.create().withClaim("access_key", accessKey) .withClaim("nonce",
- * UUID.randomUUID().toString()).sign(algorithm);
- *
- * String authenticationToken = "Bearer " + jwtToken;
- *
- *
- *
- *
- * //최근 체결 내역
- *
- * OkHttpClient client3 = new OkHttpClient();
- *
- * okhttp3.Request request3 = new okhttp3.Request.Builder()
- * .url("https://api.upbit.com/v1/trades/ticks?market=KRW-BTC&count=1") .get()
- * .addHeader("accept", "application/json") .build();
- *
- * try { Response response3 = client3.newCall(request3).execute();
- * if(response3.body() != null) { String responseBody3 =
- * response3.body().string(); System.out.println(responseBody3); }
- *
- *
- * } catch (IOException e) { e.printStackTrace(); }
- *
- *
- * //시세 캔들 조회
- *
- * OkHttpClient client4 = new OkHttpClient();
- *
- * okhttp3.Request request4 = new okhttp3.Request.Builder()
- * .url("https://api.upbit.com/v1/candles/minutes/1?market=KRW-BTC&count=1")
- * //minutes(분봉), days(일봉), weeks(주봉), months(월봉) .get() .addHeader("accept",
- * "application/json") .build();
- *
- * try {
- *
- * Response response4 = client4.newCall(request4).execute(); }catch(IOException
- * e) { e.printStackTrace(); }
- *
- *
- *
- *
- *
- *
- *
- *
- * }
- */
-////변동성 돌파 전략
-//@ResponseBody
-//@PostMapping("/autoTrade")
-//// public void auto(@RequestBody MemberVO member) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-//
-//
-//  CompletableFuture.runAsync(() -> {
-//      autoTrade(member);
-//  });
-//}
 
-//@Async
-//public void autoTrade(MemberVO member) {
-//  Logger logger = LoggerFactory.getLogger(this.getClass());
-//  coinservice2.autoOn(member.getId());
-//
-//  String ac = member.getAccessCode();
-//
-//  /*String ac = "EV9kG9xxOPFOiJZng83Zf0c2xyQIy3Gfdq6rf0W8";*/
-//  String sc = member.getSecretCode();
-//  /*String sc = "1PxWx72txMJq7xDpvxYYyD0NLzxYMBwV4r9Q8jGG";*/
-//  String userId = member.getId();
-//
-//  MemberVO vo = new MemberVO();
-//  boolean b1 = true;
-//
-//  while (b1) {
-//
-//      List<MemberVO> autoCheck = coinservice2.getCode(userId);
-//      //System.out.println(autoCheck.get(0).getAuto());
-//      String check = autoCheck.get(0).getAuto();
-//      if (check.equals("N")) {
-//          b1 = false;
-//          logger.info("자동 거래 중지: 사용자 ID = {}", userId);
-//          break;
-//      } else {
-//          boolean b2 = true;
-//          //System.out.println(vo);
-//          vo.setAccessCode(ac);
-//          vo.setSecretCode(sc);
-//          String a = coinservice2.market7();
-//          String b = coinservice2.currentPrice7();
-//          String c = coinservice2.account7(vo);
-//
-//          // 예외 처리 추가
-//          if (a == null || b == null || c == null) {
-//              throw new RuntimeException("API 호출에 실패했습니다.");
-//          }
-//
-//          String market;
-//          String market2;
-//          String koreanName;
-//          String currency;
-//          String balance;
-//          String coin2;
-//
-//          BigDecimal lowPrice;
-//          BigDecimal highPrice;
-//          BigDecimal prevClosePrice;
-//          BigDecimal targetPrice;
-//          BigDecimal minus;
-//          BigDecimal multi;
-//          BigDecimal dotFive = new BigDecimal(0.5);
-//          BigDecimal nowPrice;
-//
-//          JSONArray jsonArray = new JSONArray(a);   //마켓
-//          JSONArray jsonArray2 = new JSONArray(b);  //현재가
-//          JSONArray jsonArray3 = new JSONArray(c);  //잔고
-//
-//          //for(int i=0; i<jsonArray.length(); i++){
-//          //JSONObject jsonObject = jsonArray.getJSONObject(i);
-//
-//          //market = jsonObject.getString("market");
-//          //koreanName = jsonObject.getString("korean_name");
-//
-//          for (int j = 0; j < jsonArray2.length(); j++) {
-//
-//              JSONObject jsonObject2 = jsonArray2.getJSONObject(j);
-//              market2 = jsonObject2.getString("market");
-//
-//              if (market2.contains("KRW-BTC")) {
-//
-//
-//                  highPrice = jsonObject2.getBigDecimal("high_price");
-//                  lowPrice = jsonObject2.getBigDecimal("low_price");
-//                  prevClosePrice = jsonObject2.getBigDecimal("prev_closing_price");
-//                  nowPrice = jsonObject2.getBigDecimal("trade_price");
-//                  minus = highPrice.subtract(lowPrice);
-//                  multi = minus.multiply(dotFive);
-//                  targetPrice = prevClosePrice.add(multi);
-//                  //System.out.println(dotFive);
-//
-//                  // add 덧셈 subtract 뺄셈, multiply 곱셈, divide 나눗셈
-//
-//
-//                  //-1 작은 경우,  0 같은 경우, 1 큰경우
-//                  if (targetPrice.compareTo(nowPrice) <= 0) {
-//                      logger.info("사용자 = {} 목표 타겟 도달: 현재 가격 = {}, 목표 가격 = {}", userId, nowPrice, targetPrice);
-//
-//                      //System.out.println("목표 타겟 도달!!!");
-//
-//                      for (int i = 0; i < jsonArray3.length(); i++) {
-//
-//                          JSONObject jsonObject3 = jsonArray3.getJSONObject(i);
-//
-//                          currency = jsonObject3.getString("currency");
-//                          //balance  = jsonObject3.getString("balance");
-//
-//                          if (currency.equals("KRW")) {
-//
-//                              OrderVO vo2 = new OrderVO();
-//                              vo2.setCoin("KRW-BTC");
-//                              vo2.setAccessCode(vo.getAccessCode());
-//                              vo2.setSecretCode(vo.getSecretCode());
-//                              vo2.setOrderType("bid");
-//                              vo2.setPrice("6000");
-//                              try {
-//                                  coinservice2.order7(vo2);
-//                              } catch (NoSuchAlgorithmException e) {
-//                                  // TODO Auto-generated catch block
-//                                  e.printStackTrace();
-//                              } catch (UnsupportedEncodingException e) {
-//                                  // TODO Auto-generated catch block
-//                                  e.printStackTrace();
-//                              }
-//                              logger.info("매수 주문 실행: 코인 = KRW-BTC, 가격 = 6000");
-//
-//                              while (b2) {
-//
-//                                  String d = coinservice2.account7(vo);
-//                                  JSONArray jsonArray4 = new JSONArray(d);
-//
-//                                  for (int idx = 0; idx < jsonArray4.length(); idx++) {
-//
-//
-//                                      JSONObject jsonObject4 = jsonArray4.getJSONObject(idx);
-//                                      coin2 = jsonObject4.getString("currency");
-//
-//                                      if (coin2.equals("BTC")) {
-//
-//                                          LocalTime now = LocalTime.now();
-//                                          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-//
-//                                          String formatedNow = now.format(formatter);
-//                                          //System.out.println(formatedNow);
-//                                          if (formatedNow.equals("09:00")) {
-//
-//                                              balance = jsonObject4.getString("balance");
-//                                              //System.out.println(balance);
-//                                              OrderVO vo3 = new OrderVO();
-//                                              vo3.setCoin("KRW-BTC");
-//                                              vo3.setAccessCode(vo.getAccessCode());
-//                                              vo3.setSecretCode(vo.getSecretCode());
-//                                              vo3.setOrderType("ask");
-//                                              vo3.setVolume(balance);
-//
-//                                              try {
-//                                                  coinservice2.sell7(vo3);
-//                                              } catch (NoSuchAlgorithmException e) {
-//                                                  // TODO Auto-generated catch block
-//                                                  e.printStackTrace();
-//                                              } catch (UnsupportedEncodingException e) {
-//                                                  // TODO Auto-generated catch block
-//                                                  e.printStackTrace();
-//                                              }
-//
-//                                              logger.info("매도 주문 실행: 코인 = KRW-BTC, 잔고 = {}", balance);
-//
-//
-//                                              try {
-//                                                  Thread.sleep(30000);
-//                                                  b2 = false;
-//                                                  break;
-//                                              } catch (InterruptedException e) {
-//                                                  e.printStackTrace();
-//                                              }
-//
-//                                          }
-//                                      }
-//
-//                                  }
-//
-//                                  try {
-//                                      Thread.sleep(1000);
-//                                  } catch (InterruptedException e) {
-//                                      logger.error("거래 중 오류 발생", e);
-//                                      e.printStackTrace();
-//                                  }
-//
-//                              }
-//                          }
-//                      }
-//
-//
-//                  } else {
-//                      logger.info("사용자" + userId + "목표 타겟 미 도달!!");
-//                      try {
-//                          Thread.sleep(1000);
-//                      } catch (InterruptedException e) {
-//                          // TODO Auto-generated catch block
-//                          e.printStackTrace();
-//                      }
-//                      //System.out.println("목표 타겟 미 도달!!");
-//
-//                  }
-//
-//
-//              }
-//          }
-//      }
-//
-//
-//  }
-//
-//}
+

@@ -1,0 +1,262 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>코인 토론방</title>
+
+    <style>
+
+        #wrap-board {
+
+        }
+
+        .button-right {
+            float: right;
+            margin-bottom: 15px;
+        }
+
+        .pageing-btn{
+            position: relative;
+            left:50%;
+            right:50%;
+        }
+
+
+
+    </style>
+</head>
+<body class="sb-nav-fixed noto-sans-kr-font">
+
+<div id="nav">
+	<%@include file="/WEB-INF/views/header.jsp" %>
+</div>
+<div id="layoutSidenav">
+    <div id="sidebar">
+    	<%@include file="/WEB-INF/views/sidebar.jsp" %>
+    </div>
+    <div id="layoutSidenav_content">
+        <main>
+            <div class="container-fluid px-4">
+                <h3 class="mt-4">코인토론방</h3>
+                <ol class="breadcrumb mb-4">
+                    <!-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+                   <li class="breadcrumb-item active">Tables</li> -->
+                </ol>
+                <div class="card mb-4 col-md-6">
+                    <div class="card-header">
+                        <i class="fas fa-table me-1"></i>
+                        자유게시판
+                    </div>
+                    <div class="card-body">
+
+                        <div class="button-right">
+                            <button id="writeBtn" type="button" class="btn btn-success">글쓰기</button>
+                        </div>
+                        <table class="table table-hover table-bordered text-center">
+                            <thead>
+                            <tr class="table-secondary border">
+                                <th>번호</th>
+                                <th>제목</th>
+                                <th>글쓴이</th>
+                                <th>일시</th>
+                                <th>조회수</th>
+                            </tr>
+                            </thead>
+                            <tbody id="Tb">
+
+                            </tbody>
+                        </table>
+                        <div id="pagination" class="pageing-btn"></div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div id="footer">
+	<%@include file="/WEB-INF/views/footer.jsp" %>
+</div>
+
+<script>
+
+
+    function Board(seq, title, writer, writeDate, viewCount) {
+        this.seq = seq;
+        this.title = title;
+        this.writer = writer;
+        this.writeDate = writeDate;
+        this.viewCount = viewCount;
+
+    }
+
+    var username = '${user}';
+
+    refreshTable();
+
+
+    function refreshTable() {
+
+        var tbody = $('#Tb');
+        tbody.empty();
+
+        var page = 1;
+
+
+        $.ajax({
+            url: "/boardListAjax",
+            type: "GET",
+            dataType: "json",
+            contentType: "application/json",
+            success: function (result) {
+
+                board = result;
+
+                refreshTable();
+
+
+        $.each(board, function (i, item) {
+
+
+            var row = $('<tr>');
+
+            var td1 = $('<td class="center">').text(item.seq);
+            row.append(td1);
+
+            var td2 = $('<td class="center">');
+            var link = $('<a>').attr('href', '#').text(item.title);
+            td2.append(link);
+            row.append(td2);
+
+            var td3 = $('<td class="center">').text(item.writer);
+            row.append(td3);
+
+            var td4 = $('<td class="center">').text(item.writeDate);
+            row.append(td4);
+
+            var td5 = $('<td class="center">').text(item.viewCount);
+            row.append(td5);
+
+            tbody.append(row);
+
+            link.on('click', function (event) {
+                event.preventDefault();
+                // 여기에서 seq 값을 이용하여 상세 페이지로 이동하도록 구현
+                //consolo.log("조회수 증가!!!!")
+                var board = {
+                    seq: item.seq
+                }
+
+                $.ajax({
+                    url: "/updateView",
+                    type: "POST",
+                    data: JSON.stringify(board),
+                    dataType: "json",
+                    contentType: "application/json",
+                    success: function (result) {
+
+                    }
+
+
+                })
+
+                var responseData = {seq: item.seq};
+
+                localStorage.setItem('seq', JSON.stringify(responseData));
+
+                window.location.href = "/boardDetail";
+
+
+            });
+
+
+        })
+
+            }
+        })
+    }
+
+
+    var page = 1;
+
+    $.ajax({
+        url: "/boardListAjax",
+        type: "GET",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+
+            board = result;
+
+            refreshTable();
+        }
+    })
+
+
+    $('#writeBtn').on('click', function () {
+
+        location.href = "/boardwrite";
+
+    })
+
+    var max;
+
+    $.ajax({
+        url: "/boardMax",
+        type: "get",
+        dataType: "json",
+        contentType: "application/json",
+        success: function (result) {
+
+            if (result <= 10 || result != 0) {
+                max = 1;
+            } else {
+                max = Math.floor((result / 10) + 1);
+            }
+
+            $('#pagination').empty();
+
+            for (var i = 1; i <= max; i++) {
+
+                var pageButton = $('<button class="btn btn-secondary sm" id=' + i + '>').text(i);
+
+                pageButton.click(function () {
+
+                    var selectedPage = $(this).text();
+
+                    var vo = {
+                        page: selectedPage
+                    }
+
+                    pageButton.css('font-weight', 'bold');
+
+                    $.ajax({
+                        url: "/boardListAjax2",
+                        type: "post",
+                        dataType: "json",
+                        data: JSON.stringify(vo),
+                        contentType: "application/json",
+                        success: function (result3) {
+
+                            board = result3;
+
+                            refreshTable();
+                        }
+                    })
+
+                })
+                $('#pagination').append(pageButton);
+            }
+        }
+    })
+
+
+</script>
+</body>
+</html>

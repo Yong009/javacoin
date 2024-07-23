@@ -165,7 +165,6 @@
 	<select id="getQuestion" resultType="com.example.bitcoin.dto.QuestionVO">
 		SELECT *
 		 FROM question
-
 	</select>
 
 	<!-- 건의 사항 불러오기 개인 -->
@@ -208,6 +207,8 @@
 
 	</select>
 
+
+
 	<!-- 게시판 글 수-->
 	<select id="getMax" resultType="java.lang.Integer">
 		SELECT MAX(SEQ)
@@ -229,6 +230,23 @@
 
 	</select>
 
+	<!-- 모니터 페이징1 -->
+	<select id="getMoniterOn" resultType="com.example.bitcoin.dto.MemberVO">
+		SELECT *
+		  FROM member
+		  WHERE AUTO = 'Y'
+		  limit 10 offset #{page}
+
+	</select>
+
+	<!-- 모니터 페이징2 -->
+	<select id="getMoniterOff" resultType="com.example.bitcoin.dto.MemberVO">
+		SELECT *
+		  FROM member
+		  WHERE AUTO = 'N'
+		  limit 10 offset #{page}
+
+	</select>
 
 	<!-- 자동매매 금액 저장 -->
 	<update id="saveAutoPrice">
@@ -293,4 +311,60 @@
 		  FROM notice
 
 	</select>
+
+	<!-- 공지사항 게시판 총 수 -->
+
+
+	<!-- 건의 게시판 글 수-->
+	<select id="getQuestionMax" resultType="java.lang.Integer">
+		SELECT MAX(SEQ)
+		  FROM question
+
+	</select>
+
+	<!-- 자동매매 돌리는 사람 수-->
+	<select id="autoOnMax" resultType="java.lang.Integer">
+		SELECT COUNT(ID)
+		  FROM member
+		 WHERE AUTO = 'Y'
+
+	</select>
+
+
+	<!-- 자동매매 안돌리는 사람 수-->
+	<select id="autoOffMax" resultType="java.lang.Integer">
+		SELECT COUNT(ID)
+		  FROM member
+		 WHERE AUTO = 'N'
+
+	</select>
+
+
+	<!-- 공지사항 게시판 수-->
+	<select id="noticeMax" resultType="java.lang.Integer">
+		SELECT Max(SEQ)
+		  FROM notice
+
+	</select>
+
+	<!-- 건의사항 페이징 -->
+	<select id="questionList2" resultType="com.example.bitcoin.dto.QuestionVO">
+	 	SELECT *
+	 	  FROM question
+	 	  order by SEQ
+	 	  limit 10 offset #{page}
+
+	</select>
+
+
+	<!-- 건의 사항 그사람 페이징 -->
+	<select id="questionList3" resultType="com.example.bitcoin.dto.QuestionVO">
+	 	SELECT *
+	 	  FROM question
+	 	  WHERE writer = #{writer}
+	 	  order by SEQ
+	 	  limit 10 offset #{page}
+
+	</select>
+
 </mapper>
