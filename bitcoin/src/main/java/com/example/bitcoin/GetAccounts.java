@@ -907,12 +907,12 @@ public class GetAccounts {
 		}
 	}
 
-
+		//rsi14
 	 	@ResponseBody
 	    @GetMapping("/rsi14")
 	    public double getCurrentRsi14() {
 
-		  String API_URL = "https://api.upbit.com/v1/candles/minutes/1";
+		  String API_URL = "https://api.upbit.com/v1/candles/minutes/30";
 		  String MARKET = "KRW-BTC";
 		  int COUNT = 200;
 		  int PERIOD = 14;

@@ -567,6 +567,8 @@
                         dataType: "json",
                         success: function (result0) {
 
+
+
                             $.ajax({
                                 url: "/market7",
                                 type: "Get",
@@ -695,7 +697,7 @@
             dataType: "json",
             success: function (result) {
 
-                /*console.log(result)*/
+
 
                 $.ajax({
                     url: "/market7",
@@ -775,12 +777,7 @@
 							  title: "잔고가 조회되었습니다."
 							});
 
-/*                swal({
-          		  title: "조회 성공",
-          		  text: "잔고가 조회되었습니다.",
-          		  icon: "success",
-          		  button: "확인",
-          		});*/
+
             }
 
 
@@ -850,76 +847,12 @@
     })
 
 
-    /*   $.ajax({
-          url:"/upbitRsi",
-          type:"GET",
-          dataType:"json",
-          contentType:"application/json",
-          success:function(result){
-              console.log(result);
-          }
-
-      })*/
-
- /*  $.ajax({
-          url:"/rsi",
-          type:"GET",
-          dataType:"json",
-          contentType:"application/json",
-          success:function(result){
-              console.log(result);
-          }
-
-      })*/
 
 
-    /*    $.ajax({
-           url:"/koreaPrice",
-           type:"GET",
-           dataType:"json",
-           contentType:"application/json",
-           success:function(result){
-
-               console.log(JSON.parse(result));
-               console.log(JSON.Stringify(result));
-           }
-       }) */
-
-    // $('#orderBtn').on('click', function () {
-    //
-    //     $.ajax({
-    //
-    //         url: "/order",
-    //         type: "POST",
-    //         dataType: "json",
-    //         contentType: "applcation/json",
-    //         success: function (result) {
-    //
-    //
-    //         }
-    //
-    //
-    //     })
-    //
-    //
-    // })
-
-    /*
-        $.ajax({
-            url:"/market7",
-             type:"Get",
-             dataType:"json",
-             contentType:"application/json",
-             success: function(result){
-
-                 console.log(result);
-
-             }
-         }) */
 
 
-    /*      $.ajax({
-             url:"/currentPrice7",
+         $.ajax({
+             url:"/rsi14",
              type:"Get",
              dataType:"json",
              contentType:"application/json",
@@ -927,31 +860,33 @@
 
                  console.log(result);
              }
-         }) */
 
-    /*     $.ajax({
-              url:"/rsiSearch",
-              type:"Get",
-              dataType:"json",
-              contentType:"application/json",
-              success: function(result){
+       })
 
-                  console.log(result);
-              }
-          })*/
+/*         var accessCode = $('#access').text();
+        var secretCode = $('#secret').text();
+
+        var account = {
+              accessCode: accessCode,
+              secretCode: secretCode
+          }
 
 
-      /*   $.ajax({
-               url:"/rsi14",
-               type:"Get",
-               dataType:"json",
-               contentType:"application/json",
-               success: function(result){
+        console.log(account);
 
-                   console.log(result);
-               }
+		   $.ajax({
+                  url: "/account7",
+                  type: "POST",
+                  data: JSON.stringify(account),
+                  contentType: "application/json",
+                  dataType: "json",
+                  success: function (result2) {
 
-         })*/
+
+                  	console.log(result2);
+                  }
+
+		   }) */
 
 
 </script>
