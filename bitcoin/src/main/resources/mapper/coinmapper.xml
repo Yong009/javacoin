@@ -367,4 +367,22 @@
 
 	</select>
 
+	<!-- rsi 쓰는 사람 -->
+	<select id="getRsiMember">
+
+		SELECT *
+		  FROM member
+		  WHERE rsiAuto = 'Y'
+
+	</select>
+
+	<!--  rsi 이용시 정보 넣기 -->
+	<insert id="insertRsi">
+		UPDATE member
+		    SET rsiCoin = #{rsiCoin},
+		        rsiAutoPrice = #{rsiAutoPrice},
+		        rsiOrderPrice = #{rsiOrderPrice},
+		        rsiSellPrice = #{rsiSellPrice}
+		WHERE ID = #{id}
+	</insert>
 </mapper>

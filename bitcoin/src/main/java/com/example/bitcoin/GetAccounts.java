@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.http.HttpEntity;
@@ -86,6 +88,7 @@ public class GetAccounts {
 
 	@Autowired
 	coinserviceimpl coinserviceimpl2;
+
 
 	/*public GetAccounts(coinserviceimpl coinserviceimpl2) {
 		this.coinserviceimpl2 = coinserviceimpl2;
@@ -907,90 +910,303 @@ public class GetAccounts {
 		}
 	}
 
-		//rsi14
-	 	@ResponseBody
-	    @GetMapping("/rsi14")
-	    public double getCurrentRsi14() {
 
-		  String API_URL = "https://api.upbit.com/v1/candles/minutes/30";
-		  String MARKET = "KRW-BTC";
-		  int COUNT = 200;
-		  int PERIOD = 14;
+	// rsi 자동매매 on인 사람
+	public List<MemberVO> rsiAutoMember() {
 
-		  try {
-	            String jsonResponse = getApiResponse();
-	            ArrayList<Double> closes = parseCloses(jsonResponse);
-	            ArrayList<Double> rsiValues = calculateRSI(closes, PERIOD);
+		return coinservice2.getRsiMember();
 
-	            // 최신 RSI 값 반환
-	            return rsiValues.get(rsiValues.size() - 1);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return -1;  // 에러 발생 시 -1 반환
-	        }
-	    }
+	}
 
-	    private String getApiResponse() throws Exception {
+	@ResponseBody
+	@PostMapping("/insertRsi")
+	// rsi 살때 가격, 팔때 가격, 코인 저장, 투입되는 돈
+	public void insertRsi(@RequestBody MemberVO vo) {
 
-	    	String API_URL = "https://api.upbit.com/v1/candles/minutes/1";
-			String MARKET = "KRW-BTC";
-			int COUNT = 200;
-			int PERIOD = 14;
-	        URL url = new URL(API_URL + "?market=" + MARKET + "&count=" + COUNT);
-	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	        conn.setRequestMethod("GET");
+		coinservice2.insertRsi(vo);
 
-	        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	        String inputLine;
-	        StringBuilder content = new StringBuilder();
-	        while ((inputLine = in.readLine()) != null) {
-	            content.append(inputLine);
-	        }
-	        in.close();
-	        conn.disconnect();
+	}
 
-	        return content.toString();
-	    }
+	//rsi 자동매매
+	@Scheduled(fixedRate = 6000)
+	public void rsiAuto2() {
 
-	    private ArrayList<Double> parseCloses(String jsonResponse) {
-	        JSONArray jsonArray = new JSONArray(jsonResponse);
-	        ArrayList<Double> closes = new ArrayList<>();
-	        for (int i = jsonArray.length() - 1; i >= 0; i--) {
-	            JSONObject jsonObject = jsonArray.getJSONObject(i);
-	            closes.add(jsonObject.getDouble("trade_price"));
-	        }
-	        return closes;
-	    }
+		Logger logger = LoggerFactory.getLogger(this.getClass());
+		List<MemberVO> list = coinservice2.getRsiMember();
 
-	    private ArrayList<Double> calculateRSI(ArrayList<Double> closes, int period) {
-	        ArrayList<Double> auList = new ArrayList<>();
-	        ArrayList<Double> adList = new ArrayList<>();
-	        ArrayList<Double> rsiList = new ArrayList<>();
+		if (list == null || list.isEmpty()) {
+			logger.info("자동매매 실행한 유저가 존재하지 않습니다.");
+			return;
+		}
 
-	        for (int i = 1; i < closes.size(); i++) {
-	            double change = closes.get(i) - closes.get(i - 1);
-	            auList.add(Math.max(change, 0));
-	            adList.add(Math.max(-change, 0));
+		for (int i = 0; i < list.size(); i++) {
+
+			String accc = list.get(i).getAccessCode();
+			String sece = list.get(i).getSecretCode();
+			String userId = list.get(i).getId();
+			String autoPrice = list.get(i).getAutoPrice();
+
+			if ((accc == null || accc.equals(' ')) || (sece == null || sece.equals(' '))
+					|| (autoPrice == null || autoPrice.equals(' '))) {
+
+				logger.info(
+						"사용자 {}의 secret코드 또는 access코드 저장하지 않거나 가격을 입력하지 않았습니다. 저장 및 입력 되어야 자동매매 프로그램을 작동시킬 수 있습니다.!!",
+						userId);
+				continue;
+			}
+
+			MemberVO member = new MemberVO();
+			member.setAccessCode(accc);
+			member.setSecretCode(sece);
+			member.setAutoPrice(autoPrice);
+
+			String ma = coinservice2.account7(member);
+			String hc = coinservice2.rsiSearch();
+
+			 // Parse account response to get a set of currencies
+	        JSONArray accountArray = new JSONArray(ma);
+	        Set<String> accountCurrencies = new HashSet<>();
+	        for (int j = 0; j < accountArray.length(); j++) {
+	            JSONObject jsonObject = accountArray.getJSONObject(j);
+	            String currencyWithPrefix = "KRW-" + jsonObject.getString("currency");
+	            accountCurrencies.add(currencyWithPrefix);
 	        }
 
-	        double au = 0, ad = 0;
-	        for (int i = 0; i < period; i++) {
-	            au += auList.get(i);
-	            ad += adList.get(i);
-	        }
-	        au /= period;
-	        ad /= period;
+	        JSONArray rsiSearchArray = new JSONArray(hc);
+	        List<JSONObject> filteredMarkets = new ArrayList<>();
+	        for (int m = 0; m < rsiSearchArray.length(); m++) {
+	            JSONObject marketObject = rsiSearchArray.getJSONObject(m);
+	            String market = marketObject.getString("market");
 
-	        rsiList.add(100 - (100 / (1 + au / ad)));
-
-	        for (int i = period; i < auList.size(); i++) {
-	            au = (au * (period - 1) + auList.get(i)) / period;
-	            ad = (ad * (period - 1) + adList.get(i)) / period;
-	            rsiList.add(100 - (100 / (1 + au / ad)));
+	            if (!accountCurrencies.contains(market)) {
+	                filteredMarkets.add(marketObject);
+	            }
 	        }
 
-	        return rsiList;
-	    }
+	        String cp = null;
+			String account = null;
+
+			try {
+				// mk = coinservice2.market7(); //마켓
+				cp = coinservice2.currentPrice7(); // 현재가
+				account = coinservice2.account7(member); // 잔고
+			} catch (Exception e) {
+				logger.error("사용자 {}의 API 호출에 실패했습니다: {}", userId, e.getMessage());
+				continue;
+			}
+
+			// JSONArray jsonArray = new JSONArray(mk);
+			JSONArray jsonArray2 = new JSONArray(cp); // 현재가
+			JSONArray jsonArray3 = new JSONArray(account); // 잔고
+	        
+	        String API_URL = "https://api.upbit.com/v1/candles/minutes/1";
+	  	  	String market2;
+	  	  	int COUNT = 200;
+	  	  	int PERIOD = 14;
+
+	  	  	List<Double> rsiForMarket = new ArrayList<>();
+	        for(JSONObject obj : filteredMarkets) {
+
+	        	market2 = obj.getString("market");
+
+	        	 try {
+			            String jsonResponse = getApiResponse(market2);
+			            ArrayList<Double> closes = parseCloses(jsonResponse);
+			            ArrayList<Double> rsiValues = calculateRSI(closes, PERIOD);
+
+			            if(rsiValues.get(rsiValues.size() - 1) <= 30) {
+			            	System.out.println(market2+":"+rsiValues.get(rsiValues.size() - 1));
+			            }
+
+
+	        	 }catch(Exception e) {
+	        		  e.printStackTrace();
+	        	 }
+
+	        }
+		}
+
+
+
+
+//			String API_URL = "https://api.upbit.com/v1/candles/minutes/1";
+//			String MARKET;
+//			int COUNT = 200;
+//			int PERIOD = 14;
+//			String a = filteredMarkets;
+//
+//			  JSONArray jsonArray = new JSONArray(a);
+//		        List<JSONObject> jsonObjects = new ArrayList<>();
+//		        for (int j = 0; j < jsonArray.length(); j++) {
+//		            JSONObject jsonobject = jsonArray.getJSONObject(j);
+//		            jsonObjects.add(jsonobject);
+//		        }
+//
+//		        List<JSONObject> top50List = jsonObjects;
+//		        List<Double> rsiForMarket = new ArrayList<>();
+//		       // JSONArray resultArray = new JSONArray();
+//
+//			  for( JSONObject obj : top50List) {
+//				  MARKET = obj.getString("market");
+//
+//
+//			  try {
+//		            String jsonResponse = getApiResponse(MARKET);
+//		            ArrayList<Double> closes = parseCloses(jsonResponse);
+//		            ArrayList<Double> rsiValues = calculateRSI(closes, PERIOD);
+//
+//
+//
+//		            rsiForMarket.add(rsiValues.get(rsiValues.size() - 1));
+//		        } catch (Exception e) {
+//		            e.printStackTrace();
+//
+//		           rsiForMarket.add(-1.0);
+//
+//		        }
+//
+//			  }
+//			  //rsiForMarket;
+//
+//
+//
+//			// String mk = null;
+//			String cp = null;
+//			String account = null;
+//
+//			try {
+//				// mk = coinservice2.market7(); //마켓
+//				cp = coinservice2.currentPrice7(); // 현재가
+//				account = coinservice2.account7(member); // 잔고
+//			} catch (Exception e) {
+//				logger.error("사용자 {}의 API 호출에 실패했습니다: {}", userId, e.getMessage());
+//				continue;
+//			}
+//
+//			// JSONArray jsonArray = new JSONArray(mk);
+//			JSONArray jsonArray2 = new JSONArray(cp); // 현재가
+//			JSONArray jsonArray3 = new JSONArray(account); // 잔고
+
+
+	}
+
+
+	//rsi14
+ 	@ResponseBody
+    @GetMapping("/rsi14")
+    public List<Double> getCurrentRsi14() {
+
+	  String API_URL = "https://api.upbit.com/v1/candles/minutes/1";
+	  String MARKET;
+	  int COUNT = 200;
+	  int PERIOD = 14;
+	  String a = coinservice2.rsiSearch();
+
+	  JSONArray jsonArray = new JSONArray(a);
+        List<JSONObject> jsonObjects = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonobject = jsonArray.getJSONObject(i);
+            jsonObjects.add(jsonobject);
+        }
+
+        List<JSONObject> top50List = jsonObjects;
+        List<Double> rsiForMarket = new ArrayList<>();
+       // JSONArray resultArray = new JSONArray();
+
+	  for( JSONObject obj : top50List) {
+		  MARKET = obj.getString("market");
+
+
+	  try {
+            String jsonResponse = getApiResponse(MARKET);
+            ArrayList<Double> closes = parseCloses(jsonResponse);
+            ArrayList<Double> rsiValues = calculateRSI(closes, PERIOD);
+
+            // 최신 RSI 값 반환
+            //return rsiValues.get(rsiValues.size() - 1);
+           // JSONObject resultObj = new JSONObject();
+           // resultObj.put("market", MARKET);
+           // resultObj.put("rsi", rsiValues.get(rsiValues.size() - 1));
+           // resultArray.put(resultObj);
+
+            rsiForMarket.add(rsiValues.get(rsiValues.size() - 1));
+        } catch (Exception e) {
+            e.printStackTrace();
+            //JSONObject errorObj = new JSONObject();
+            //errorObj.put("market", MARKET);
+            //errorObj.put("rsi", -1.0);
+           // resultArray.put(errorObj);
+           rsiForMarket.add(-1.0);
+            //return -1;  // 에러 발생 시 -1 반환
+        }
+
+	  }
+	  return rsiForMarket;
+	  //return resultArray.toString();
+    }
+
+    private String getApiResponse(String MARKET2) throws Exception {
+
+    	String API_URL = "https://api.upbit.com/v1/candles/minutes/1";
+    	String MARKET = MARKET2;
+    	//String MARKET = "KRW-BTC";
+		int COUNT = 200;
+		int PERIOD = 14;
+        URL url = new URL(API_URL + "?market=" + MARKET + "&count=" + COUNT);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String inputLine;
+        StringBuilder content = new StringBuilder();
+        while ((inputLine = in.readLine()) != null) {
+            content.append(inputLine);
+        }
+        in.close();
+        conn.disconnect();
+
+        return content.toString();
+    }
+
+    private ArrayList<Double> parseCloses(String jsonResponse) {
+        JSONArray jsonArray = new JSONArray(jsonResponse);
+        ArrayList<Double> closes = new ArrayList<>();
+        for (int i = jsonArray.length() - 1; i >= 0; i--) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            closes.add(jsonObject.getDouble("trade_price"));
+        }
+        return closes;
+    }
+
+    private ArrayList<Double> calculateRSI(ArrayList<Double> closes, int period) {
+        ArrayList<Double> auList = new ArrayList<>();
+        ArrayList<Double> adList = new ArrayList<>();
+        ArrayList<Double> rsiList = new ArrayList<>();
+
+        for (int i = 1; i < closes.size(); i++) {
+            double change = closes.get(i) - closes.get(i - 1);
+            auList.add(Math.max(change, 0));
+            adList.add(Math.max(-change, 0));
+        }
+
+        double au = 0, ad = 0;
+        for (int i = 0; i < period; i++) {
+            au += auList.get(i);
+            ad += adList.get(i);
+        }
+        au /= period;
+        ad /= period;
+
+        rsiList.add(100 - (100 / (1 + au / ad)));
+
+        for (int i = period; i < auList.size(); i++) {
+            au = (au * (period - 1) + auList.get(i)) / period;
+            ad = (ad * (period - 1) + adList.get(i)) / period;
+            rsiList.add(100 - (100 / (1 + au / ad)));
+        }
+
+        return rsiList;
+    }
 
 	/*
 	 * // 이건 rsi 9랑 값이 같다!!! ( 업비트 rsi 방식 )
@@ -1158,49 +1374,21 @@ public class GetAccounts {
 	 * return -1; // 데이터가 부족한 경우 -1 반환 }
 	 */
 
+    //rsi 스케줄러
 
 
 
-	    //거래대금 50개 상위
-	    @ResponseBody
-	    @GetMapping("/rsiSearch")
-	    public String rsiSearch() {
+    //거래대금 50개 상위
+    @ResponseBody
+    @GetMapping("/rsiSearch")
+    public String rsiSearch() {
 
-	    	String a = coinservice2.currentPrice7();
-
-	    	JSONArray jsonArray = new JSONArray(a);
-	    	List<JSONObject> jsonObjects = new ArrayList<>();
-	    	for(int i=0; i< jsonArray.length(); i++) {
-	    		JSONObject jsonobject =jsonArray.getJSONObject(i);
-	    		jsonObjects.add(jsonobject);
-	    	}
-
-	    	jsonObjects.sort(Comparator.comparing(obj ->obj.getBigDecimal("acc_trade_price_24h"),Comparator.reverseOrder()));
-
-	    	List<JSONObject> top50List = jsonObjects.subList(0, Math.min(jsonObjects.size(), 50));
-
-	    	System.out.println("내림차순");
-
-	    	for(JSONObject obj : top50List) {
-	    		System.out.println(obj.getString("market")+ ": " + obj.getBigDecimal("acc_trade_price_24h"));
-	    	}
+    	String a = coinservice2.rsiSearch();
 
 
-	    	//jsonArray.sort(Comparator.comparing(e -> new BigDecimal(e.getAsJsonObject().get(""))))
-//	    	for(int i = 0; i<jsonArray.length(); i++) {
-//	    		JSONObject jsonObject = jsonArray.getJSONObject(i);
-//	    		BigDecimal price = jsonObject.getBigDecimal("acc_trade_price_24h");
-//	    		System.out.println(price);
-//	    	}
+        return a;
 
-
-	    	return "test";
-
-	    }
-
-
-
-
+    }
 
 
 

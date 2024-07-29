@@ -103,15 +103,16 @@ public interface coinmapper {
    public int autoOffMax();
    // 모니터 페이징1
    public List<MemberVO> getMoniterOn(PagingVO vo);
-
    // 모니터 페이징2
    public List<MemberVO> getMoniterOff(PagingVO vo);
-
    // 공지사항 게시판 수
    public int noticeMax();
-
    // 건의 사항 페이징
    public List<QuestionVO> questionList2(PagingVO vo);
    // 건의 사항 그 사람 페이징
    public List<QuestionVO> questionList3(PagingVO vo);
+   // rsi 쓰는 사람
+   public List<MemberVO> getRsiMember();
+   // rsi 정보 넣기
+   public void insertRsi(MemberVO vo);
 }

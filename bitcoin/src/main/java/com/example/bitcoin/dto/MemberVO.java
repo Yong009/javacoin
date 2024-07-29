@@ -7,12 +7,53 @@ import lombok.Data;
 @Data
 public class MemberVO {
 
+	public String getRsiAuto() {
+		return rsiAuto;
+	}
+
+	public void setRsiAuto(String rsiAuto) {
+		this.rsiAuto = rsiAuto;
+	}
+
+	public String getRsiCoin() {
+		return rsiCoin;
+	}
+
+	public void setRsiCoin(String rsiCoin) {
+		this.rsiCoin = rsiCoin;
+	}
+
+	public String getRsiAutoPrice() {
+		return rsiAutoPrice;
+	}
+
+	public void setRsiAutoPrice(String rsiAutoPrice) {
+		this.rsiAutoPrice = rsiAutoPrice;
+	}
+
+	public String getRsiOrderPrice() {
+		return rsiOrderPrice;
+	}
+
+	public void setRsiOrderPrice(String rsiOrderPrice) {
+		this.rsiOrderPrice = rsiOrderPrice;
+	}
+
+	public String getRsiSellPrice() {
+		return rsiSellPrice;
+	}
+
+	public void setRsiSellPrice(String rsiSellPrice) {
+		this.rsiSellPrice = rsiSellPrice;
+	}
+
 	String id; // 아이디
 	String password; // 비밀번호
 	String accessCode; // 엑세스코드
 	String secretCode; // 시크릿코드
 	String role; // 권한
 	String auto; // 자동매매 y/n
+
 	public String getSellPrice() {
 		return sellPrice;
 	}
@@ -33,6 +74,11 @@ public class MemberVO {
 		  return member;
 	  }*/
 
+	String rsiAuto;
+	String rsiCoin;
+	String rsiAutoPrice;
+	String rsiOrderPrice;
+	String rsiSellPrice;
 
 	public String getOrderPrice() {
 		return orderPrice;

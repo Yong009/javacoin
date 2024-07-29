@@ -254,6 +254,7 @@
                 dataType: "json",
                 success: function (result0) {
 
+
                     $.ajax({
                         url: "/market7",
                         type: "Get",
@@ -847,7 +848,16 @@
     })
 
 
+	/*	$.ajax({
+			url:"/rsiSearch",
+			type:"GET",
+			dataType:"json",
+			contentType:"application/json",
+			success: function(result9){
 
+				}
+
+				})*/
 
 
 
@@ -862,6 +872,8 @@
              }
 
        })
+
+
 
 /*         var accessCode = $('#access').text();
         var secretCode = $('#secret').text();

@@ -10,6 +10,7 @@ import java.math.RoundingMode;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -58,6 +61,9 @@ public class coinserviceimpl implements coinservice {
 
     @Autowired
     coinservice coinservice3;
+
+    @Autowired
+    coinserviceimpl coinimp;
 
 
     //코드 가져오기
@@ -692,6 +698,75 @@ public class coinserviceimpl implements coinservice {
 		int page = (vo.getPage() - 1) * 10;
 		vo.setPage(page);
 		return coinmappers.questionList3(vo);
+	}
+
+	// 거래량 상위 50개
+	@Override
+	public String rsiSearch() {
+
+		//String a = coinservice3.currentPrice7();
+
+		String a = coinimp.currentPrice7();
+
+    	JSONArray jsonArray = new JSONArray(a);
+    	List<JSONObject> jsonObjects = new ArrayList<>();
+    	for(int i=0; i< jsonArray.length(); i++) {
+    		JSONObject jsonobject =jsonArray.getJSONObject(i);
+    		jsonObjects.add(jsonobject);
+    	}
+
+    	jsonObjects.sort(Comparator.comparing(obj ->obj.getBigDecimal("acc_trade_price_24h"),Comparator.reverseOrder()));
+
+    	List<JSONObject> top50List = jsonObjects.subList(0, Math.min(jsonObjects.size(), 50));
+
+    	List<String> marketList = new ArrayList<>();
+
+    	JSONArray marketJsonArray = new JSONArray();
+
+    	for(JSONObject obj : top50List) {
+    		 JSONObject marketObj = new JSONObject();
+             marketObj.put("market", obj.getString("market"));
+             marketJsonArray.put(marketObj);
+    	}
+
+        return marketJsonArray.toString();
+
+//		 List<JSONObject> top50List2;
+//		 for(JSONObject obj : top50List) {
+//		  top50List2.add(obj.getString("market"));
+//		 }
+
+
+   	//System.out.println("내림차순");
+
+//   	for(JSONObject obj : top50List) {
+//
+//   		JSONObject jsonobject = jsonArray.getJSONObject(i);
+//           jsonObjects.add(jsonobject);
+//   		//System.out.println(obj.getString("market"));
+//   		//System.out.println(obj.getString("market")+ ": " + obj.getBigDecimal("acc_trade_price_24h"));
+//   	}
+
+
+   	//jsonArray.sort(Comparator.comparing(e -> new BigDecimal(e.getAsJsonObject().get(""))))
+//   	for(int i = 0; i<jsonArray.length(); i++) {
+//   		JSONObject jsonObject = jsonArray.getJSONObject(i);
+//   		BigDecimal price = jsonObject.getBigDecimal("acc_trade_price_24h");
+//   		System.out.println(price);
+//   	}
+
+	}
+
+	@Override
+	public List<MemberVO> getRsiMember() {
+
+		return coinmappers.getRsiMember();
+	}
+
+	@Override
+	public void insertRsi(MemberVO vo) {
+
+		coinmappers.insertRsi(vo);
 	}
 
 }

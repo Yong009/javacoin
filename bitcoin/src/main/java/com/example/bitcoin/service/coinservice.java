@@ -88,6 +88,9 @@ public interface coinservice {
 	// 자동 매매 전일 고가 , 저가 저장
 	public void updatePrice(PriceVO vo);
 
+	// 거래량 50위 상위
+	public String rsiSearch();
+
 	// 자동 매매 전일 고가, 저가 가져오기
 	public List<PriceVO> getPriceList();
 	// 총 회원 수
@@ -131,4 +134,10 @@ public interface coinservice {
 
 	// 건의 사항 그 사람 페이징
 	public List<QuestionVO> questionList3(PagingVO vo);
+
+	// rsi 돌리는 사람들
+	public List<MemberVO> getRsiMember();
+	// rsi에 필요한 정보 넣기
+	public void insertRsi(MemberVO vo);
+
 }
