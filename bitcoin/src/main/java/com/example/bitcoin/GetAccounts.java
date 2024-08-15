@@ -928,6 +928,7 @@ public class GetAccounts {
 	}
 
 	//rsi 자동매매
+	/*
 	@Scheduled(fixedRate = 6000)
 	public void rsiAuto2() {
 
@@ -1024,7 +1025,7 @@ public class GetAccounts {
 	        	 }
 
 	        }
-		}
+		}*/
 
 
 
@@ -1088,8 +1089,9 @@ public class GetAccounts {
 //			JSONArray jsonArray3 = new JSONArray(account); // 잔고
 
 
-	}
+	//}
 
+	// 여기부터 밑까지 사용 하는 것 잠깐 주석 //
 
 	//rsi14
  	@ResponseBody
@@ -1207,6 +1209,10 @@ public class GetAccounts {
 
         return rsiList;
     }
+
+
+
+
 
 	/*
 	 * // 이건 rsi 9랑 값이 같다!!! ( 업비트 rsi 방식 )

@@ -28,7 +28,7 @@ public class SpringSecurityConfig{
 		.authorizeHttpRequests(request -> request
 
 				.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-				.requestMatchers("/sidebar","/assets/demo/**","/assets/**", "/js/**","/css/**","/login","/jsp","/boardListAjax2","/rsi","/rsi14","/boardDetail2","/boardDetailAjax","/boardListAjax","/board2","/logout","/login","/static/**","/**.jpg","/**.png","/","/logout","/header","/footer","/market7","/currentPrice7","/chart2","/header2.html","/error","index2","/koreaPrice","/indices","/equities/**").permitAll()
+				.requestMatchers("/dashboard","/sidebar","/assets/demo/**","/assets/**", "/js/**","/css/**","/login","/jsp","/boardListAjax2","/rsi","/rsi14","/boardDetail2","/boardDetailAjax","/boardListAjax","/board2","/logout","/login","/static/**","/**.jpg","/**.png","/","/logout","/header","/footer","/market7","/currentPrice7","/chart2","/header2.html","/error","index2","/koreaPrice","/indices","/equities/**").permitAll()
 				.anyRequest().authenticated()
 
 				).formLogin(login -> login

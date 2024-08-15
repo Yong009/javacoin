@@ -38,10 +38,16 @@
 
 			color:white;
 		}
+
+        .commonBody{
+            font-size:12px !important;
+        }
+
+        .
     </style>
 
 </head>
-<body class="sb-nav-fixed noto-sans-kr-font">
+<body class="sb-nav-fixed noto-sans-kr-font commonBody">
 <!--<div th:fragment="nav">-->
   <!--  <div class="nav">-->
 
