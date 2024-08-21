@@ -30,7 +30,6 @@
 ## ⭐ Main Feature
 ### 로그인
 - 스프링 시큐리티 구현
-
 ![로그인화면2](https://github.com/user-attachments/assets/71a5ef2d-b168-4291-9ef6-d96db078e5c5)
 
 ### 회원가입 및 로그인 
