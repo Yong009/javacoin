@@ -15,7 +15,7 @@
 그럼 서버 구축해서 웹사이트로 구현한다면 늘 컴퓨터를 켜서 실행하지 않아도 되지 왆을까 생각이 들어 프로젝트에 들어가게 되었습니다.
 
 
-![로그인화면2](https://github.com/user-attachments/assets/71a5ef2d-b168-4291-9ef6-d96db078e5c5)
+
 
 ## :baby_chick: Demo
 (↑해당 프로젝트가 실제 배포되고 있지 않아서, 이미지로 프로젝트의 뷰를 대체할 경우)
@@ -28,8 +28,10 @@
 </p>
 
 ## ⭐ Main Feature
-### 정기 결제 기능
-- 아임포트(Iamport)를 이용한 정기 결제 기능 구현
+### 로그인
+- 스프링 시큐리티 구현
+
+![로그인화면2](https://github.com/user-attachments/assets/71a5ef2d-b168-4291-9ef6-d96db078e5c5)
 
 ### 회원가입 및 로그인 
 - JWT 이용
