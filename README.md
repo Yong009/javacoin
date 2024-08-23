@@ -15,17 +15,7 @@
 그럼 서버 구축해서 웹사이트로 구현한다면 늘 컴퓨터를 켜서 실행하지 않아도 되지 왆을까 생각이 들어 프로젝트에 들어가게 되었습니다.
 
 
-
-
 ## :baby_chick: Demo
-(↑해당 프로젝트가 실제 배포되고 있지 않아서, 이미지로 프로젝트의 뷰를 대체할 경우)
-<p float="left">
-    <img src="https://lh3.googleusercontent.com/iYHEwh2_Q6nIKS67eItV4AwIokeJDNe0ojtpWGqKpRyhaRlmCSmBcnkFNCmXbTkajKA=w2560-h1330-rw" width=200 />
-    <img src="https://lh3.googleusercontent.com/xl0sqT6Jz1p9Gq9slw4VXRr-akf4v74b_k3QkZUMZPvYV37-e5LqTZcOjofof4Xyl48=w2560-h1330-rw" width=200 />
-    <img src="https://lh3.googleusercontent.com/JqUUXWSgU0bhSBpOObERLvfUGE3eBnInmYvDMY3S2aAatyeFKLOifWnBLgZ0KLGbmA=w2560-h1330-rw" width=200 />
-    <img src="https://lh3.googleusercontent.com/AdN5fkguQMSc4M6iVkAFONsuxZhOQaKE7TDzuhF56FgDLORAnBv8160W7vva4a6kFBg=w2560-h1330-rw" width=200 />
-    <img src="https://lh3.googleusercontent.com/ruDvvtKehqGB_4PX7QBsUY2RLDe_v6g5FL-_XmC6SUGjKUQqa08Uy-DtsNi8wYuuXU4=w2560-h1330-rw" width=200 />
-</p>
 
 ## ⭐ Main Feature
 ### 로그인
@@ -41,8 +31,18 @@
 ### 자동매매
 - 스케줄러 사용
 - 업비트 api 활용
- 
 
+    <details>
+    <summary>자동매매 화면</summary>
+       
+    <img src="https://github.com/user-attachments/assets/317b6a38-9312-409c-9cd4-da3cf4461c63" alt="로그인화면"/>
+        
+    </details>
+
+### 잔고
+- 업비트 api 활용하여 데이터 가공
+- api키 저장 및 조회
+- 코인 보유시 매도 기능 
 
 ## 💻 Getting Started
 (↑해당 프로젝트 설치 및 실행 방법)
