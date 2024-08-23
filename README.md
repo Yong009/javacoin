@@ -69,8 +69,51 @@
 - 회원탈퇴
 - 페이징
 
+    <details>
+    <summary>관리자 화면</summary>
+       
+    <img src="https://github.com/user-attachments/assets/035eeebf-e8d4-48f1-b1dd-4605154c4450" alt="관리자 화면"/>
+        
+    </details>
 
+### 마이페이지
+- 수정 기능
+
+    <details>
+    <summary>관리자 화면</summary>
+       
+    <img src="https://github.com/user-attachments/assets/035eeebf-e8d4-48f1-b1dd-4605154c4450" alt="관리자 화면"/>
+        
+    </details>
   
+
+
+### 거래내역
+- api 활용하여 매수/매도 내역 조회
+
+    <details>
+    <summary>관리자 화면</summary>
+       
+    <img src="https://github.com/user-attachments/assets/035eeebf-e8d4-48f1-b1dd-4605154c4450" alt="관리자 화면"/>
+        
+    </details>
+
+### 게시판 및 댓글
+- 페이징
+- 게시판 글 누를 시 상세 페이지로
+- 조회수 기능
+- 글쓰기 ( 등록 및 수정 및 삭제 )
+- 댓글 ( 등록 및 삭제 )
+
+    <details>
+    <summary>관리자 화면</summary>
+       
+    <img src="https://github.com/user-attachments/assets/035eeebf-e8d4-48f1-b1dd-4605154c4450" alt="관리자 화면"/>
+        
+    </details>
+
+
+
    
 ## 💻 Getting Started
 (↑해당 프로젝트 설치 및 실행 방법)
