@@ -90,7 +90,7 @@
 - api 활용하여 매수/매도 내역 조회
 
     <details>
-    <summary>관리자 화면</summary>
+    <summary>거래내역 화면</summary>
        
     <img src="https://github.com/user-attachments/assets/f59687d8-ffb2-4877-8df1-25e1f732d22a" alt="거래내역 화면"/>
         
@@ -104,9 +104,9 @@
 - 댓글 ( 등록 및 삭제 )
 
     <details>
-    <summary>관리자 화면</summary>
+    <summary>게시판 화면</summary>
        
-    <img src="https://github.com/user-attachments/assets/035eeebf-e8d4-48f1-b1dd-4605154c4450" alt="관리자 화면"/>
+    <img src="https://github.com/user-attachments/assets/09c962aa-c97d-4b4f-9554-5eb30c8f5e1c" alt="게시판 화면"/>
         
     </details>
 
