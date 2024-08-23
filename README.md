@@ -26,6 +26,7 @@
         
     </details>
 
+
 ### 자동매매
 - 스케줄러 사용
 - 업비트 api 활용
@@ -36,6 +37,7 @@
     <img src="https://github.com/user-attachments/assets/317b6a38-9312-409c-9cd4-da3cf4461c63" alt="자동매매 화면"/>
         
     </details>
+
 
 ### 잔고
 - 업비트 api 활용하여 데이터 가공
@@ -49,6 +51,7 @@
         
     </details>
 
+
 ### 차트
 - 업비트 api 활용하여 데이터 가공
 - api 호출 주기를 이용하여 변화 감지 및 적용
@@ -60,6 +63,7 @@
     <img src="https://github.com/user-attachments/assets/f61b3192-98e3-4d7a-ac18-f0cc78a3c84c" alt="차트 화면"/>
         
     </details>
+
 
 ### 관리자화면
 - 회원들의 자동매매 사용 여부 확인
@@ -74,6 +78,7 @@
         
     </details>
 
+
 ### 마이페이지
 - 수정 기능
 
@@ -84,6 +89,7 @@
         
     </details>
 
+
 ### 거래내역
 - api 활용하여 매수/매도 내역 조회
 
@@ -93,6 +99,7 @@
     <img src="https://github.com/user-attachments/assets/f59687d8-ffb2-4877-8df1-25e1f732d22a" alt="거래내역 화면"/>
         
     </details>
+
 
 ### 게시판 및 댓글
 - 페이징
