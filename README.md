@@ -14,8 +14,9 @@
 
 그럼 서버 구축해서 웹사이트로 구현한다면 늘 컴퓨터를 켜서 실행하지 않아도 되지 않을까 생각이 들어 프로젝트에 들어가게 되었습니다.
 
-## 프로젝트 투입일 
+## ⭐프로젝트 투입일 
 
+<img src="https://github.com/user-attachments/assets/210e9ed2-e9f0-4932-a1ce-da6d63a52dd2" alt="프로젝트 투입"/>
 
 ## ⭐ Main Feature
 ### 로그인
@@ -144,6 +145,6 @@
 - 형상관리 : github
 
 
-## 👨‍👩‍👧‍👦 Developer
+## 👨‍💻 Developer
 *  **구용억** ((https://github.com/Yong009))
 
