@@ -55,6 +55,20 @@
 - 업비트 api 활용하여 데이터 가공
 - api 호출 주기를 이용하여 변화 감지 및 적용
 - 간단한 코인 검색 기능
+
+    <details>
+    <summary>차트 화면</summary>
+       
+    <img src="https://github.com/user-attachments/assets/f61b3192-98e3-4d7a-ac18-f0cc78a3c84c" alt="차트 화면"/>
+        
+    </details>
+
+### 관리자화면
+- 회원들의 자동매매 사용 여부 확인
+- 강제 자동매매 종료 기능
+- 회원탈퇴
+- 페이징
+
   
    
 ## 💻 Getting Started
