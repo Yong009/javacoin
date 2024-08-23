@@ -15,8 +15,6 @@
 그럼 서버 구축해서 웹사이트로 구현한다면 늘 컴퓨터를 켜서 실행하지 않아도 되지 왆을까 생각이 들어 프로젝트에 들어가게 되었습니다.
 
 
-## :baby_chick: Demo
-
 ## ⭐ Main Feature
 ### 로그인
 - 스프링 시큐리티 구현
@@ -109,78 +107,34 @@
     <img src="https://github.com/user-attachments/assets/09c962aa-c97d-4b4f-9554-5eb30c8f5e1c" alt="게시판 화면"/>
         
     </details>
-
-
+    <details>
+    <summary>댓글 화면</summary>
+       
+    <img src="https://github.com/user-attachments/assets/7f3d7393-a92a-4a49-a54f-67f849d58c4a" alt="댓글 화면"/>
+        
+    </details>
 
    
-## 💻 Getting Started
-(↑해당 프로젝트 설치 및 실행 방법)
-
-### Installation
-```
-npm install
-```
-### Develop Mode
-```
-npm run dev
-```
-### Production
-```
-npm run build
-```
-
 ## 🔧 Stack
-- **Language**: JavaScript
-- **Library & Framework** : Node.js
-- **Database** : AWS RDS (MariaDB)
+- **Language**: Java,JavaScript
+- **Library & Framework** : Springboot
+- **Database** : AWS RDS (Mysql)
 - **ORM** : Sequelize
-- **Deploy**: AWS EC2
-
-## :open_file_folder: Project Structure
-
-```markdown
-src
-├── common
-│   ├── config
-│   ├── types
-│   └── utils
-│       ├── types
-│       └── utils
-├── controller
-├── entity
-├── infrastructure
-│   ├── express
-│   └── typeorm
-├── repository
-└── ser
-```
-
-## 🔨 Server Architecture
-(↑서버 아키텍처에 대한 내용을 그림으로 표현함으로써 인프라를 어떻게 구축했는 지 한 눈에 보여줄 수 있다.)
-![](https://docs.aws.amazon.com/gamelift/latest/developerguide/images/realtime-whatis-architecture-vsd.png)
-
-## ⚒ CI/CD
-- github actions를 활용해서 지속적 통합 및 배포
-- `feature` 브랜치에서 `dev`로 Pull Request를 보내면, CI가 동작된다.
-- `dev`에서 `master`로 Pull Request를 보내면, CI가 동작되고 Merge가 되면, 운영 리소스에 배포된다.
+- **Deploy**: AWS EC2 ( ubuntu ) 
 
 ## 👨‍💻 Role & Contribution
 
 **Frontend (Web)**
 
-- 관리자 페이지 (Vue.js) 개발
-- 전체 아키텍처 구성
+- bootstrap 활용
+- ajax 사용
 
 **Devops**
+- 직접 jar or war 빌드
+- aws ec2 배포
+- 형상관리 : github
 
-- CI/CD 구축 (Docker, Github Action)
-- 서버 모니터링
-
-**etc**
-
-- 전체 개발 일정 및 이슈 관리
 
 ## 👨‍👩‍👧‍👦 Developer
-*  **박재성** ([jaeseongDev](https://github.com/jaeseongDev))
-*  **고성진** ([seongjin96](https://github.com/seongjin96))
-*  **조연희** ([yeoneei](https://github.com/yeoneei))
+*  **구용억** ((https://github.com/Yong009))
+
