@@ -92,7 +92,7 @@
     <details>
     <summary>관리자 화면</summary>
        
-    <img src="https://github.com/user-attachments/assets/035eeebf-e8d4-48f1-b1dd-4605154c4450" alt="관리자 화면"/>
+    <img src="https://github.com/user-attachments/assets/f59687d8-ffb2-4877-8df1-25e1f732d22a" alt="거래내역 화면"/>
         
     </details>
 
