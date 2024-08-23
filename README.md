@@ -82,11 +82,9 @@
     <details>
     <summary>관리자 화면</summary>
        
-    <img src="https://github.com/user-attachments/assets/035eeebf-e8d4-48f1-b1dd-4605154c4450" alt="관리자 화면"/>
+    <img src="https://github.com/user-attachments/assets/9d8df70d-910f-400a-ab37-8e7d09f8fd8d" alt="마이페이지 화면"/>
         
     </details>
-  
-
 
 ### 거래내역
 - api 활용하여 매수/매도 내역 조회
