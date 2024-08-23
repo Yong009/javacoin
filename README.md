@@ -35,7 +35,7 @@
     <details>
     <summary>자동매매 화면</summary>
        
-    <img src="https://github.com/user-attachments/assets/317b6a38-9312-409c-9cd4-da3cf4461c63" alt="로그인화면"/>
+    <img src="https://github.com/user-attachments/assets/317b6a38-9312-409c-9cd4-da3cf4461c63" alt="자동매매 화면"/>
         
     </details>
 
@@ -44,6 +44,19 @@
 - api키 저장 및 조회
 - 코인 보유시 매도 기능 
 
+    <details>
+    <summary>잔고 화면</summary>
+       
+    <img src="https://github.com/user-attachments/assets/79221ab3-fa3d-4f58-968c-f02e706f0129" alt="잔고 화면"/>
+        
+    </details>
+
+### 차트
+- 업비트 api 활용하여 데이터 가공
+- api 호출 주기를 이용하여 변화 감지 및 적용
+- 간단한 코인 검색 기능
+  
+   
 ## 💻 Getting Started
 (↑해당 프로젝트 설치 및 실행 방법)
 
